@@ -1,12 +1,12 @@
-#pragma once
+ï»¿#pragma once
 #include "base.h"
 
 namespace ff {
 
-	//1 Ï£Íû×¢²áÄ³¸öÒ»¶ÔÏóµÄÄ³Ò»¸öº¯Êı
-	//2 Ï£Íû¿ÉÒÔÈ¡Ïûµô¶ÔÄ³¸öÊÂ¼şµÄ¼àÌıº¯Êı
+	/// 1 å¸Œæœ›æ³¨å†ŒæŸä¸ªä¸€å¯¹è±¡çš„æŸä¸€ä¸ªå‡½æ•°
+	/// 2 å¸Œæœ›å¯ä»¥å–æ¶ˆæ‰å¯¹æŸä¸ªäº‹ä»¶çš„ç›‘å¬å‡½æ•°
 
-	//ÊÕ·¢µÄÏûÏ¢Ìå
+	/// æ”¶å‘çš„æ¶ˆæ¯ä½“
 	class EventBase {
 	public:
 		using Ptr = std::shared_ptr<EventBase>;
@@ -18,18 +18,18 @@ namespace ff {
 
 		~EventBase() noexcept;
 
-		std::string mEventName;//ÏûÏ¢µÄÃû×Ö
-		void* mTarget = nullptr;//ÏûÏ¢µÄÖ÷Ìå£¬ÄÄ¸ö¶ÔÏó·¢³öµÄ,´æ´¢ÆäÖ¸Õë
-		void* mpUserData{ nullptr };//¸ù¾İ²»Í¬µÄĞèÇó£¬½«userDataÉèÖÃ³É²»Í¬µÄ¶ÔÏóÖ¸Õë
+		std::string mEventName;			/// æ¶ˆæ¯çš„åå­—
+		void* mTarget = nullptr;		/// æ¶ˆæ¯çš„ä¸»ä½“ï¼Œå“ªä¸ªå¯¹è±¡å‘å‡ºçš„,å­˜å‚¨å…¶æŒ‡é’ˆ
+		void* mpUserData{ nullptr };	/// æ ¹æ®ä¸åŒçš„éœ€æ±‚ï¼Œå°†userDataè®¾ç½®æˆä¸åŒçš„å¯¹è±¡æŒ‡é’ˆ
 	};
 
 	class EventDispatcher {
 	public:
-		//for class::function
+		/// for class::function
 		template<typename T>
 		using TypedFunctionPointer = void(T::*)(const EventBase::Ptr&);
 
-		//for wrapper function
+		/// for wrapper function
 		using EventFunction = std::function<void(const EventBase::Ptr&)>;
 
 		struct Listener {
@@ -46,7 +46,7 @@ namespace ff {
 
 			struct FunctionPointerDescriptor {
 
-				//º¯ÊıÖ¸ÕëµØÖ·µÄÖ¸Õë£¡£¡
+				/// å‡½æ•°æŒ‡é’ˆåœ°å€çš„æŒ‡é’ˆï¼ï¼
 				void*	mAddr = nullptr;
 				size_t	mSize{ 0 };
 
@@ -55,7 +55,7 @@ namespace ff {
 						return false;
 					}
 
-					//°´Î»¶Ô±È
+					/// æŒ‰ä½å¯¹æ¯”
 					if (memcmp(mAddr, other.mAddr, mSize) != 0) {
 						return false;
 					}
@@ -66,33 +66,33 @@ namespace ff {
 
 			template<typename T>
 			static FunctionPointerDescriptor buildFunctionPointer(TypedFunctionPointer<T> functionPointer) noexcept {
-				//¼ÆËã±¾Ö¸ÕëÓĞ¶à´óµÄsize,²»ÊÇÖ¸ÕëÖ¸ÏòµÄÄÚÈİ
+				/// è®¡ç®—æœ¬æŒ‡é’ˆæœ‰å¤šå¤§çš„size,ä¸æ˜¯æŒ‡é’ˆæŒ‡å‘çš„å†…å®¹
 				size_t s = sizeof(TypedFunctionPointer<T>);
 				void* p = malloc(s);
 
-				//placement New ÏÈ·ÖÅäÁËÒ»¿éÄÚ´æ£¬È»ºóÍ¨¹ıplacementNewµ÷ÓÃÁËÆä¹¹Ôìº¯Êı/Ä¬ÈÏ¹¹Ôì
+				/// placement New å…ˆåˆ†é…äº†ä¸€å—å†…å­˜ï¼Œç„¶åé€šè¿‡placementNewè°ƒç”¨äº†å…¶æ„é€ å‡½æ•°/é»˜è®¤æ„é€ 
 				new(p)TypedFunctionPointer<T>(functionPointer);
 
 				Listener::FunctionPointerDescriptor fpd;
-				fpd.mAddr = p;//pÖ¸ÏòµÄÄÚ´æµ±ÖĞ£¬´æ´¢ÁËfunctionPointerµÄÖ¸ÕëÖµ
-				fpd.mSize = s;//functionPointerµÄÖ¸ÕëÖµµÄ´óĞ¡ 
+				fpd.mAddr = p;			/// pæŒ‡å‘çš„å†…å­˜å½“ä¸­ï¼Œå­˜å‚¨äº†functionPointerçš„æŒ‡é’ˆå€¼
+				fpd.mSize = s;			/// functionPointerçš„æŒ‡é’ˆå€¼çš„å¤§å° 
 
 				return fpd;
 			}
 
-			//caller 
-			void* mTarget = nullptr;//Ä³Ò»¸ö¶ÔÏóµÄthisÖ¸Õë
+			/// caller 
+			void* mTarget = nullptr; /// æŸä¸€ä¸ªå¯¹è±¡çš„thisæŒ‡é’ˆ
 
-			//functionPointerDescriptor
+			/// functionPointerDescriptor
 			FunctionPointerDescriptor mFuncionPointerDescriptor{};
 
-			//functionPointer
-			//¶Ôº¯ÊıÖ¸ÕëµÄ¹ÜÀíÀà
+			/// functionPointer
+			/// å¯¹å‡½æ•°æŒ‡é’ˆçš„ç®¡ç†ç±»
 			std::function<void(const EventBase::Ptr&)> mFunction = nullptr;
 		};
 
 		static bool listenerIsEqual(const Listener::Ptr& l0, const Listener::Ptr& l1) {
-			//µ÷ÓÃ¶ÔÏóµÄµØÖ·Ò»ÖÂ£¬ÇÒ¶ÔÓ¦µÄº¯ÊıµØÖ·Ò»ÖÂ¼´¿É 
+			/// è°ƒç”¨å¯¹è±¡çš„åœ°å€ä¸€è‡´ï¼Œä¸”å¯¹åº”çš„å‡½æ•°åœ°å€ä¸€è‡´å³å¯ 
 			return l0->mTarget == l1->mTarget && l0->mFuncionPointerDescriptor == l1->mFuncionPointerDescriptor;
 		}
 
@@ -113,36 +113,36 @@ namespace ff {
 		void dispatchEvent(const EventBase::Ptr& event);
 
 	protected:
-		//´æ´¢ÁË¼àÌıÊÂ¼şÃû³Æ¡ª¡ª¼àÌıº¯Êı¶ÓÁĞ
-		//Í¬Ò»¸öÊÂ¼şÃû³Æ£¬¿ÉÄÜ»áÓĞ¶à¸öListener¼àÌı£¨¶à¸ö¶ÔÏóµÄº¯Êı£©
+		/// å­˜å‚¨äº†ç›‘å¬äº‹ä»¶åç§°â€”â€”ç›‘å¬å‡½æ•°é˜Ÿåˆ—
+		/// åŒä¸€ä¸ªäº‹ä»¶åç§°ï¼Œå¯èƒ½ä¼šæœ‰å¤šä¸ªListenerç›‘å¬ï¼ˆå¤šä¸ªå¯¹è±¡çš„å‡½æ•°ï¼‰
 		std::unordered_map<std::string, ListenerQueue> mListeners;
 		static EventDispatcher* mInstance;
 	};
 
 	template<typename T>
 	void EventDispatcher::addEventListener(const std::string& name, T* target, TypedFunctionPointer<T> functionPointer) noexcept {
-		//queueIterÊÇµ±Ç°Õâ¸öÏûÏ¢£¨name£©¶ÔÓ¦µÄmapµ±ÖĞµÄ£¬¼üÖµ¶ÔµÄµü´úÆ÷£¬¼üÖµ¶ÔÊÇ£¨string£¬ ListenerQueue£©
-		//queueIter¶øÑÔ£¬firstÊÇÏûÏ¢Ãû×Ö£¬secondÊÇ¶ÓÁĞvector<Listener>
+		/// queueIteræ˜¯å½“å‰è¿™ä¸ªæ¶ˆæ¯ï¼ˆnameï¼‰å¯¹åº”çš„mapå½“ä¸­çš„ï¼Œé”®å€¼å¯¹çš„è¿­ä»£å™¨ï¼Œé”®å€¼å¯¹æ˜¯ï¼ˆstringï¼Œ ListenerQueueï¼‰
+		/// queueIterè€Œè¨€ï¼Œfirstæ˜¯æ¶ˆæ¯åå­—ï¼Œsecondæ˜¯é˜Ÿåˆ—vector<Listener>
 		auto queueIter = mListeners.find(name);
 
 		if (queueIter == mListeners.end()) {
 			queueIter = (mListeners.insert(std::make_pair(name, ListenerQueue()))).first;
 		}
 
-		//Attention£¡listenerQueueÊÇÒ»¸öÒıÓÃ£¡
+		/// Attentionï¼listenerQueueæ˜¯ä¸€ä¸ªå¼•ç”¨ï¼
 		auto& listenerQueue = queueIter->second;
 
-		//functionPointerÊÇÒ»¸öÀàÄÚµÄº¯ÊıÖ¸Õë
-		//targetÊÇ¶ÔÏóµÄÖ¸Õë
-		//bind²Ù×÷£¬½«¶şÕß½áºÏÔÚÒ»Æğ£¬Éú³ÉÒ»¸öfunction
+		/// functionPointeræ˜¯ä¸€ä¸ªç±»å†…çš„å‡½æ•°æŒ‡é’ˆ
+		/// targetæ˜¯å¯¹è±¡çš„æŒ‡é’ˆ
+		/// bindæ“ä½œï¼Œå°†äºŒè€…ç»“åˆåœ¨ä¸€èµ·ï¼Œç”Ÿæˆä¸€ä¸ªfunction
 		auto function = std::bind(functionPointer, target, std::placeholders::_1);
 
-		//¿ªÊ¼¹¹½¨listener
+		/// å¼€å§‹æ„å»ºlistener
 		Listener::Ptr listener = Listener::create();
 		listener->mTarget = target;
 
-		//Í¨¹ıbindÉú³ÉµÄfunctionÎŞ·¨½øĞĞ¶Ô±È£¬ÎŞ·¨Ê¹ÓÃfunction1 == function2À´ÅĞ¶ÏÊÇ·ñÏàµÈ
-		//´«ÈëµÄfunctionPointerÊÇbindÖ®Ç°µÄ½á¹û£¬¼´µ¥¶ÀµÄº¯ÊıÖ¸ÕëµØÖ·
+		/// é€šè¿‡bindç”Ÿæˆçš„functionæ— æ³•è¿›è¡Œå¯¹æ¯”ï¼Œæ— æ³•ä½¿ç”¨function1 == function2æ¥åˆ¤æ–­æ˜¯å¦ç›¸ç­‰
+		/// ä¼ å…¥çš„functionPointeræ˜¯bindä¹‹å‰çš„ç»“æœï¼Œå³å•ç‹¬çš„å‡½æ•°æŒ‡é’ˆåœ°å€
 		listener->mFuncionPointerDescriptor = Listener::buildFunctionPointer(functionPointer);
 		listener->mFunction = function;
 

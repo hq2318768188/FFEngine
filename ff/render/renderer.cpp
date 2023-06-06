@@ -1,4 +1,4 @@
-#include "renderer.h"
+ï»¿#include "renderer.h"
 #include "../objects/group.h"
 #include "../objects/skinnedMesh.h"
 #include "../tools/timer.h"
@@ -42,14 +42,14 @@ namespace ff {
 	Renderer::~Renderer() noexcept {}
 
 	bool Renderer::render(Scene::Ptr scene, Camera::Ptr camera) {
-		//´¦Àí´°ÌåÏûÏ¢£¬²¢ÇÒÅĞ¶ÏÊÇ·ñ¼ÌĞørender
+		/// å¤„ç†çª—ä½“æ¶ˆæ¯ï¼Œå¹¶ä¸”åˆ¤æ–­æ˜¯å¦ç»§ç»­render
 		if (!mWindow->processEvent()) {
 			return false;
 		}
 
 		if (scene == nullptr) { scene = mDummyScene; }
 
-		//1 ¸üĞÂ³¡¾°Êı¾İ
+		/// 1 æ›´æ–°åœºæ™¯æ•°æ®
 		scene->updateWorldMatrix(true, true);
 		camera->updateWorldMatrix(true, true);
 
@@ -59,36 +59,36 @@ namespace ff {
 		mCurrentViewMatrix = projectionMatrix * cameraInverseMatrix;
 		mFrustum->setFromProjectionMatrix(mCurrentViewMatrix);
 
-		//2 ÌáÈ¡äÖÈ¾Êı¾İ£¬¹¹³ÉäÖÈ¾ÁĞ±íÓë×´Ì¬
+		/// 2 æå–æ¸²æŸ“æ•°æ®ï¼Œæ„æˆæ¸²æŸ“åˆ—è¡¨ä¸çŠ¶æ€
 		mRenderState->init();
 		mRenderList->init();
 
-		//sceneµ±ÖĞµÄÊı¾İ¶¼ÊÇ²ã¼¶¼Ü¹¹µÄÊ÷×´Êı¾İ£¬´ÓÕâ¸ö½á¹¹£¬½âÎöÎªÒ»¸öÏßĞÔÁĞ±í
+		/// sceneå½“ä¸­çš„æ•°æ®éƒ½æ˜¯å±‚çº§æ¶æ„çš„æ ‘çŠ¶æ•°æ®ï¼Œä»è¿™ä¸ªç»“æ„ï¼Œè§£æä¸ºä¸€ä¸ªçº¿æ€§åˆ—è¡¨
 		projectObject(scene, 0, mSortObject);
 
-		//µ÷ÓÃÍê±ÏprojectObjectÖ®ºó£¬ËùÓĞ¿ÉäÖÈ¾ÎïÌå&ÔÚÊÓ¾°Ìå·¶Î§ÄÚµÄ£¬¶¼ÒÑ¾­±»Ñ¹Èëµ½ÁËRenderListµ±ÖĞ
+		/// è°ƒç”¨å®Œæ¯•projectObjectä¹‹åï¼Œæ‰€æœ‰å¯æ¸²æŸ“ç‰©ä½“&åœ¨è§†æ™¯ä½“èŒƒå›´å†…çš„ï¼Œéƒ½å·²ç»è¢«å‹å…¥åˆ°äº†RenderListå½“ä¸­
 		mRenderList->finish();
 
-		//¾­¹ıÉÏÊöprojectObjectµÄÁ÷³Ì£¬ÈÎºÎÒ»¸öÎÒÃÇÊ¹ÓÃµ½µÄAttribute¶¼ÒÑ¾­³É¹¦µÄ±»½âÎö³ÉÎªÁËÒ»¸öVBO
-		//ÔÚÉÏÊöÁ÷³ÌÖĞ£¬Ã¿¸öMeshµÄIndexAttribute²¢Ã»ÓĞ±»½âÎöÎªEBO
+		/// ç»è¿‡ä¸Šè¿°projectObjectçš„æµç¨‹ï¼Œä»»ä½•ä¸€ä¸ªæˆ‘ä»¬ä½¿ç”¨åˆ°çš„Attributeéƒ½å·²ç»æˆåŠŸçš„è¢«è§£ææˆä¸ºäº†ä¸€ä¸ªVBO
+		/// åœ¨ä¸Šè¿°æµç¨‹ä¸­ï¼Œæ¯ä¸ªMeshçš„IndexAttributeå¹¶æ²¡æœ‰è¢«è§£æä¸ºEBO
 
 		if (mSortObject) {
 			mRenderList->sort();
 		}
 
-		//make frame data
+		/// make frame data
 		mInfos->reset();
 
-		//renderScene
-		//¸üĞÂ½¨ÉèÁËÒ»Ğ©Óë×ø±êÏµÑ¡ÔñÃ»ÓĞ¹ØÏµµÄuniformÄÚÈİ
+		/// renderScene
+		/// æ›´æ–°å»ºè®¾äº†ä¸€äº›ä¸åæ ‡ç³»é€‰æ‹©æ²¡æœ‰å…³ç³»çš„uniformå†…å®¹
 		mRenderState->setupLights();
 		
 
-		//3 äÖÈ¾³¡¾°
-		//shadow
+		/// 3 æ¸²æŸ“åœºæ™¯
+		/// shadow
 		mShadowMap->render(mRenderState, scene, camera);
 
-		//drawBackground and clear 
+		/// drawBackground and clear 
 		mBackground->render(mRenderList, scene);
 
 		renderScene(mRenderList, scene, camera);
@@ -101,12 +101,12 @@ namespace ff {
 	}
 
 	void Renderer::projectObject(const Object3D::Ptr& object, uint32_t groupOrder, bool sortObjects) noexcept {
-		//µ±Ç°ĞèÒª±»½âÎöµÄÎïÌå£¬Èç¹ûÊÇ²»¿É¼ûÎïÌå£¬ÄÇÃ´Á¬Í¬Æä×Ó½ÚµãÒ»Æğ¶¼±äÎª²»¿É¼û×´Ì¬
+		/// å½“å‰éœ€è¦è¢«è§£æçš„ç‰©ä½“ï¼Œå¦‚æœæ˜¯ä¸å¯è§ç‰©ä½“ï¼Œé‚£ä¹ˆè¿åŒå…¶å­èŠ‚ç‚¹ä¸€èµ·éƒ½å˜ä¸ºä¸å¯è§çŠ¶æ€
 		if (!object->mVisible) return;
 
 		glm::vec4 toolVec(1.0f);
 
-		//¶Ôobject½øĞĞÁËÀàĞÍÅĞ¶Ï£¬²¢ÇÒ·Ö±ğ×ö²»Í¬µÄ´¦Àí 
+		/// å¯¹objectè¿›è¡Œäº†ç±»å‹åˆ¤æ–­ï¼Œå¹¶ä¸”åˆ†åˆ«åšä¸åŒçš„å¤„ç† 
 		if (object->mIsGroup) {
 			auto group = std::static_pointer_cast<Group>(object);
 			groupOrder = group->mGroupOrder;
@@ -118,15 +118,15 @@ namespace ff {
 				mRenderState->pushShadow(light);
 			}
 		}
-		//Èç¹ûÊÇ¿ÉäÖÈ¾ÎïÌå
+		/// å¦‚æœæ˜¯å¯æ¸²æŸ“ç‰©ä½“
 		else if (object->mIsRenderableObject) {
-			//¹Ç÷À
+			/// éª¨éª¼
 			if (object->mIsSkinnedMesh) {
 				auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
 				skinnedMesh->mSkeleton->update();
 			}
 
-			//Èç¹ûĞèÒªÔÚäÖÈ¾ÁĞ±íµ±ÖĞ¶ÔÎïÌå½øĞĞÅÅĞò£¬ÔòĞèÒª¼ÆËãÆäz×ø±êÖµ(Éî¶ÈÖµ£©
+			/// å¦‚æœéœ€è¦åœ¨æ¸²æŸ“åˆ—è¡¨å½“ä¸­å¯¹ç‰©ä½“è¿›è¡Œæ’åºï¼Œåˆ™éœ€è¦è®¡ç®—å…¶zåæ ‡å€¼(æ·±åº¦å€¼ï¼‰
 			if (mSortObject) {
 				toolVec = glm::vec4(object->getWorldPosition(), 1.0);
 				toolVec = mCurrentViewMatrix * toolVec;
@@ -134,13 +134,13 @@ namespace ff {
 
 			auto renderableObject = std::static_pointer_cast<RenderableObject>(object);
 
-			//Ê×ÏÈ¶Ôobject½øĞĞÒ»´ÎÊÓ¾°Ìå¼ô²Ã²âÊÔ
+			/// é¦–å…ˆå¯¹objectè¿›è¡Œä¸€æ¬¡è§†æ™¯ä½“å‰ªè£æµ‹è¯•
 			if (mFrustum->intersectObject(renderableObject)) {
 
-				//1 ¶Ôobject geometry attribute½øĞĞ½âÎöÓë¸üĞÂ
+				/// 1 å¯¹object geometry attributeè¿›è¡Œè§£æä¸æ›´æ–°
 				auto geometry = mObjects->update(renderableObject);
 
-				//2 ÄÃ³ömaterial
+				/// 2 æ‹¿å‡ºmaterial
 				auto material = renderableObject->getMaterial();
 
 				mRenderList->push(
@@ -166,9 +166,9 @@ namespace ff {
 		const auto opaqueObjects = currentRenderList->getOpaques();
 		const auto transparentObjects = currentRenderList->getTransparents();
 
-		//ÉèÖÃ³¡¾°Ïà¹ØµÄ×´Ì¬£¬¿ÉÒÔÔÚÕâÀï¼ÌĞøÀ©Õ¹ºÜ¶à³¡¾°Ïà¹ØÉèÖÃ
+		/// è®¾ç½®åœºæ™¯ç›¸å…³çš„çŠ¶æ€ï¼Œå¯ä»¥åœ¨è¿™é‡Œç»§ç»­æ‰©å±•å¾ˆå¤šåœºæ™¯ç›¸å…³è®¾ç½®
 		mRenderState->setupLightsView(camera);
-		//scene viewport 
+		/// scene viewport 
 		mState->viewport(mViewport);
 
 		if (!opaqueObjects.empty()) renderObjects(opaqueObjects, scene, camera);
@@ -182,7 +182,7 @@ namespace ff {
 		const Scene::Ptr& scene,
 		const Camera::Ptr& camera
 	) noexcept {
-		//¶Ôµ±Ç°Ä³Ò»¸öäÖÈ¾¶ÓÁĞµÄäÖÈ¾ÈÎÎñ£¬½øĞĞÒ»Ğ©±ØÒªµÄ×´Ì¬ÉèÖÃ
+		/// å¯¹å½“å‰æŸä¸€ä¸ªæ¸²æŸ“é˜Ÿåˆ—çš„æ¸²æŸ“ä»»åŠ¡ï¼Œè¿›è¡Œä¸€äº›å¿…è¦çš„çŠ¶æ€è®¾ç½®
 		const auto overrideMaterial = scene->mIsScene ? scene->mOverrideMaterial : nullptr;
 
 		for (const auto& renderItem : renderItems) {
@@ -203,11 +203,11 @@ namespace ff {
 	) noexcept {
 		object->onBeforeRender(this, scene.get(), camera.get());
 
-		//ĞèÒª´«ÈëShaderµ±ÖĞµÄÖØÒªuniform±äÁ¿
+		/// éœ€è¦ä¼ å…¥Shaderå½“ä¸­çš„é‡è¦uniformå˜é‡
 		object->updateModelViewMatrix(camera->getWorldMatrixInverse());
 		object->updateNormalMatrix();
 
-		//deal with double side
+		/// deal with double side
 		renderBufferDirect(object, scene, camera, geometry, material);
 	}
 
@@ -228,12 +228,12 @@ namespace ff {
 
 		mState->setMaterial(material);
 
-		//1 Éú³É²¢¹ÜÀíVAO
-		//2 ÉèÖÃ°ó¶¨×´Ì¬
-		//3 ¸ºÔğÁËVAO°ó¶¨×´Ì¬µÄ»º´æ
+		/// 1 ç”Ÿæˆå¹¶ç®¡ç†VAO
+		/// 2 è®¾ç½®ç»‘å®šçŠ¶æ€
+		/// 3 è´Ÿè´£äº†VAOç»‘å®šçŠ¶æ€çš„ç¼“å­˜
 		mBindingStates->setup(geometry, index);
 
-		//draw
+		/// draw
 		if (index) {
 			glDrawElements(toGL(material->mDrawMode), index->getCount(), toGL(index->getDataType()), 0);
 		}
@@ -243,15 +243,15 @@ namespace ff {
 
 	}
 
-	//1 OpenGL ÊÇÒ»¸ö×´Ì¬»úÏµÍ³
-	//2 Ã¿Ò»Ö¡¶¼»áµ÷ÓÃ¶à¸öDrawCall
-	//3 Ã¿Ò»´ÎDrawCall£¬OpenGL¶¼»á¸ù¾İµ±Ç°ÎÒÃÇÉèÖÃµÄ¸÷Àà×´Ì¬£¬½øĞĞ»æÖÆ
-	//4 Èç¹ûµ±Ç°ÕâÒ»Ö¡£¬ĞèÒª»æÖÆÈı¸öÎïÌå£¬¾ÍµÃµ÷ÓÃÈı´ÎDrawCall
-	//5 »æÖÆÃ¿Ò»¸öÎïÌåÖ®Ç°£¬¶¼±ØĞë¶ÔOpenGLµÄ×´Ì¬½øĞĞÕıÈ·µÄÉèÖÃ£¨Ê¹ÓÃÄÄ¸öVAO£¬Ê¹ÓÃÄÄÒ»Ì×Shader²úÉúµÄProgram£¬¹ÜÏßÊ¹ÓÃÄÄÖÖ£©
-	//6 ¶ÔOpenGLµÄAPIµ÷ÓÃÊÇÓĞ¿ªÏúµÄ£¬ËùÒÔÄÜ¸´ÓÃ×´Ì¬¾Í¸´ÓÃ¡£
-	//7 ¸´ÓÃ×´Ì¬£º¼ÙÉèÈı¸öÎïÌå¶¼ÓÃÁËÍ¬ÑùµÄProgram£¬Ôò²»ĞèÒª×öÈı´ÎProgramµÄ°ó¶¨£¬Ö»ĞèÒªµ÷ÓÃÒ»´ÎUseProgram£¬»æÖÆÈı¸öÎïÌå
-	//ÖØÒªÈÎÎñ£º
-	//Æ´×°ËùÓĞ±¾´Î»æÖÆĞèÒªµÄUniformsµ½Ò»¸öoutMapÀïÃæ£¬È»ºó½øĞĞÍ³Ò»µÄ¸üĞÂ²Ù×÷
+	/// 1 OpenGL æ˜¯ä¸€ä¸ªçŠ¶æ€æœºç³»ç»Ÿ
+	/// 2 æ¯ä¸€å¸§éƒ½ä¼šè°ƒç”¨å¤šä¸ªDrawCall
+	/// 3 æ¯ä¸€æ¬¡DrawCallï¼ŒOpenGLéƒ½ä¼šæ ¹æ®å½“å‰æˆ‘ä»¬è®¾ç½®çš„å„ç±»çŠ¶æ€ï¼Œè¿›è¡Œç»˜åˆ¶
+	/// 4 å¦‚æœå½“å‰è¿™ä¸€å¸§ï¼Œéœ€è¦ç»˜åˆ¶ä¸‰ä¸ªç‰©ä½“ï¼Œå°±å¾—è°ƒç”¨ä¸‰æ¬¡DrawCall
+	/// 5 ç»˜åˆ¶æ¯ä¸€ä¸ªç‰©ä½“ä¹‹å‰ï¼Œéƒ½å¿…é¡»å¯¹OpenGLçš„çŠ¶æ€è¿›è¡Œæ­£ç¡®çš„è®¾ç½®ï¼ˆä½¿ç”¨å“ªä¸ªVAOï¼Œä½¿ç”¨å“ªä¸€å¥—Shaderäº§ç”Ÿçš„Programï¼Œç®¡çº¿ä½¿ç”¨å“ªç§ï¼‰
+	/// 6 å¯¹OpenGLçš„APIè°ƒç”¨æ˜¯æœ‰å¼€é”€çš„ï¼Œæ‰€ä»¥èƒ½å¤ç”¨çŠ¶æ€å°±å¤ç”¨ã€‚
+	/// 7 å¤ç”¨çŠ¶æ€ï¼šå‡è®¾ä¸‰ä¸ªç‰©ä½“éƒ½ç”¨äº†åŒæ ·çš„Programï¼Œåˆ™ä¸éœ€è¦åšä¸‰æ¬¡Programçš„ç»‘å®šï¼Œåªéœ€è¦è°ƒç”¨ä¸€æ¬¡UseProgramï¼Œç»˜åˆ¶ä¸‰ä¸ªç‰©ä½“
+	/// é‡è¦ä»»åŠ¡ï¼š
+	/// æ‹¼è£…æ‰€æœ‰æœ¬æ¬¡ç»˜åˆ¶éœ€è¦çš„Uniformsåˆ°ä¸€ä¸ªoutMapé‡Œé¢ï¼Œç„¶åè¿›è¡Œç»Ÿä¸€çš„æ›´æ–°æ“ä½œ
 	DriverProgram::Ptr Renderer::setProgram(
 		const Camera::Ptr& camera,
 		const Scene::Ptr& scene,
@@ -261,29 +261,29 @@ namespace ff {
 	) noexcept {
 		auto lights = mRenderState->mLights;
 
-		//±êÖ¾×ÅÊÇ·ñĞèÒª¸ü»»Ò»¸ö°ó¶¨µÄProgram
+		/// æ ‡å¿—ç€æ˜¯å¦éœ€è¦æ›´æ¢ä¸€ä¸ªç»‘å®šçš„Program
 		bool needsProgramChange = false;
 
-		//´ÓBackendÀïÃæ£¬»ñÈ¡µ½µ±Ç°MaterialµÄDriverMaterial
+		/// ä»Backendé‡Œé¢ï¼Œè·å–åˆ°å½“å‰Materialçš„DriverMaterial
 		auto dMaterial = mMaterials->get(material);
 
-		//Èç¹û±¾ÎïÌåµÚÒ»´ÎËÍÈë¹ÜÏß½øĞĞ»æÖÆ£¬±ÈÈçµÚÒ»Ö¡µÄµÚÒ»¸öÈı½ÇĞÎ£¬¾Í±ØĞëÎªÆäÉú³ÉÒ»¸öDriverProgram
-		//materialµÄVersion³õÊ¼»¯Îª1£¬ DriverMaterialµÄVersion³õÊ¼»¯Îª0
+		/// å¦‚æœæœ¬ç‰©ä½“ç¬¬ä¸€æ¬¡é€å…¥ç®¡çº¿è¿›è¡Œç»˜åˆ¶ï¼Œæ¯”å¦‚ç¬¬ä¸€å¸§çš„ç¬¬ä¸€ä¸ªä¸‰è§’å½¢ï¼Œå°±å¿…é¡»ä¸ºå…¶ç”Ÿæˆä¸€ä¸ªDriverProgram
+		/// materialçš„Versionåˆå§‹åŒ–ä¸º1ï¼Œ DriverMaterialçš„Versionåˆå§‹åŒ–ä¸º0
 		if (material->mVersion == dMaterial->mVersion) {
 
-			//1 µ±¶şÕßVersionÏàµÈ£¬ËµÃ÷µ±Ç°Material²¢²»ÊÇµÚÒ»´Î½âÎö£¬Ôò±¾MaterialÒ»¶¨ÒÑ¾­ÓµÓĞÁËÒ»¸öDriverProgram
-			//2 ±¾MaterialÒ»¶¨ÕıÔÚÊ¹ÓÃÒ»×éShader(vs/fs)
-			//3 ¼ÙÉè±¾MaterialÔÚÉÏÒ»Ö¡Ã»ÓĞÓÃµ½DiffuseMap, ÔÚÉú³ÉDriverProgramµÄÊ±ºò£¬¾Í²»»á#define HAS_DIFFUSE_MAP
-			// ÔòShader´úÂëÀïÃæµÄ¹ØÓÚDiffuseMapµÄ¹¦ÄÜ¾Í²»»á±»±àÒë½øÈ¥
-			//4 ¼ÙÉèÔÚµ±Ç°ÕâÒ»Ö¡£¬±¾Material±»¸Õ¸ÕÉèÖÃÁËDiffuseMap,ËùÒÔ¾Í±ØĞëĞèÒªÒ»¸ö¼¤»îÁËDiffuseMap¹¦ÄÜµÄShader
-			// 
-			// ×Ü½á£º
-			// ÒÔÏÂµÄÂß¼­£¬¶¼»á¶ÔÓ°ÏìShader¹¦ÄÜµÄ¹Ø¼ü±äÁ¿½øĞĞ¼ì²é£¬¿´Ò»¿´ÊÇ·ñ¸úÉÏÒ»Ö¡µÄShader´úÂë×´Ì¬ÏàÍ¬
-			//  
-			//dMaterial update is in updateCommonMaterialProperties
+			/// 1 å½“äºŒè€…Versionç›¸ç­‰ï¼Œè¯´æ˜å½“å‰Materialå¹¶ä¸æ˜¯ç¬¬ä¸€æ¬¡è§£æï¼Œåˆ™æœ¬Materialä¸€å®šå·²ç»æ‹¥æœ‰äº†ä¸€ä¸ªDriverProgram
+			/// 2 æœ¬Materialä¸€å®šæ­£åœ¨ä½¿ç”¨ä¸€ç»„Shader(vs/fs)
+			/// 3 å‡è®¾æœ¬Materialåœ¨ä¸Šä¸€å¸§æ²¡æœ‰ç”¨åˆ°DiffuseMap, åœ¨ç”ŸæˆDriverProgramçš„æ—¶å€™ï¼Œå°±ä¸ä¼š#define HAS_DIFFUSE_MAP
+			/// åˆ™Shaderä»£ç é‡Œé¢çš„å…³äºDiffuseMapçš„åŠŸèƒ½å°±ä¸ä¼šè¢«ç¼–è¯‘è¿›å»
+			/// 4 å‡è®¾åœ¨å½“å‰è¿™ä¸€å¸§ï¼Œæœ¬Materialè¢«åˆšåˆšè®¾ç½®äº†DiffuseMap,æ‰€ä»¥å°±å¿…é¡»éœ€è¦ä¸€ä¸ªæ¿€æ´»äº†DiffuseMapåŠŸèƒ½çš„Shader
+			/// 
+			/// æ€»ç»“ï¼š
+			/// ä»¥ä¸‹çš„é€»è¾‘ï¼Œéƒ½ä¼šå¯¹å½±å“ShaderåŠŸèƒ½çš„å…³é”®å˜é‡è¿›è¡Œæ£€æŸ¥ï¼Œçœ‹ä¸€çœ‹æ˜¯å¦è·Ÿä¸Šä¸€å¸§çš„Shaderä»£ç çŠ¶æ€ç›¸åŒ
+			///  
+			/// dMaterial update is in updateCommonMaterialProperties
 			
-			//¶şÕß²»ÏàµÈ»áÓĞÁ½ÖÖÇé¿ö£¬ÆäÒ»¸ü»»ÁËTexture£¬ÕâÖÖ±ä»¯²»»á¸ü¸Äshader½á¹¹
-			//Æä¶ş£¬¶şÕßÆäÖĞÒ»¸öÊÇNullptr,¾ÍµÃÖØĞÂÕÒÒ»¸öShader×é
+			/// äºŒè€…ä¸ç›¸ç­‰ä¼šæœ‰ä¸¤ç§æƒ…å†µï¼Œå…¶ä¸€æ›´æ¢äº†Textureï¼Œè¿™ç§å˜åŒ–ä¸ä¼šæ›´æ”¹shaderç»“æ„
+			/// å…¶äºŒï¼ŒäºŒè€…å…¶ä¸­ä¸€ä¸ªæ˜¯Nullptr,å°±å¾—é‡æ–°æ‰¾ä¸€ä¸ªShaderç»„
 			if (material->mDiffuseMap != dMaterial->mDiffuseMap) {
 				if (material->mDiffuseMap == nullptr || dMaterial->mDiffuseMap == nullptr) {
 					needsProgramChange = true;
@@ -330,50 +330,50 @@ namespace ff {
 			dMaterial->mVersion = material->mVersion;
 		}
 
-		//Èç¹ûµÚÒ»´Î½âÎömaterial£¬ÔòmCurrentProgramÒ»¶¨ÊÇnullptr
+		/// å¦‚æœç¬¬ä¸€æ¬¡è§£æmaterialï¼Œåˆ™mCurrentProgramä¸€å®šæ˜¯nullptr
 		auto dprogram = dMaterial->mCurrentProgram;
 		if (needsProgramChange) {
-			//Éú³É£¬»òÕß¸´ÓÃÔ­À´µÄProgram£¬²¢ÇÒ¸ø³öÊ¹ÓÃµÄProgram
+			/// ç”Ÿæˆï¼Œæˆ–è€…å¤ç”¨åŸæ¥çš„Programï¼Œå¹¶ä¸”ç»™å‡ºä½¿ç”¨çš„Program
 			dprogram = getProgram(material, scene, object);
 		}
 
 		bool refreshProgram = false;
-		//useProgramµ±ÖĞ£¬Èç¹û¸ü»»ÁË°ó¶¨µÄProgram£¬¾ÍµÃ¸üĞÂUniform
+		/// useProgramå½“ä¸­ï¼Œå¦‚æœæ›´æ¢äº†ç»‘å®šçš„Programï¼Œå°±å¾—æ›´æ–°Uniform
 		if (mState->useProgram(dprogram->mProgram)) {
 			refreshProgram = true;
 		}
 
-		//----------------------------------ÒÔÉÏ¾ÍÊÇ×öÍêÁËProgramµÄ°ó¶¨¹¤×÷-----------------------------------
+		/// ----------------------------------ä»¥ä¸Šå°±æ˜¯åšå®Œäº†Programçš„ç»‘å®šå·¥ä½œ-----------------------------------
 
-		//----------------------------------Õ¹¿ª¶ÔÓÚUniforms¸üĞÂµÄ¹¤×÷-----------------------------------------
+		/// ----------------------------------å±•å¼€å¯¹äºUniformsæ›´æ–°çš„å·¥ä½œ-----------------------------------------
 
-		//attention, ¿½±´map,±¾uniformsÒ²¾ÍÊÇÎÒÃÇËµµÄoutMap£¬ÀàĞÍÊÇUniformHandleMap
+		/// attention, æ‹·è´map,æœ¬uniformsä¹Ÿå°±æ˜¯æˆ‘ä»¬è¯´çš„outMapï¼Œç±»å‹æ˜¯UniformHandleMap
 		auto uniforms = dMaterial->mUniforms;
 
-		//DriverMaterial¸ù¾İÎÒÃÇ»æÖÆĞèÒªµÄmaterial£¬¶Ôuniforms½øĞĞÁË¸üĞÂ´¦Àí
+		// DriverMaterialæ ¹æ®æˆ‘ä»¬ç»˜åˆ¶éœ€è¦çš„materialï¼Œå¯¹uniformsè¿›è¡Œäº†æ›´æ–°å¤„ç†
 		DriverMaterials::refreshMaterialUniforms(uniforms, material);
 
 		bool needsLights = materialNeedsLights(material);
 
 		auto& lightUniforms = mRenderState->mLights->mState.mLightUniformHandles;
 
-		//todo Ïàµ±ÓÚ¹âÕÕ¸üĞÂ
-		//Èç¹û±¾materialĞèÒª¹âÕÕ£¬¾ÍµÃ°Ñ¹âÕÕÏà¹ØµÄUniformsºÏ²¢½øÀ´
+		/// Todo ç›¸å½“äºå…‰ç…§æ›´æ–°
+		/// å¦‚æœæœ¬materialéœ€è¦å…‰ç…§ï¼Œå°±å¾—æŠŠå…‰ç…§ç›¸å…³çš„Uniformsåˆå¹¶è¿›æ¥
 		if (needsLights) {
 			makeLightsNeedUpdate(lightUniforms);
 			uniforms.insert(lightUniforms.begin(), lightUniforms.end());
 		}
 
-		//bones
+		/// bones
 		if (object->mIsSkinnedMesh) {
 			auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
 			auto skeleton = skinnedMesh->mSkeleton;
 			uniforms.insert(skeleton->mUniforms.begin(), skeleton->mUniforms.end());
 		}
 
-		//Í¨ÓÃµÚÒ»´Î»á×Ô¶¯¼ÓÈë
-		//uniformsÊÇÒ»¸öunordered_map£¬´ËÊ±µÄuniforms»¹Ã»ÓĞ¼ÓÈëÈçÏÂµÄkey-value×éºÏ
-		//´ËÊ±Èç¹û°´ÕÕÈçÏÂ·½Ê½·ÃÎÊ£¬Èç¹ûÊÇ¿Õ£¬ÄÇÃ´¾Í»á×Ô¶¯ĞÂ½¨Ò»¸öÌõÄ¿£¨key-value£©²åÈë½øÈ¥£¬Ö»²»¹ıuniformHandleÊÇÄ¬ÈÏÖµ
+		/// é€šç”¨ç¬¬ä¸€æ¬¡ä¼šè‡ªåŠ¨åŠ å…¥
+		/// uniformsæ˜¯ä¸€ä¸ªunordered_mapï¼Œæ­¤æ—¶çš„uniformsè¿˜æ²¡æœ‰åŠ å…¥å¦‚ä¸‹çš„key-valueç»„åˆ
+		/// æ­¤æ—¶å¦‚æœæŒ‰ç…§å¦‚ä¸‹æ–¹å¼è®¿é—®ï¼Œå¦‚æœæ˜¯ç©ºï¼Œé‚£ä¹ˆå°±ä¼šè‡ªåŠ¨æ–°å»ºä¸€ä¸ªæ¡ç›®ï¼ˆkey-valueï¼‰æ’å…¥è¿›å»ï¼Œåªä¸è¿‡uniformHandleæ˜¯é»˜è®¤å€¼
 		uniforms["modelViewMatrix"].mValue = object->getModelViewMatrix();
 		uniforms["modelViewMatrix"].mNeedsUpdate = true;
 
@@ -405,16 +405,16 @@ namespace ff {
 		auto dMaterial = mMaterials->get(material);
 		auto lights = mRenderState->mLights;
 
-		//½«ÒÔÇ°ÓÃ¹ıµÄDriverProgramsÈ¡³öÀ´£¬ÊÇÒ»¸ömapµÄÒıÓÃ
+		/// å°†ä»¥å‰ç”¨è¿‡çš„DriverProgramså–å‡ºæ¥ï¼Œæ˜¯ä¸€ä¸ªmapçš„å¼•ç”¨
 		auto& programs = dMaterial->mPrograms;
 
-		//mProgramsÊÇDriverPrograms£¬Í¨¹ıÏÂ·½µÄ½Ó¿Ú£¬Éú³É±¾¸öRenderItemµÄParameters
+		/// mProgramsæ˜¯DriverProgramsï¼Œé€šè¿‡ä¸‹æ–¹çš„æ¥å£ï¼Œç”Ÿæˆæœ¬ä¸ªRenderItemçš„Parameters
 		auto parameters = mPrograms->getParameters(material, object, lights, mShadowMap);
 
-		//Í¨¹ıParameters¼ÆËãÒ»¸ö¹şÏ£Öµ
+		/// é€šè¿‡Parametersè®¡ç®—ä¸€ä¸ªå“ˆå¸Œå€¼
 		auto cacheKey = mPrograms->getProgramCacheKey(parameters);
 
-		//´ÓÓÃ¹ıµÄDriverProgramsÀïÃæ£¬ÕÒÕÒ¿´£¬ÊÇ·ñÓĞÕâ¸öÀàĞÍµÄDriverProgram,Èç¹ûÕÒµ½¾ÍÊ¹ÓÃ
+		/// ä»ç”¨è¿‡çš„DriverProgramsé‡Œé¢ï¼Œæ‰¾æ‰¾çœ‹ï¼Œæ˜¯å¦æœ‰è¿™ä¸ªç±»å‹çš„DriverProgram,å¦‚æœæ‰¾åˆ°å°±ä½¿ç”¨
 		auto pIter = programs.find(cacheKey);
 		if (pIter != programs.end()) {
 			dMaterial->mCurrentProgram = pIter->second;
@@ -422,13 +422,13 @@ namespace ff {
 			program = pIter->second;
 		}
 		else {
-			//¸ù¾İMaterialµÄÀàĞÍ²»Í¬£¬È¡µÃÆä¶ÔÓ¦µÄÌØÊâUniformµÄmap¼¯ºÏ£¬¼´UniformHandleMap
+			/// æ ¹æ®Materialçš„ç±»å‹ä¸åŒï¼Œå–å¾—å…¶å¯¹åº”çš„ç‰¹æ®ŠUniformçš„mapé›†åˆï¼Œå³UniformHandleMap
 			dMaterial->mUniforms = mPrograms->getUniforms(material);
 
-			//Èç¹ûÔÚÔø¾­Ê¹ÓÃ¹ıµÄDriverProgramsÀïÃæÃ»ÕÒµ½£¬ÄÇÃ´¾ÍµÃÖØĞÂÉú³ÉÒ»¸ö
+			/// å¦‚æœåœ¨æ›¾ç»ä½¿ç”¨è¿‡çš„DriverProgramsé‡Œé¢æ²¡æ‰¾åˆ°ï¼Œé‚£ä¹ˆå°±å¾—é‡æ–°ç”Ÿæˆä¸€ä¸ª
 			program = mPrograms->acquireProgram(parameters, cacheKey);
 
-			//µÃµ½ÁËÒ»¸öDriverProgram£¬¾ÍµÃ´æ·ÅÔÚµ±Ç°DriverMaterialµÄÔø¾­Ê¹ÓÃMapµ±ÖĞ
+			/// å¾—åˆ°äº†ä¸€ä¸ªDriverProgramï¼Œå°±å¾—å­˜æ”¾åœ¨å½“å‰DriverMaterialçš„æ›¾ç»ä½¿ç”¨Mapå½“ä¸­
 			programs.insert(std::make_pair(cacheKey, program));
 
 			dMaterial->mCurrentProgram = program;
@@ -436,14 +436,14 @@ namespace ff {
 
 		updateCommonMaterialProperties(material, parameters);
 
-		//update light state
+		/// update light state
 		dMaterial->mNeedsLight = materialNeedsLights(material);
 		dMaterial->mLightsStateVersion = lights->mState.mVersion;
 
 		return program;
 	}
 
-	//Í³Ò»ÁË±¾Material¸úÆä¶ÔÓ¦µÄDriverMaterialµÄ¹Ø¼ü±äÁ¿£¬´Ó¶øÔÚÏÂÒ»Ö¡µÄÊ±ºò£¬²»»áneedsProgramChange
+	/// ç»Ÿä¸€äº†æœ¬Materialè·Ÿå…¶å¯¹åº”çš„DriverMaterialçš„å…³é”®å˜é‡ï¼Œä»è€Œåœ¨ä¸‹ä¸€å¸§çš„æ—¶å€™ï¼Œä¸ä¼šneedsProgramChange
 	void Renderer::updateCommonMaterialProperties(
 		const Material::Ptr& material,
 		const DriverProgram::Parameters::Ptr& parameters) noexcept
@@ -480,9 +480,9 @@ namespace ff {
 
 		mState->viewport(mViewport);
 
-		//pay attention: we should deal with custom-renderTarget resizing in application
+		/// pay attention: we should deal with custom-renderTarget resizing in application
 		if (mOnSizeCallback) {
-			//ÕæÕıµÄµ÷ÓÃÁËÍâ½ç×¢²á»Øµ÷µÄ½Ó¿Ú
+			/// çœŸæ­£çš„è°ƒç”¨äº†å¤–ç•Œæ³¨å†Œå›è°ƒçš„æ¥å£
 			mOnSizeCallback(width, height);
 		}
 	}
@@ -490,16 +490,16 @@ namespace ff {
 	void Renderer::setRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept {
 		mCurrentRenderTarget = renderTarget;
 
-		//Èç¹ûRenderTargetÊÇ¿Õ£¬ËµÃ÷Ê¹ÓÃÄ¬ÈÏµÄRenderTarget
+		/// å¦‚æœRenderTargetæ˜¯ç©ºï¼Œè¯´æ˜ä½¿ç”¨é»˜è®¤çš„RenderTarget
 		if (renderTarget == nullptr) {
 			mState->bindFrameBuffer(0);
 			return;
 		}
 
-		//ÄÃ³öÀ´DriverRenderTarget
+		/// æ‹¿å‡ºæ¥DriverRenderTarget
 		auto dRenderTarget = mRenderTargets->get(renderTarget);
 
-		//Èç¹ûµ±Ç°µÄRenderTarget»¹Ã»ÓĞ±»´´½¨£¬Ôò½«´´½¨ÈÎÎñ¶ª¸øDriverTextures
+		/// å¦‚æœå½“å‰çš„RenderTargetè¿˜æ²¡æœ‰è¢«åˆ›å»ºï¼Œåˆ™å°†åˆ›å»ºä»»åŠ¡ä¸¢ç»™DriverTextures
 		if (!dRenderTarget->mFrameBuffer) {
 			mTextures->setupRenderTarget(renderTarget);
 		}
@@ -533,8 +533,8 @@ namespace ff {
 		mShadowMap->mEnabled = enable;
 	}
 
-	//ÎªºÎ²»Ö±½ÓÊ¹ÓÃdriverWindowµÄsetº¯Êı½øĞĞ»Øµ÷ÉèÖÃÄØ£¿
-	//´°Ìå´óĞ¡µÄ±ä»¯»áÓ°ÏìÔÛÃÇrendererµÄ×´Ì¬,±ÈÈçÊÓ¿ÚviewportĞèÒª¸úËæÉèÖÃ±ä»¯
+	/// ä¸ºä½•ä¸ç›´æ¥ä½¿ç”¨driverWindowçš„setå‡½æ•°è¿›è¡Œå›è°ƒè®¾ç½®å‘¢ï¼Ÿ
+	/// çª—ä½“å¤§å°çš„å˜åŒ–ä¼šå½±å“å’±ä»¬rendererçš„çŠ¶æ€,æ¯”å¦‚è§†å£viewportéœ€è¦è·Ÿéšè®¾ç½®å˜åŒ–
 	void Renderer::setFrameSizeCallBack(const OnSizeCallback& callback) noexcept {
 		mOnSizeCallback = callback;
 	}

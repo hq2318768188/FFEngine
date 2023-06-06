@@ -1,9 +1,9 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 
 namespace ff {
 
-	//ÕâÊÇÒ»¸ö×î¼òµ¥µÄ·ÖÅäidµÄ·½Ê½£¬²¢Ã»ÓĞ¿¼ÂÇidµÄ»ØÊÕÔÙÀûÓÃ
+	/// è¿™æ˜¯ä¸€ä¸ªæœ€ç®€å•çš„åˆ†é…idçš„æ–¹å¼ï¼Œå¹¶æ²¡æœ‰è€ƒè™‘idçš„å›æ”¶å†åˆ©ç”¨
 	class Identity {
 	public:
 		static ID generateID() { return ++mCurrentID; }

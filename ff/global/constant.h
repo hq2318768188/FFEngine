@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "base.h"
 #include <stb_image.h>
 
@@ -15,11 +15,11 @@ namespace ff {
 #define DOWN	0
 #define UP		1
 
-	//key :´ú±íÁËÄ³Ò»¸ö°´¼ü
-	//value:´ú±íÁË,ÎÒÃÇ¹æ¶¨µÄÒ»¸ö¼üÅÌ±àºÅ
+	/// key :ä»£è¡¨äº†æŸä¸€ä¸ªæŒ‰é”®
+	/// value:ä»£è¡¨äº†,æˆ‘ä»¬è§„å®šçš„ä¸€ä¸ªé”®ç›˜ç¼–å·
 	using KeyboardMapType = std::unordered_map<uint32_t, KeyboardAction>;
 
-	//ÔÚÕâÀïÔ¤ÉèºÃ,ÎÒÃÇ¹ØĞÄµÄÕâËÄ¸ö°´¼ü
+	/// åœ¨è¿™é‡Œé¢„è®¾å¥½,æˆ‘ä»¬å…³å¿ƒçš„è¿™å››ä¸ªæŒ‰é”®
 	static const KeyboardMapType KeyboardActionMap = {
 		KeyboardMapType::value_type(GLFW_KEY_W, WKey),
 		KeyboardMapType::value_type(GLFW_KEY_S, SKey),
@@ -37,8 +37,8 @@ namespace ff {
 		NONE,
 	};
 
-	//key:µ±Ç°ÄÄ¸ö°´¼ü·¢ÉúÁË·´Ó¦
-	//value:¶ÔÓ¦µÄup or down, tupleÀ´±í´ï,tupleÓµÓĞË³Ğò,std::get<0>ÄÃµ½µÄ¾ÍÊÇµÚÒ»¸ömouseAction
+	/// key:å½“å‰å“ªä¸ªæŒ‰é”®å‘ç”Ÿäº†ååº”
+	/// value:å¯¹åº”çš„up or down, tupleæ¥è¡¨è¾¾,tupleæ‹¥æœ‰é¡ºåº,std::get<0>æ‹¿åˆ°çš„å°±æ˜¯ç¬¬ä¸€ä¸ªmouseAction
 	using MouseActionMapType = std::unordered_map<uint32_t, std::tuple<MouseAction, MouseAction>>;
 
 	static const MouseActionMapType MouseActionMap = {
@@ -115,10 +115,10 @@ namespace ff {
 		}
 	}
 
-	//events-----------------
+	/// events-----------------
 	static const std::string DISPOSE = "dispose";
 
-	//material---------------
+	/// material---------------
 	namespace MaterialName {
 		static const std::string Material = "Material";
 		static const std::string MeshBasicMaterial = "MeshBasicMaterial";
@@ -129,7 +129,7 @@ namespace ff {
 
 
 
-	//geometry---------------
+	/// geometry---------------
 	enum class BufferAllocType {
 		StaticDrawBuffer,
 		DynamicDrawBuffer
@@ -163,7 +163,7 @@ namespace ff {
 	}
 
 
-	//texture----------------
+	/// texture----------------
 	static constexpr uint32_t MAX_TEXUTRE_COUNT = 8;
 	static constexpr GLuint MAX_TEXTURE = GL_TEXTURE0 + 7;
 
@@ -407,7 +407,7 @@ namespace ff {
 		}
 	}
 
-	//attributes
+	/// attributes
 	static const std::unordered_map<std::string, uint32_t>  LOCATION_MAP = {
 		{"position", 0},
 		{"normal", 1},

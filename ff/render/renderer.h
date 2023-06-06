@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "../camera/camera.h"
 #include "../core/object3D.h"
@@ -70,29 +70,29 @@ namespace ff {
 		void clear(bool color = true, bool depth = true, bool stencil = true) noexcept;
 
 	public:
-		//Ã¿Ò»´Î»æÖÆ£¬ÊÇ·ñĞèÒª×Ô¶¯²Á³ıColorBuffer
+		/// æ¯ä¸€æ¬¡ç»˜åˆ¶ï¼Œæ˜¯å¦éœ€è¦è‡ªåŠ¨æ“¦é™¤ColorBuffer
 		bool mAutoClear{ true };
 
 	private:
 
-		// 1 object µ±Ç°ĞèÒª±»projectµÄobject£¬project£º½«²ã¼¶¼Ü¹¹µÄ×éÖ¯£¬Õ¹¿ª³ÉÎªÁĞ±í
-		// 2 groupOrder µ±Ç°ÆäËù´¦ÓÚµÄgroupµÄäÖÈ¾ÓÅÏÈ¼¶
-		// 3 sortObjects ÊÇ·ñÔÚäÖÈ¾ÁĞ±íÖĞ£¬¶Ôitem½øĞĞÅÅĞò
+		///  1 object å½“å‰éœ€è¦è¢«projectçš„objectï¼Œprojectï¼šå°†å±‚çº§æ¶æ„çš„ç»„ç»‡ï¼Œå±•å¼€æˆä¸ºåˆ—è¡¨
+		///  2 groupOrder å½“å‰å…¶æ‰€å¤„äºçš„groupçš„æ¸²æŸ“ä¼˜å…ˆçº§
+		///  3 sortObjects æ˜¯å¦åœ¨æ¸²æŸ“åˆ—è¡¨ä¸­ï¼Œå¯¹itemè¿›è¡Œæ’åº
 		void projectObject(const Object3D::Ptr& object, uint32_t groupOrder, bool sortObjects) noexcept;
 
-		//µÚÒ»²ã¼¶£¬ÔÚ³¡¾°¼¶±ğ£¬½øĞĞÒ»Ğ©×´Ì¬µÄ´¦ÀíÓëÉèÖÃ£¬²¢ÇÒ¸ù¾İ
-		//ÊµÌå/Í¸Ã÷ÎïÌå½øĞĞ¶ÓÁĞäÖÈ¾-renderObjects
+		/// ç¬¬ä¸€å±‚çº§ï¼Œåœ¨åœºæ™¯çº§åˆ«ï¼Œè¿›è¡Œä¸€äº›çŠ¶æ€çš„å¤„ç†ä¸è®¾ç½®ï¼Œå¹¶ä¸”æ ¹æ®
+		/// å®ä½“/é€æ˜ç‰©ä½“è¿›è¡Œé˜Ÿåˆ—æ¸²æŸ“-renderObjects
 		void renderScene(const DriverRenderList::Ptr& currentRenderList, const Scene::Ptr& scene, const Camera::Ptr& camera) noexcept;
 
-		//µÚ¶ş²ã¼¶£¬ÔÚ¶ÓÁĞ¼¶±ğ£¬½øĞĞÒ»Ğ©×´Ì¬µÄ´¦ÀíÓëÉèÖÃ
-		//ÒÀ´Îµ÷ÓÃÃ¿¸öäÖÈ¾µ¥Ôª£¬½øÈëµ½renderObject
+		/// ç¬¬äºŒå±‚çº§ï¼Œåœ¨é˜Ÿåˆ—çº§åˆ«ï¼Œè¿›è¡Œä¸€äº›çŠ¶æ€çš„å¤„ç†ä¸è®¾ç½®
+		/// ä¾æ¬¡è°ƒç”¨æ¯ä¸ªæ¸²æŸ“å•å…ƒï¼Œè¿›å…¥åˆ°renderObject
 		void renderObjects(
 			const std::vector<RenderItem::Ptr>& renderItems, 
 			const Scene::Ptr& scene, 
 			const Camera::Ptr& camera) noexcept;
 
-		//µÚÈı²ã¼¶£¬ÔÚµ¥¸öäÖÈ¾µ¥Ôª²ãÃæÉÏ£¬½øĞĞÒ»Ğ©×´Ì¬µÄ´¦ÀíÓëÉèÖÃ
-		//²¢ÇÒµ÷ÓÃ¸úAPIÏà¹ØÉîÖØµÄrenderBufferDirect
+		/// ç¬¬ä¸‰å±‚çº§ï¼Œåœ¨å•ä¸ªæ¸²æŸ“å•å…ƒå±‚é¢ä¸Šï¼Œè¿›è¡Œä¸€äº›çŠ¶æ€çš„å¤„ç†ä¸è®¾ç½®
+		/// å¹¶ä¸”è°ƒç”¨è·ŸAPIç›¸å…³æ·±é‡çš„renderBufferDirect
 		void renderObject(
 			const RenderableObject::Ptr& object,
 			const Scene::Ptr& scene, 
@@ -159,7 +159,7 @@ namespace ff {
 
 		Frustum::Ptr			mFrustum{ nullptr };
 
-		//dummy objects
+		/// dummy objects
 		Scene::Ptr				mDummyScene = Scene::create();
 	};
 }

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../global/base.h"
 
@@ -6,7 +6,7 @@ namespace ff {
 
 	class Sphere {
 	public:
-		//ÖÇÄÜÖ¸Õë°ü×°
+		/// æ™ºèƒ½æŒ‡é’ˆåŒ…è£…
 		using Ptr = std::shared_ptr<Sphere>;
 		static Ptr create(const glm::vec3& center, float radius) {
 			return std::make_shared<Sphere>(center, radius);
@@ -19,11 +19,11 @@ namespace ff {
 
 		~Sphere() noexcept {}
 
-		//Ó¦ÓÃÔÚ¸úËæÎïÌå½øĞĞmatrix±ä»»µÄÊ±ºò
+		/// åº”ç”¨åœ¨è·Ÿéšç‰©ä½“è¿›è¡Œmatrixå˜æ¢çš„æ—¶å€™
 		void applyMatrix4(const glm::mat4 matrix) noexcept {
 			mCenter = glm::vec3(matrix * glm::vec4(mCenter, 1.0));
 
-			//¶ÔÓÚ°ë¾¶£¬Ö»»áÊÕµ½scaleËõ·ÅÓ°Ïì£¬ÎÒÃÇÖ»ĞèÒª¿¼ÂÇÈı¸öScaleµ±ÖĞ×î´óµÄÄÄ¸ö
+			/// å¯¹äºåŠå¾„ï¼Œåªä¼šæ”¶åˆ°scaleç¼©æ”¾å½±å“ï¼Œæˆ‘ä»¬åªéœ€è¦è€ƒè™‘ä¸‰ä¸ªScaleå½“ä¸­æœ€å¤§çš„å“ªä¸ª
 			float scaleX = glm::length(glm::vec3(matrix[0]));
 			float scaleY = glm::length(glm::vec3(matrix[1]));
 			float scaleZ = glm::length(glm::vec3(matrix[2]));
@@ -33,15 +33,15 @@ namespace ff {
 		}
 
 		void copy(const Sphere::Ptr& other) {
-			//¾ÙÀı£º
-			//Sphere::Ptr s1 = Sphere::create(xxx);
-			//Sphere::Ptr s2 = s1;
-			//s2->mRadius = 10.0f;
-			//ÕâÑù×öµÄ»°£¬¾Í»áµ¼ÖÂs1Ö¸ÏòµÄÄÚ´æ£¬Ò²»á·¢Éú±ä»¯
+			/// ä¸¾ä¾‹ï¼š
+			/// Sphere::Ptr s1 = Sphere::create(xxx);
+			/// Sphere::Ptr s2 = s1;
+			/// s2->mRadius = 10.0f;
+			/// è¿™æ ·åšçš„è¯ï¼Œå°±ä¼šå¯¼è‡´s1æŒ‡å‘çš„å†…å­˜ï¼Œä¹Ÿä¼šå‘ç”Ÿå˜åŒ–
 
-			//Ó¦¸Ã£º
-			//Sphere::Ptr s2 = Sphere::create(xxx);
-			//s2->copy(s1);
+			/// åº”è¯¥ï¼š
+			/// Sphere::Ptr s2 = Sphere::create(xxx);
+			/// s2->copy(s1);
 			mCenter = other->mCenter;
 			mRadius = other->mRadius;
 		}

@@ -1,4 +1,4 @@
-#include "MultipleRenderTarget.h"
+ï»¿#include "MultipleRenderTarget.h"
 
 namespace ff {
 
@@ -6,14 +6,14 @@ namespace ff {
 		RenderTarget(width, height, options) {
 		mIsMultiRenderTarget = true;
 
-		//mTextureÊÇÆä¸¸ÀàRenderTargetµÄÄÄ¸öColorAttachment
-		//Õâ¸ömTexture¾Í×÷ÎªÁËÉú³ÉÕâ¶à¸öColorAttachmentsµÄÄ£°å
+		/// mTextureæ˜¯å…¶çˆ¶ç±»RenderTargetçš„å“ªä¸ªColorAttachment
+		/// è¿™ä¸ªmTextureå°±ä½œä¸ºäº†ç”Ÿæˆè¿™å¤šä¸ªColorAttachmentsçš„æ¨¡æ¿
 		for (uint32_t i = 0; i < count; ++i) {
 			mTextures.push_back(mTexture->clone());
 		}
 	}
 
-	//Æä¸¸ÀàÒÑ¾­µ÷ÓÃÁËEventDispatcher
+	/// å…¶çˆ¶ç±»å·²ç»è°ƒç”¨äº†EventDispatcher
 	MultipleRenderTarget::~MultipleRenderTarget() noexcept {}
 
 	void MultipleRenderTarget::pushColor(const Texture::Ptr& texture) noexcept {

@@ -1,4 +1,4 @@
-#include "../ff/global/base.h"
+ï»¿#include "../ff/global/base.h"
 #include "../ff/core/attribute.h"
 #include "../ff/core/geometry.h"
 #include "../ff/core/object3D.h"
@@ -28,20 +28,20 @@
 
 using namespace ff;
 
-//³¡¾°
+/// åœºæ™¯
 Scene::Ptr	scene = nullptr;
 
-//µØ°åÆ½Ãæ
+/// åœ°æ¿å¹³é¢
 Mesh::Ptr	plane = nullptr;
 
-//Æ½ÐÐ¹â
+/// å¹³è¡Œå…‰
 DirectionalLight::Ptr directionalLight = nullptr;
 
-//Ïà»úÏà¹Ø
+/// ç›¸æœºç›¸å…³
 Camera::Ptr camera = nullptr;
 GameCameraControl::Ptr cameraControl = nullptr;
 
-//¶¯»­Ïà¹Ø
+/// åŠ¨ç”»ç›¸å…³
 AnimationAction::Ptr action = nullptr;
 Timer::Ptr	timer = Timer::create();
 
@@ -74,21 +74,21 @@ void onResize(int width, int height) {
 Scene::Ptr makeScene() {
 	Scene::Ptr scene = Scene::create();
 
-	//´´½¨µØ°åÆ½ÃæµÄGeometry
+	/// åˆ›å»ºåœ°æ¿å¹³é¢çš„Geometry
 	auto planeGeometry = PlaneGeometry::create(8.0, 8.0, 1, 1);
 
-	//ÐèÒª½ÓÊÜ¹âÕÕ£¬²¢ÇÒÐèÒª½ÓÊÜÄ£ÐÍµÄÒõÓ°
+	/// éœ€è¦æŽ¥å—å…‰ç…§ï¼Œå¹¶ä¸”éœ€è¦æŽ¥å—æ¨¡åž‹çš„é˜´å½±
 	MeshPhongMaterial::Ptr phongMaterial = MeshPhongMaterial::create();
-	phongMaterial->mSide = Side::FrontSide;//Ö»äÖÈ¾ÕýÃæ
+	phongMaterial->mSide = Side::FrontSide;/// åªæ¸²æŸ“æ­£é¢
 
-	//Éú³ÉµØ°åÆ½Ãæ
+	/// ç”Ÿæˆåœ°æ¿å¹³é¢
 	plane = Mesh::create(planeGeometry, phongMaterial);
 	plane->setScale(0.5, 0.5, 0.5);
 	plane->rotateX(-90.0f);
 	plane->setPosition(0.0, 0.0, 0.0);
 	scene->addChild(plane);
 
-	//sky box
+	/// sky box
 	std::vector<std::string> cubePaths = {
 		"assets/textures/skybox/right.jpg",
 		"assets/textures/skybox/left.jpg",
@@ -101,7 +101,7 @@ Scene::Ptr makeScene() {
 	CubeTexture::Ptr cubeTexture = CubeTextureLoader::load(cubePaths);
 	scene->mBackground = cubeTexture;
 
-	//lights
+	/// lights
 	directionalLight = DirectionalLight::create();
 	directionalLight->setPosition(4.0f, 4.0f, 4.0f);
 	directionalLight->mColor = glm::vec3(1.0f, 1.0f, 1.0f);
@@ -126,7 +126,7 @@ Scene::Ptr makeScene() {
 	scene->addChild(model->mObject);
 
 
-	//actions¿ÉÄÜ»áÓÐ¶à¸ö£¬Ã¿Ò»¸ö¶¼´ú±íÒ»¸ö¶¯»­£¬±ÈÈç´òÈ­£¬×ßÂ·£¬ÅÜ²½µÈ
+	/// actionså¯èƒ½ä¼šæœ‰å¤šä¸ªï¼Œæ¯ä¸€ä¸ªéƒ½ä»£è¡¨ä¸€ä¸ªåŠ¨ç”»ï¼Œæ¯”å¦‚æ‰“æ‹³ï¼Œèµ°è·¯ï¼Œè·‘æ­¥ç­‰
 	action = model->mActions[0];
 	//	action->mSpeed = 0.3;
 	action->play();
@@ -154,22 +154,22 @@ int main() {
 		renderer->setFrameSizeCallBack(onResize);
 		renderer->setMouseMoveCallBack(onMouseMove);
 
-		//½øÈëÑ­»·Ö®Ç°£¬Ê×ÏÈ»ñÈ¡³õÊ¼Ê±¼ä£¬elapsed_mill·µ»ØºÁÃë¼ÆÊ±,
-		//³ýÒÔ1000.0£¬ Ò»¸öÊÇ½«int64_t×ªÎªfloat£¬Ò»¸öÊÇ½«ºÁÃë×ªÎªÃë¼ÆÊ±
+		/// è¿›å…¥å¾ªçŽ¯ä¹‹å‰ï¼Œé¦–å…ˆèŽ·å–åˆå§‹æ—¶é—´ï¼Œelapsed_millè¿”å›žæ¯«ç§’è®¡æ—¶,
+		/// é™¤ä»¥1000.0ï¼Œ ä¸€ä¸ªæ˜¯å°†int64_tè½¬ä¸ºfloatï¼Œä¸€ä¸ªæ˜¯å°†æ¯«ç§’è½¬ä¸ºç§’è®¡æ—¶
 		float lastTime = timer->elapsed_mill() / 1000.0f;
 
 		while (true) {
-			//1 »ñÈ¡µ±Ç°³ÌÐòÔËÐÐÊ±¼ä
+			/// 1 èŽ·å–å½“å‰ç¨‹åºè¿è¡Œæ—¶é—´
 			float currentTime = timer->elapsed_mill() / 1000.0f;
 
-			//2 ¼ÆËãµ±Ç°Ê±¼ä£¬ÓëÉÏÒ»Ö¡Ê±¼äµÄÊ±¼ä²î
+			/// 2 è®¡ç®—å½“å‰æ—¶é—´ï¼Œä¸Žä¸Šä¸€å¸§æ—¶é—´çš„æ—¶é—´å·®
 			float deltaTime = currentTime - lastTime;
 
-			//3 ½«µ±Ç°Ê±¼ä±£´æÔÚlastTimeµ±ÖÐ£¬×¼±¸ÏÂÒ»Ö¡¼ÌÐø¼ÆËã
+			/// 3 å°†å½“å‰æ—¶é—´ä¿å­˜åœ¨lastTimeå½“ä¸­ï¼Œå‡†å¤‡ä¸‹ä¸€å¸§ç»§ç»­è®¡ç®—
 			lastTime = currentTime;
 
-			//¸üÐÂaction×´Ì¬,Èç¹ûactionÃ»ÓÐµ÷ÓÃplay£¬ÔòÎÞÂÛÈçºÎ¸üÐÂÊ±¼ä
-			//¶¯»­¶¼²»»áÓÐ½øÕ¹;Èç¹ûÔÚÄ³¸öÊ±¿Ì£¬µ÷ÓÃÁËactionµÄstop,¶¯»­Ò²»áÍ£Ö¹
+			/// æ›´æ–°actionçŠ¶æ€,å¦‚æžœactionæ²¡æœ‰è°ƒç”¨playï¼Œåˆ™æ— è®ºå¦‚ä½•æ›´æ–°æ—¶é—´
+			/// åŠ¨ç”»éƒ½ä¸ä¼šæœ‰è¿›å±•;å¦‚æžœåœ¨æŸä¸ªæ—¶åˆ»ï¼Œè°ƒç”¨äº†actionçš„stop,åŠ¨ç”»ä¹Ÿä¼šåœæ­¢
 			action->update(deltaTime);
 
 			cameraControl->update();

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #include "../global/base.h"
 
@@ -18,7 +18,7 @@ namespace ff {
 
 		~Plane() noexcept {}
 
-		//ÇóÈ¡Ò»¸öµãµ½Æ½ÃæµÄ¾àÀë£¨Óë·¨ÏßÍ¨ÏòÕß¾àÀëÎªÕı£¬Óë·¨Ïß·´ÏòÕß¾àÀëÎª¸º£©
+		/// æ±‚å–ä¸€ä¸ªç‚¹åˆ°å¹³é¢çš„è·ç¦»ï¼ˆä¸æ³•çº¿é€šå‘è€…è·ç¦»ä¸ºæ­£ï¼Œä¸æ³•çº¿åå‘è€…è·ç¦»ä¸ºè´Ÿï¼‰
 		float distanceToPoint(const glm::vec3& point) noexcept {
 			return glm::dot(mNormal, point) + mConstant;
 		}

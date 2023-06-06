@@ -1,4 +1,4 @@
-#include "renderTarget.h"
+ï»¿#include "renderTarget.h"
 #include "../global/eventDispatcher.h"
 #include "../tools/identity.h"
 
@@ -21,7 +21,7 @@ namespace ff {
 			options.mMinFilter,
 			options.mFormat);
 		
-		//±¾TextureÊÇ×÷ÎªäÖÈ¾Êä³öÄ¿±êµãµÄÓÃÍ¾£¬ËùÒÔSourceÊÇnullptr
+		/// æœ¬Textureæ˜¯ä½œä¸ºæ¸²æŸ“è¾“å‡ºç›®æ ‡ç‚¹çš„ç”¨é€”ï¼Œæ‰€ä»¥Sourceæ˜¯nullptr
 		mTexture->mUsage = TextureUsage::RenderTargetTexture;
 		mTexture->mInternalFormat = options.mInternalFormat;
 

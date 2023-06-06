@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../global/base.h"
 
 namespace ff {
@@ -25,7 +25,7 @@ namespace ff {
 			assert(!needsAssert);
 		}
 
-		//state
+		/// state
 		static void enable(GLenum cap) {
 			glEnable(cap);
 			checkError();
@@ -52,7 +52,7 @@ namespace ff {
 		}
 
 
-		//blend
+		/// blend
 		static void blendFuncSeparate(
 			GLenum srcRGB,
 			GLenum dstRGB,
@@ -68,7 +68,7 @@ namespace ff {
 			checkError();
 		}
 
-		//depth
+		/// depth
 		static void depthMask(GLboolean flag) {
 			glDepthMask(flag);
 			checkError();

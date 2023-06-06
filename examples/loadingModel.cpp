@@ -1,4 +1,4 @@
-#include "../ff/global/base.h"
+Ôªø#include "../ff/global/base.h"
 #include "../ff/core/attribute.h"
 #include "../ff/core/geometry.h"
 #include "../ff/core/object3D.h"
@@ -50,7 +50,8 @@ Scene::Ptr makeScene() {
 
 	Scene::Ptr scene = Scene::create();
 
-	//sky box
+	/// sky box
+	///	Âè≥ Â∑¶ ‰∏ä ‰∏ã Ââç Âêé
 	std::vector<std::string> cubePaths = {
 		"assets/textures/skybox/right.jpg",
 		"assets/textures/skybox/left.jpg",
@@ -63,14 +64,14 @@ Scene::Ptr makeScene() {
 	CubeTexture::Ptr cubeTexture = CubeTextureLoader::load(cubePaths);
 	scene->mBackground = cubeTexture;
 
-	//lights
+	/// lights
 	directionalLight = DirectionalLight::create();
 	directionalLight->setPosition(4.0f, 4.0f, 4.0f);
 	directionalLight->mColor = glm::vec3(1.0f, 1.0f, 1.0f);
 	directionalLight->mIntensity = 1.0;
 	directionalLight->lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	
-	//±æµ∆π‚ª·≤˙…˙“ı”∞
+	/// Êú¨ÁÅØÂÖâ‰ºö‰∫ßÁîüÈò¥ÂΩ±
 	directionalLight->mCastShadow = true;
 	directionalLight->mShadow->mMapSize = glm::vec2(2048.0, 2048.0);
 	directionalLight->mShadow->mCamera = OrthographicCamera::create(-90, 90, -90, 90, -90, 90);
@@ -105,7 +106,7 @@ int main() {
 		cameraControl = GameCameraControl::create(camera);
 		cameraControl->setSpeed(0.2f);
 
-		//…˙≥…renderer
+		/// ÁîüÊàêrenderer
 		Renderer::Ptr renderer = Renderer::create(rDc);
 		renderer->setMouseActionCallback(onMouseAction);
 		renderer->setKeyboardActionCallBack(onKeyboardAction);

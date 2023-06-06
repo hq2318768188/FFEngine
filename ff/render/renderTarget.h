@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "../global/constant.h"
 #include "../textures/depthTexture.h"
@@ -31,7 +31,7 @@ namespace ff {
 			bool			mNeedsDepthBuffer{ true };
 			bool			mNeedsStencilBuffer{ false };
 
-			//ÎÒÃÇÔÊĞíÓÃ»§¸øµ½ÎÒÃÇÒ»¸öËû×Ô¼ºÉú³ÉµÄTexture×÷ÎªÉî¶ÈBuffer
+			/// æˆ‘ä»¬å…è®¸ç”¨æˆ·ç»™åˆ°æˆ‘ä»¬ä¸€ä¸ªä»–è‡ªå·±ç”Ÿæˆçš„Textureä½œä¸ºæ·±åº¦Buffer
 			DepthTexture::Ptr	mDepthTexture{ nullptr };
 		};
 
@@ -60,11 +60,11 @@ namespace ff {
 		uint32_t				mWidth{ 0 };
 		uint32_t				mHeight{ 0 };
 
-		Texture::Ptr			mTexture{ nullptr };//×÷ÎªColorAttachmentµÄÎÆÀíÍ¼Æ¬
+		Texture::Ptr			mTexture{ nullptr }; /// ä½œä¸ºColorAttachmentçš„çº¹ç†å›¾ç‰‡
 
 		bool					mNeedsDepth{ true };
 		bool					mNeedsStencil{ false };
 
-		Texture::Ptr			mDepthTexture{ nullptr };//×÷ÎªdepthAttachmentµÄÎÆÀíÍ¼Æ¬
+		Texture::Ptr			mDepthTexture{ nullptr }; /// ä½œä¸ºdepthAttachmentçš„çº¹ç†å›¾ç‰‡
 	};
 }

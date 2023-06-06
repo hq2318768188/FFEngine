@@ -1,14 +1,14 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "../global/constant.h"
 #include "source.h"
 
 namespace ff {
 
-	//¸ºÔğ¸ø³öÎÆÀíÌùÍ¼ÃèÊöĞÅÏ¢
+	/// è´Ÿè´£ç»™å‡ºçº¹ç†è´´å›¾æè¿°ä¿¡æ¯
 	class Texture {
 	public:
-		//ÖÇÄÜÖ¸Õë¹ÜÀí
+		/// æ™ºèƒ½æŒ‡é’ˆç®¡ç†
 		using Ptr = std::shared_ptr<Texture>;
 		static Ptr create(
 			const uint32_t& width,
@@ -55,37 +55,37 @@ namespace ff {
 		virtual Texture::Ptr clone() noexcept;
 
 	public:
-		//Filter£¬NearestËÄÉáÎåÈë£¬ Ö±½ÓÈ¡µÃÄ³¸öÏñËØµÄÑÕÉ«Öµ
-		//Filter£¬LinearÈ¡µÃÖÜ±ßÏñËØµÄÑÕÉ«Öµ£¬°´ÕÕÔ¶½ü³Ì¶È±ê¶¨È¨ÖØ£¬¼ÓÈ¨Æ½¾ù
+		/// Filterï¼ŒNearestå››èˆäº”å…¥ï¼Œ ç›´æ¥å–å¾—æŸä¸ªåƒç´ çš„é¢œè‰²å€¼
+		/// Filterï¼ŒLinearå–å¾—å‘¨è¾¹åƒç´ çš„é¢œè‰²å€¼ï¼ŒæŒ‰ç…§è¿œè¿‘ç¨‹åº¦æ ‡å®šæƒé‡ï¼ŒåŠ æƒå¹³å‡
 		TextureFilter		mMinFilter{ TextureFilter::LinearFilter };
 		TextureFilter		mMagFilter{ TextureFilter::LinearFilter };
 
-		//°ü×°·½Ê½£¬ÎÆÀí×ø±ê³¬³öÁË0-1£¬ÔõÃ´°ì£¿
+		/// åŒ…è£…æ–¹å¼ï¼Œçº¹ç†åæ ‡è¶…å‡ºäº†0-1ï¼Œæ€ä¹ˆåŠï¼Ÿ
 		TextureWrapping		mWrapS{ TextureWrapping::RepeatWrapping };
 		TextureWrapping		mWrapT{ TextureWrapping::RepeatWrapping };
 		TextureWrapping		mWrapR{ TextureWrapping::RepeatWrapping };
 
-		//ÏñËØ¸ñÊ½ĞÅÏ¢
-		//Format ¼´ÊäÈëµÄÍ¼Æ¬ÏñËØ¸ñÊ½£¬internalFormat¼´ÔÚshader²ÉÑùµÄÊ±ºò£¬ÄÚ´æÖĞ´æ·ÅµÄ¸ñÊ½
+		/// åƒç´ æ ¼å¼ä¿¡æ¯
+		/// Format å³è¾“å…¥çš„å›¾ç‰‡åƒç´ æ ¼å¼ï¼ŒinternalFormatå³åœ¨shaderé‡‡æ ·çš„æ—¶å€™ï¼Œå†…å­˜ä¸­å­˜æ”¾çš„æ ¼å¼
 		TextureFormat		mFormat{ TextureFormat::RGBA };
 		TextureFormat		mInternalFormat{ TextureFormat::RGBA };
 
-		//Ã¿¸öÑÕÉ«Í¨µÀµÄÊıÖµ¸ñÊ½
+		/// æ¯ä¸ªé¢œè‰²é€šé“çš„æ•°å€¼æ ¼å¼
 		DataType			mDataType{ DataType::UnsignedByteType };
 
-		//±ØÒªµÄ³¤¿í
+		/// å¿…è¦çš„é•¿å®½
 		uint32_t			mWidth{ 0 };
 		uint32_t			mHeight{ 0 };
 
 		Source::Ptr			mSource{ nullptr };
 
-		//ÒªÃ´³¤¿í±äÁË£¬ÒªÃ´²ÎÊı±äÁË£¬ÒªÃ´Êı¾İ±äÁË
+		/// è¦ä¹ˆé•¿å®½å˜äº†ï¼Œè¦ä¹ˆå‚æ•°å˜äº†ï¼Œè¦ä¹ˆæ•°æ®å˜äº†
 		bool				mNeedsUpdate{ true };
 
-		//ÎÆÀíÀàĞÍ£¬Æ½ÃæÎÆÀí£¬Á¢·½ÌåÌùÍ¼£¬ÎÆÀíÊı×é¡£¡£¡£
+		/// çº¹ç†ç±»å‹ï¼Œå¹³é¢çº¹ç†ï¼Œç«‹æ–¹ä½“è´´å›¾ï¼Œçº¹ç†æ•°ç»„ã€‚ã€‚ã€‚
 		TextureType			mTextureType{ TextureType::Texture2D };
 
-		//±¾ÎÆÀíÓÃÓÚºÎ·½£¬ÌùÍ¼£¬»­²¼£¨colorRendertarget/colorAttachment£©
+		/// æœ¬çº¹ç†ç”¨äºä½•æ–¹ï¼Œè´´å›¾ï¼Œç”»å¸ƒï¼ˆcolorRendertarget/colorAttachmentï¼‰
 		TextureUsage		mUsage{ TextureUsage::SamplerTexture };
 
 	protected:

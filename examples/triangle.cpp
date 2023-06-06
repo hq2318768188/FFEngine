@@ -1,4 +1,4 @@
-#include "../ff/core/attribute.h"
+ï»¿#include "../ff/core/attribute.h"
 #include "../ff/core/geometry.h"
 #include "../ff/objects/mesh.h"
 #include "../ff/scene/scene.h"
@@ -10,26 +10,26 @@
 #include "../ff/global/constant.h"
 
 
-//´°ÌåµÄ´óĞ¡
+/// çª—ä½“çš„å¤§å°
 uint32_t WIDTH = 800;
 uint32_t HEIGHT = 600;
 
-//ÏìÓ¦Êó±êÒÆ¶¯£¬ÊÕµ½µÄ²ÎÊıÎªÊó±êµ±Ç°Î»ÖÃ
+/// å“åº”é¼ æ ‡ç§»åŠ¨ï¼Œæ”¶åˆ°çš„å‚æ•°ä¸ºé¼ æ ‡å½“å‰ä½ç½®
 static void onMouseMove(double xpos, double ypos) {
 }
 
-//ÏìÓ¦Êó±êÊÂ¼ş£¬±ÈÈçµã»÷»òÕßÌ§Æğ
+/// å“åº”é¼ æ ‡äº‹ä»¶ï¼Œæ¯”å¦‚ç‚¹å‡»æˆ–è€…æŠ¬èµ·
 static void onMouseAction(ff::MouseAction action) {
 	if (action == ff::MouseAction::LeftDown) {
 		std::cout << "LeftDown" << std::endl;
 	}
 }
 
-//ÏìÓ¦¼üÅÌÊÂ¼ş£¬²¢ÇÒ»Ø´«¼üÅÌ×´Ì¬
+/// å“åº”é”®ç›˜äº‹ä»¶ï¼Œå¹¶ä¸”å›ä¼ é”®ç›˜çŠ¶æ€
 static void onKeyboardAction(KeyBoardState action) {
 }
 
-//ÏìÓ¦´°¿Ú´óĞ¡±ä»¯£¬²¢ÇÒ»Ø´«±ä»¯ºóµÄ´°Ìå¿í¸ß
+/// å“åº”çª—å£å¤§å°å˜åŒ–ï¼Œå¹¶ä¸”å›ä¼ å˜åŒ–åçš„çª—ä½“å®½é«˜
 static void onResize(int width, int height) {
 }
 
@@ -50,34 +50,34 @@ int main() {
 		0, 1, 2
 	};
 
-	//´´Ôì¼¸ºÎÊı¾İ£¬²¢ÇÒÎªmeshµÄ¶¥µãÃÇ£¬ÉèÖÃÊôĞÔÊı¾İ£¨Attribute£¬ÆäÖĞitemSize£¬
-	//ÊÇÖ¸£¬Ã¿¸ö¶¥µã£¬Ïà¹ØÊôĞÔ£¬ÓĞ¶àÉÙ¸öÊı×Ö£©
+	/// åˆ›é€ å‡ ä½•æ•°æ®ï¼Œå¹¶ä¸”ä¸ºmeshçš„é¡¶ç‚¹ä»¬ï¼Œè®¾ç½®å±æ€§æ•°æ®ï¼ˆAttributeï¼Œå…¶ä¸­itemSizeï¼Œ
+	/// æ˜¯æŒ‡ï¼Œæ¯ä¸ªé¡¶ç‚¹ï¼Œç›¸å…³å±æ€§ï¼Œæœ‰å¤šå°‘ä¸ªæ•°å­—ï¼‰
 	auto geometry = ff::Geometry::create();
 	geometry->setAttribute("position", ff::Attributef::create(positions, 3));
 	geometry->setAttribute("color", ff::Attributef::create(colors, 3));
 	geometry->setIndex(ff::Attributei::create(indices, 1));
 
-	//Éú³É»ù´¡²ÄÖÊ
+	/// ç”ŸæˆåŸºç¡€æè´¨
 	auto material = ff::MeshBasicMaterial::create();
 
-	//Ò»¸öMesh£¬°üÀ¨ËüµÄ¼¸ºÎĞÅÏ¢£¬ÒÔ¼°²ÄÖÊĞÅÏ¢
+	/// ä¸€ä¸ªMeshï¼ŒåŒ…æ‹¬å®ƒçš„å‡ ä½•ä¿¡æ¯ï¼Œä»¥åŠæè´¨ä¿¡æ¯
 	auto triangle = ff::Mesh::create(geometry, material);
 
-	//´´½¨³¡¾°£¬²¢ÇÒ½«Èı½ÇĞÎMesh¼ÓÈëÆäÖĞ
+	/// åˆ›å»ºåœºæ™¯ï¼Œå¹¶ä¸”å°†ä¸‰è§’å½¢MeshåŠ å…¥å…¶ä¸­
 	auto scene = ff::Scene::create();
 	scene->addChild(triangle);
 
-	//´´½¨Í¸ÊÓÍ¶Ó°ÉãÏñ»únear far ¿í¸ß±È£¬ÊÓ½Ç Î»ÖÃ
+	/// åˆ›å»ºé€è§†æŠ•å½±æ‘„åƒæœºnear far å®½é«˜æ¯”ï¼Œè§†è§’ ä½ç½®
 	auto camera = ff::PerspectiveCamera::create(0.1f, 100.0f, (float)WIDTH / (float)(HEIGHT), 60.0f);
 	camera->setPosition(0.0f, 0.0f, 1.0f);
 
-	//´´½¨äÖÈ¾Æ÷
+	/// åˆ›å»ºæ¸²æŸ“å™¨
 	ff::Renderer::Descriptor rDc;
 	rDc.mWidth = WIDTH;
 	rDc.mHeight = HEIGHT;
 	ff::Renderer::Ptr renderer = ff::Renderer::create(rDc);
 
-	//ÉèÖÃ±³¾°Çå³ıÉ«£¬ÀàËÆÓëglClearColor
+	/// è®¾ç½®èƒŒæ™¯æ¸…é™¤è‰²ï¼Œç±»ä¼¼ä¸glClearColor
 	renderer->setClearColor(0.94, 1.0, 0.94, 1.0);
 
 	renderer->setMouseActionCallback(onMouseAction);

@@ -1,4 +1,4 @@
-#include "../ff/core/attribute.h"
+ï»¿#include "../ff/core/attribute.h"
 #include "../ff/core/geometry.h"
 #include "../ff/objects/mesh.h"
 #include "../ff/scene/scene.h"
@@ -15,7 +15,7 @@
 uint32_t WIDTH = 800;
 uint32_t HEIGHT = 600;
 
-//meshÀàÐÍµÄÖÇÄÜÖ¸Õë
+/// meshç±»åž‹çš„æ™ºèƒ½æŒ‡é’ˆ
 ff::Mesh::Ptr cube = nullptr;
 
 static void onMouseMove(double xpos, double ypos) {
@@ -39,10 +39,10 @@ void rotateCube() {
 
 int main() {
 
-	//´´½¨CubeµÄGeometry
+	/// åˆ›å»ºCubeçš„Geometry
 	auto boxGeometry = ff::BoxGeometry::create(1.0, 1.0, 1.0);
 	
-	//´´½¨»ù´¡²ÄÖÊ
+	/// åˆ›å»ºåŸºç¡€æè´¨
 	auto material = ff::MeshBasicMaterial::create();
 	material->mDiffuseMap = ff::TextureLoader::load("assets/textures/cat.png");
 	//material->mDrawMode = ff::DrawMode::LinesStrip;

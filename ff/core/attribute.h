@@ -1,19 +1,19 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "../global/constant.h"
 #include "../tools/identity.h"
 #include "../global/eventDispatcher.h"
 
 namespace ff {
-	//¶ÔÓÚÃ¿¸öMesh£¬ÎÒÃÇ½«ÆäËùÓĞ¶¥µãµÄÄ³¸öAttribute¹²Í¬´æ´¢³ÉÒ»¸öÊı×é£¬±ÈÈçPosition¾ÍÊÇÒ»¸öfloatÀàĞÍµÄÊı×é
-	//Ã¿¸öAttributeÓĞ¿ÉÄÜÊı×ÖÀàĞÍ²»Í¬£¬±ÈÈçPositionĞèÒªfloat£¬indexĞèÒªuint32_t
+	/// å¯¹äºæ¯ä¸ªMeshï¼Œæˆ‘ä»¬å°†å…¶æ‰€æœ‰é¡¶ç‚¹çš„æŸä¸ªAttributeå…±åŒå­˜å‚¨æˆä¸€ä¸ªæ•°ç»„ï¼Œæ¯”å¦‚Positionå°±æ˜¯ä¸€ä¸ªfloatç±»å‹çš„æ•°ç»„
+	/// æ¯ä¸ªAttributeæœ‰å¯èƒ½æ•°å­—ç±»å‹ä¸åŒï¼Œæ¯”å¦‚Positionéœ€è¦floatï¼Œindexéœ€è¦uint32_t
 	template<typename T>
 	class Attribute :public std::enable_shared_from_this<Attribute<T>> {
-		//¼Ì³Ğenable_shared_from_this¿ÉÒÔÔÊĞíÔÚÀàÄÚµÄº¯ÊıÖĞ£¬»ñÈ¡µ½±¾Attribute¶ÔÏóµÄÖÇÄÜÖ¸Õë
+		/// ç»§æ‰¿enable_shared_from_thiså¯ä»¥å…è®¸åœ¨ç±»å†…çš„å‡½æ•°ä¸­ï¼Œè·å–åˆ°æœ¬Attributeå¯¹è±¡çš„æ™ºèƒ½æŒ‡é’ˆ
 	public:
 
-		//PtrÊÇ±¾ÀàĞÍÖÇÄÜÖ¸ÕëµÄ±ğÃû£¬ÎªÁËËõ¶Ì´úÂë³¤¶È
-		//createÓÃÀ´´´½¨Ò»¸öAttributeÀàĞÍµÄÖÇÄÜÖ¸ÕëµÄ¾²Ì¬º¯Êı
+		/// Ptræ˜¯æœ¬ç±»å‹æ™ºèƒ½æŒ‡é’ˆçš„åˆ«åï¼Œä¸ºäº†ç¼©çŸ­ä»£ç é•¿åº¦
+		/// createç”¨æ¥åˆ›å»ºä¸€ä¸ªAttributeç±»å‹çš„æ™ºèƒ½æŒ‡é’ˆçš„é™æ€å‡½æ•°
 		using Ptr = std::shared_ptr<Attribute<T>>;
 		static Ptr create(const std::vector<T>& data, uint32_t itemSize, BufferAllocType bufferAllocType = BufferAllocType::StaticDrawBuffer) {
 			return std::make_shared <Attribute<T>>(data, itemSize, bufferAllocType);
@@ -23,14 +23,14 @@ namespace ff {
 
 		~Attribute() noexcept;
 
-		//½«valueÉèÖÃµ½µÚindex¸ö¶¥µãµÄxÖµÉÏ
+		//å°†valueè®¾ç½®åˆ°ç¬¬indexä¸ªé¡¶ç‚¹çš„xå€¼ä¸Š
 		void setX(const uint32_t& index, T value) noexcept;
 
 		void setY(const uint32_t& index, T value) noexcept;
 
 		void setZ(const uint32_t& index, T value) noexcept;
 
-		//µÃµ½µÚindex¸ö¶¥µãµÄ±¾attributeµÄxÖµ
+		//å¾—åˆ°ç¬¬indexä¸ªé¡¶ç‚¹çš„æœ¬attributeçš„xå€¼
 		T getX(const uint32_t& index) noexcept;
 
 		T getY(const uint32_t& index) noexcept;
@@ -58,23 +58,23 @@ namespace ff {
 		auto getDataType() const noexcept { return mDataType; }
 
 	private:
-		ID				mID{ 0 };//È«¾ÖÎ¨Ò»id
-		std::vector<T>	mData{};//Êı¾İÊı×é
-		uint32_t		mItemSize{ 0 };//¶àÉÙ¸öÊı¾İÎªÒ»¸ö¶¥µãµÄAttribute
-		uint32_t		mCount{ 0 };//±¾attributeµÄÊı¾İ£¬°üº¬ÁË¶àÉÙ¸ö¶¥µãµÄÊı¾İ
+		ID				mID{ 0 };													/// å…¨å±€å”¯ä¸€id
+		std::vector<T>	mData{};													/// æ•°æ®æ•°ç»„
+		uint32_t		mItemSize{ 0 };												/// å¤šå°‘ä¸ªæ•°æ®ä¸ºä¸€ä¸ªé¡¶ç‚¹çš„Attribute
+		uint32_t		mCount{ 0 };												/// æœ¬attributeçš„æ•°æ®ï¼ŒåŒ…å«äº†å¤šå°‘ä¸ªé¡¶ç‚¹çš„æ•°æ®
 
-		//opengl»òÕßÆäËûÍ¼ĞÎapi£¬½«buffer·Ö³ÉÁËÁ½ÖÖÀàĞÍ£¨ÔÚÔÛÃÇÊ¹ÓÃ·¶Î§ÄÚ£©£¬
-		//static,ÔÚ´´½¨VBOµÄÊ±ºò£¬»á½«ÄÚ´æ·ÖÅäµ½GPU¶Ë£¬ÊÊºÏÒ»´ÎĞÔ´«Êä£¬²»¾­³£¸ü¸ÄµÄÊı¾İ
-		//dynamic£¬ÔÚ´´½¨VBOµÄÊ±ºò£¬»á½«ÄÚ´æ·ÖÅäµ½CPU¶Ë£¨´ó¸ÅÂÊ£©£¬ÊÊºÏ¶à´ÎÆµ·±µÄ¸ü¸Ä
+		/// openglæˆ–è€…å…¶ä»–å›¾å½¢apiï¼Œå°†bufferåˆ†æˆäº†ä¸¤ç§ç±»å‹ï¼ˆåœ¨å’±ä»¬ä½¿ç”¨èŒƒå›´å†…ï¼‰ï¼Œ
+		/// static,åœ¨åˆ›å»ºVBOçš„æ—¶å€™ï¼Œä¼šå°†å†…å­˜åˆ†é…åˆ°GPUç«¯ï¼Œé€‚åˆä¸€æ¬¡æ€§ä¼ è¾“ï¼Œä¸ç»å¸¸æ›´æ”¹çš„æ•°æ®
+		/// dynamicï¼Œåœ¨åˆ›å»ºVBOçš„æ—¶å€™ï¼Œä¼šå°†å†…å­˜åˆ†é…åˆ°CPUç«¯ï¼ˆå¤§æ¦‚ç‡ï¼‰ï¼Œé€‚åˆå¤šæ¬¡é¢‘ç¹çš„æ›´æ”¹
 		BufferAllocType	mBufferAllocType{ BufferAllocType::StaticDrawBuffer };
 
-		DataType		mDataType{ DataType::FloatType };//¼ÇÂ¼±¾AttributeµÄÊı¾İÀàĞÍfloat int uint
+		DataType		mDataType{ DataType::FloatType };							/// è®°å½•æœ¬Attributeçš„æ•°æ®ç±»å‹float int uint
 
-		bool			mNeedsUpdate{ true };//Êı¾İÊÇ·ñĞèÒª¸üĞÂ
-		Range			mUpdateRange{};//¼ÙÉèÊı×é³¤¶ÈÎª300¸öfloatÀàĞÍµÄÊı×é£¬±¾´Î¸üĞÂ£¬¿ÉÒÔÖ»¸üĞÂ55-100¸öfloatÊı¾İ
+		bool			mNeedsUpdate{ true };										/// æ•°æ®æ˜¯å¦éœ€è¦æ›´æ–°
+		Range			mUpdateRange{};												/// å‡è®¾æ•°ç»„é•¿åº¦ä¸º300ä¸ªfloatç±»å‹çš„æ•°ç»„ï¼Œæœ¬æ¬¡æ›´æ–°ï¼Œå¯ä»¥åªæ›´æ–°55-100ä¸ªfloatæ•°æ®
 	};
 
-	//¸ù¾İÊı¾İÀàĞÍµÄ²»Í¬£¬Æğ²»Í¬µÄ±ğÃû
+	/// æ ¹æ®æ•°æ®ç±»å‹çš„ä¸åŒï¼Œèµ·ä¸åŒçš„åˆ«å
 	using Attributef = Attribute<float>;
 	using Attributei = Attribute<uint32_t>;
 
@@ -84,7 +84,7 @@ namespace ff {
 
 		mData = data;
 		mItemSize = itemSize;
-		//ÔÌº¬¶àÉÙ¸ö¶¥µãµÄĞÅÏ¢
+		/// è•´å«å¤šå°‘ä¸ªé¡¶ç‚¹çš„ä¿¡æ¯
 		mCount = static_cast<uint32_t>(mData.size()) / itemSize;
 		mBufferAllocType = bufferAllocType;
 
@@ -93,7 +93,7 @@ namespace ff {
 
 	template<typename T>
 	Attribute<T>::~Attribute() noexcept {
-		//·¢ËÍÏûÏ¢£¬¸øµ½¸÷Àà¼àÌıµÄº¯Êı£¬¸æËßËûÃÇ£¬ÄÄ¸öattributeÒÑ¾­ÏûÍöÁË
+		/// å‘é€æ¶ˆæ¯ï¼Œç»™åˆ°å„ç±»ç›‘å¬çš„å‡½æ•°ï¼Œå‘Šè¯‰ä»–ä»¬ï¼Œå“ªä¸ªattributeå·²ç»æ¶ˆäº¡äº†
 		EventBase::Ptr e = EventBase::create("attributeDispose");
 		e->mTarget = this;
 		e->mpUserData = &mID;
@@ -103,11 +103,11 @@ namespace ff {
 
 	template<typename T>
 	void Attribute<T>::setX(const uint32_t& index, T value) noexcept {
-		//Ê¹ÓÃ¶ÏÑÔÀ´·ÀÖ¹index¹ı½ç
+		/// ä½¿ç”¨æ–­è¨€æ¥é˜²æ­¢indexè¿‡ç•Œ
 		assert(index < mCount);
 
-		//float vector: a b c value e f g h i j
-		//¼ÙÉèindex = 1 itemsize=3
+		/// float vector: a b c value e f g h i j
+		/// å‡è®¾index = 1 itemsize=3
 		mData[index * mItemSize] = value;
 		mNeedsUpdate = true;
 	}
@@ -116,8 +116,8 @@ namespace ff {
 	void Attribute<T>::setY(const uint32_t& index, T value) noexcept {
 		assert(index < mCount);
 
-		//float vector: a b c d value f g h i j
-		//¼ÙÉèindex = 1 itemsize=3
+		/// float vector: a b c d value f g h i j
+		/// å‡è®¾index = 1 itemsize=3
 		mData[index * mItemSize + 1] = x;
 		mNeedsUpdate = true;
 	}
@@ -126,8 +126,8 @@ namespace ff {
 	void Attribute<T>::setZ(const uint32_t& index, T value) noexcept {
 		assert(index < mCount);
 
-		//float vector: a b c d e value g h i j
-		//¼ÙÉèindex = 1 itemsize=3
+		/// float vector: a b c d e value g h i j
+		/// å‡è®¾index = 1 itemsize=3
 		mData[index * mItemSize + 2] = x;
 		mNeedsUpdate = true;
 	}

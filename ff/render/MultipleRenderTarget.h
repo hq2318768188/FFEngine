@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "renderTarget.h"
 
 namespace ff {
 
 	class DriverTextures;
-	//ÓµÓĞ¶à¸öÑÕÉ«Êä³öÍ¨µÀ
+	/// æ‹¥æœ‰å¤šä¸ªé¢œè‰²è¾“å‡ºé€šé“
 	class MultipleRenderTarget :public RenderTarget {
 	public:
 		friend DriverTextures;
@@ -14,7 +14,7 @@ namespace ff {
 			return std::make_shared <MultipleRenderTarget>(width, height, count, options);
 		}
 
-		//countÊÇÓĞ¶àÉÙ¸öColorAttachment
+		/// countæ˜¯æœ‰å¤šå°‘ä¸ªColorAttachment
 		MultipleRenderTarget(const uint32_t& width, const uint32_t& height, const uint32_t& count, const RenderTarget::Options& options) noexcept;
 		
 		~MultipleRenderTarget() noexcept;

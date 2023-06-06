@@ -1,4 +1,4 @@
-#include "assimpLoader.h"
+ï»¿#include "assimpLoader.h"
 #include "../objects/mesh.h"
 #include "../objects/skinnedMesh.h"
 #include "../objects/group.h"
@@ -18,18 +18,18 @@ namespace ff {
 	AssimpResult::Ptr AssimpLoader::load(const std::string& path) noexcept {
 		AssimpResult::Ptr result = AssimpResult::create();
 
-		//µ±Ç°Ä£ĞÍËùÓĞMeshÓÃµ½µÄmaterial¶¼»á¼ÇÂ¼ÔÚÕâÑùµÄÊı×éÀïÃæ£¬Ë³Ğò°´ÕÕaiSceneÀïµÄ
-		//mMaterialsµÄË³ĞòÏàÍ¬
+		/// å½“å‰æ¨¡å‹æ‰€æœ‰Meshç”¨åˆ°çš„materialéƒ½ä¼šè®°å½•åœ¨è¿™æ ·çš„æ•°ç»„é‡Œé¢ï¼Œé¡ºåºæŒ‰ç…§aiSceneé‡Œçš„
+		/// mMaterialsçš„é¡ºåºç›¸åŒ
 		std::vector<Material::Ptr> materials;
 
-		//Éú³É¸ù½Úµã
+		/// ç”Ÿæˆæ ¹èŠ‚ç‚¹
 		Object3D::Ptr rootObject = Group::create();
 
-		//¹Ç÷À¶¯»­Ïà¹Ø
+		/// éª¨éª¼åŠ¨ç”»ç›¸å…³
 		Bone::Ptr rootBone = Bone::create();
 		std::vector<Bone::Ptr> bones{};
 
-		//¿ªÊ¼½øĞĞ¶ÁÈ¡
+		/// å¼€å§‹è¿›è¡Œè¯»å–
 		Assimp::Importer importer;
 		const aiScene* scene = importer.ReadFile(
 			path, 
@@ -41,12 +41,12 @@ namespace ff {
 			return nullptr;
 		}
 
-		//Ä£ĞÍ¶ÁÈ¡µÄpathÒ»°ãÊÇÕâÑùµÄ£ºassets/models/superMan/man.fbx
-		//È¡³öÀ´¸ùÂ·¾¶£ºassets/models/superMan/
+		/// æ¨¡å‹è¯»å–çš„pathä¸€èˆ¬æ˜¯è¿™æ ·çš„ï¼šassets/models/superMan/man.fbx
+		/// å–å‡ºæ¥æ ¹è·¯å¾„ï¼šassets/models/superMan/
 		std::size_t lastIndex = path.find_last_of("//");
 		std::string rootPath = path.substr(0, lastIndex + 1);
 
-		//if has animations, then processSkeleton
+		/// if has animations, then processSkeleton
 		if (scene->mNumAnimations) {
 			processSkeleton(scene->mRootNode, scene, rootBone, bones);
 
@@ -56,8 +56,8 @@ namespace ff {
 		processMaterial(scene, rootPath, materials);
 		processNode(scene->mRootNode, scene, rootObject, materials, bones);
 
-		//make actions
-		//¶ÁÈ¡ËùÓĞ¶¯»­µÄ¹Ø¼üÖ¡Êı¾İ£¬ÎªÃ¿¸ö¶¯»­¹¹½¨AnimationAction
+		/// make actions
+		/// è¯»å–æ‰€æœ‰åŠ¨ç”»çš„å…³é”®å¸§æ•°æ®ï¼Œä¸ºæ¯ä¸ªåŠ¨ç”»æ„å»ºAnimationAction
 		std::vector<AnimationAction::Ptr> actions{};
 		if (scene->mNumAnimations) {
 			auto clips = processAnimation(scene);
@@ -72,10 +72,10 @@ namespace ff {
 		return result;
 	}
 
-	//1 ½âÎöÃ¿¸öNode£¬Èç¹ûÓĞMesh£¬¾Í½âÎöÉú³ÉMesh£¬²¢ÇÒ¼ÓÈëµ½±¾Node¶ÔÓ¦µÄGroup¶ÔÏóÀïÃæ
-	//2 Èç¹ûÏµÍ³Ã»ÓĞ¶¯»­²¢ÇÒ±¾NodeÃ»ÓĞMesh£¬Ôò½«LocalTransformÉèÖÃµ½¶ÔÓ¦µÄGroupµÄlocalMatrixÉÏÃæ
-	//3 ½¨Éè²ã¼¶¼Ü¹¹
-	//
+	/// 1 è§£ææ¯ä¸ªNodeï¼Œå¦‚æœæœ‰Meshï¼Œå°±è§£æç”ŸæˆMeshï¼Œå¹¶ä¸”åŠ å…¥åˆ°æœ¬Nodeå¯¹åº”çš„Groupå¯¹è±¡é‡Œé¢
+	/// 2 å¦‚æœç³»ç»Ÿæ²¡æœ‰åŠ¨ç”»å¹¶ä¸”æœ¬Nodeæ²¡æœ‰Meshï¼Œåˆ™å°†LocalTransformè®¾ç½®åˆ°å¯¹åº”çš„Groupçš„localMatrixä¸Šé¢
+	/// 3 å»ºè®¾å±‚çº§æ¶æ„
+	/// 
 	void AssimpLoader::processNode(
 		const aiNode* node,
 		const aiScene* scene,
@@ -83,20 +83,20 @@ namespace ff {
 		const std::vector<Material::Ptr>& materials,
 		const std::vector<Bone::Ptr>& bones) {
 
-		//make a group for all the meshes in the node
+		/// make a group for all the meshes in the node
 		Group::Ptr group = Group::create();
 		for (uint32_t i = 0; i < node->mNumMeshes; ++i) {
-			//¶ÔÓÚµ±Ç°nodeµÄµÚi¸öMesh£¬È¡³öÀ´ÆäMeshID£¨node->mMeshes[i]£©£¬ÓÃÕâ¸öMeshIDÏòSceneÀïÃæË÷ÒıaiMesh£¬ÄÃµ½¾ßÌåÊı¾İ
+			/// å¯¹äºå½“å‰nodeçš„ç¬¬iä¸ªMeshï¼Œå–å‡ºæ¥å…¶MeshIDï¼ˆnode->mMeshes[i]ï¼‰ï¼Œç”¨è¿™ä¸ªMeshIDå‘Sceneé‡Œé¢ç´¢å¼•aiMeshï¼Œæ‹¿åˆ°å…·ä½“æ•°æ®
 			aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			group->addChild(processMesh(mesh, scene, getGLMMat4(node->mTransformation), materials, bones));
 		}
 
 		parentObject->addChild(group);
 
-		//if node has meshes, then nodeTransform is judged by processMesh
-		//ÒòÎªÓĞ¶¯»­µÄÊ±ºò£¬±¾½ÚµãµÄmeshµÄWorldMatrix±ä»»£¬Ó¦¸ÃÌıÃüÓÚÓ°ÏìËüµÄ¹Ç÷À½Úµã
+		/// if node has meshes, then nodeTransform is judged by processMesh
+		/// å› ä¸ºæœ‰åŠ¨ç”»çš„æ—¶å€™ï¼Œæœ¬èŠ‚ç‚¹çš„meshçš„WorldMatrixå˜æ¢ï¼Œåº”è¯¥å¬å‘½äºå½±å“å®ƒçš„éª¨éª¼èŠ‚ç‚¹
 		if (!scene->mNumAnimations && !node->mNumMeshes) {
-			//add transform for all meshes in the node
+			/// add transform for all meshes in the node
 			glm::mat4 localMatrix = getGLMMat4(node->mTransformation);
 			group->setLocalMatrix(localMatrix);
 		}
@@ -112,13 +112,13 @@ namespace ff {
 		const aiScene* scene,
 		Bone::Ptr parentBone,
 		std::vector<Bone::Ptr>& bones) {
-		//name
+		/// name
 		auto bone = Bone::create();
 		bones.push_back(bone);
 
 		bone->mName = node->mName.C_Str();
 
-		//transform
+		/// transform
 		glm::mat4 nodeMatrix = getGLMMat4(node->mTransformation);
 		bone->mNodeMatrix = nodeMatrix;
 
@@ -134,19 +134,19 @@ namespace ff {
 		const std::string& rootPath,
 		std::vector<Material::Ptr>& materials)
 	{
-		//Ñ­»·½âÎöaiSceneÀïÃæµÄÃ¿Ò»¸ömaterial
+		/// å¾ªç¯è§£æaiSceneé‡Œé¢çš„æ¯ä¸€ä¸ªmaterial
 		for (uint32_t id = 0; id < scene->mNumMaterials; ++id) {
 			Material::Ptr material{ nullptr };
 
 			aiMaterial* aimaterial = scene->mMaterials[id];
 
-			//ÓÃÀ´»ñÈ¡µ±Ç°µÄMaterialÊÇÊ²Ã´ÀàĞÍ
+			/// ç”¨æ¥è·å–å½“å‰çš„Materialæ˜¯ä»€ä¹ˆç±»å‹
 			aiShadingMode shadingMode{ aiShadingMode::aiShadingMode_Phong };
 
 			aimaterial->Get(AI_MATKEY_SHADING_MODEL, shadingMode);
 
-			//todo: we may need more material model
-			//ÓÉÓÚÎÒÃÇÖ»ÊµÏÖÁËMeshPhongmaterialÕâÖÖÄ£ĞÍÍ¨ÓÃµÄ²ÄÖÊ£¬ËùÒÔÒ»ÂÉĞ´³ÉPhongMaterial
+			/// TODO: we may need more material model
+			/// ç”±äºæˆ‘ä»¬åªå®ç°äº†MeshPhongmaterialè¿™ç§æ¨¡å‹é€šç”¨çš„æè´¨ï¼Œæ‰€ä»¥ä¸€å¾‹å†™æˆPhongMaterial
 			switch (shadingMode) {
 			case aiShadingMode::aiShadingMode_Phong:
 				material = MeshPhongMaterial::create();
@@ -156,7 +156,7 @@ namespace ff {
 				break;
 			}
 
-			//¿ªÊ¼¶ÁÈ¡Ã¿¸öMaterialµÄÌùÍ¼Êı¾İ
+			/// å¼€å§‹è¯»å–æ¯ä¸ªMaterialçš„è´´å›¾æ•°æ®
 			material->mDiffuseMap = processTexture(aiTextureType_DIFFUSE, scene, aimaterial, rootPath);
 
 			material->mNormalMap = processTexture(aiTextureType_NORMALS, scene, aimaterial, rootPath);
@@ -177,20 +177,20 @@ namespace ff {
 
 		//for now we only need one texture per type, without texture blending
 		//todo: multi-texture blending
-		//¶ÔÓÚµ±Ç°Ä£ĞÍ£¬ÎÒÃÇ¹¤³ÌÀïÃæ´æ´¢µÄÂ·¾¶¿ÉÄÜÊÇ£ºassets/models/superMan/man.fbx
-		//Í¼Æ¬Êı¾İ¿ÉÄÜ»á´æ·ÅÔÚ£ºassets/models/superMan/textures/ÎÄ¼ş¼ĞÏÂ
-		//ÏÂ·½ÄÃµ½µÄaiPathÊÇÒª¶ÁÈ¡µÄÍ¼Æ¬µÄÏà¶ÔÂ·¾¶£¬Ïà¶ÔÓÚman.fbx
+		//å¯¹äºå½“å‰æ¨¡å‹ï¼Œæˆ‘ä»¬å·¥ç¨‹é‡Œé¢å­˜å‚¨çš„è·¯å¾„å¯èƒ½æ˜¯ï¼šassets/models/superMan/man.fbx
+		//å›¾ç‰‡æ•°æ®å¯èƒ½ä¼šå­˜æ”¾åœ¨ï¼šassets/models/superMan/textures/æ–‡ä»¶å¤¹ä¸‹
+		//ä¸‹æ–¹æ‹¿åˆ°çš„aiPathæ˜¯è¦è¯»å–çš„å›¾ç‰‡çš„ç›¸å¯¹è·¯å¾„ï¼Œç›¸å¯¹äºman.fbx
 		material->Get(AI_MATKEY_TEXTURE(type, 0), aiPath);
 
 		if (!aiPath.length) {
 			return nullptr;
 		}
 
-		//ÓĞµÄÄ£ĞÍ£¬»á°ÑÎÆÀíÒ»Æğ´ò°üÔÚÄ£ĞÍÄÚ²¿£¬²¢Ã»ÓĞµ¥¶À´æ·Å¡£
-		//²é¿´¶ÔÓÚµ±Ç°µÄaiPath¶ÔÓ¦µÄÍ¼Æ¬À´½²£¬ÊÇ·ñ´æÔÚÕâÖÖ´ò°üÔÚÄ£ĞÍÄÚ²¿µÄÇé¿ö
+		//æœ‰çš„æ¨¡å‹ï¼Œä¼šæŠŠçº¹ç†ä¸€èµ·æ‰“åŒ…åœ¨æ¨¡å‹å†…éƒ¨ï¼Œå¹¶æ²¡æœ‰å•ç‹¬å­˜æ”¾ã€‚
+		//æŸ¥çœ‹å¯¹äºå½“å‰çš„aiPathå¯¹åº”çš„å›¾ç‰‡æ¥è®²ï¼Œæ˜¯å¦å­˜åœ¨è¿™ç§æ‰“åŒ…åœ¨æ¨¡å‹å†…éƒ¨çš„æƒ…å†µ
 		const aiTexture* assimpTexture = scene->GetEmbeddedTexture(aiPath.C_Str());
 		if (assimpTexture) {
-			//Èç¹ûÈ·ÊµÍ¼Æ¬´ò°üÔÚÁËÄ£ĞÍÄÚ²¿£¬ÔòÉÏÊö´úÂë»ñÈ¡µ½µÄaiTextureÀïÃæ¾Íº¬ÓĞÁËÍ¼Æ¬Êı¾İ
+			//å¦‚æœç¡®å®å›¾ç‰‡æ‰“åŒ…åœ¨äº†æ¨¡å‹å†…éƒ¨ï¼Œåˆ™ä¸Šè¿°ä»£ç è·å–åˆ°çš„aiTextureé‡Œé¢å°±å«æœ‰äº†å›¾ç‰‡æ•°æ®
 			unsigned char* dataIn = reinterpret_cast<unsigned char*>(assimpTexture->pcData);
 			uint32_t widthIn = assimpTexture->mWidth;
 			uint32_t heightIn = assimpTexture->mHeight;
@@ -198,18 +198,18 @@ namespace ff {
 
 			return TextureLoader::load(path, dataIn, widthIn, heightIn);
 		}
-		//ÒòÎªaiPathÊÇtextures/diffuseTexture.jpg
-		//Æ´×°ºó±ä³É£ºassets/models/superMan/textures/diffuseTexture.jpg
+		//å› ä¸ºaiPathæ˜¯textures/diffuseTexture.jpg
+		//æ‹¼è£…åå˜æˆï¼šassets/models/superMan/textures/diffuseTexture.jpg
 		std::string fullPath = rootPath + aiPath.C_Str();
 		return TextureLoader::load(fullPath);
 	}
 
-	//1 Èç¹ûµ±Ç°½âÎöµÄMeshÊÕµ½ÁË¹Ç÷ÀµÄÓ°Ïì£¬ÄÇÃ´¾ÍÊÇÒ»¸öSkinnedMesh
-	//2 Èç¹ûÊÕµ½ÁË¹Ç÷ÀÓ°Ïì£¬ÄÇÃ´ÆäAttribute¾ÍĞèÒª¼ÓÈëskinIdexÒÔ¼°skinWeight
+	//1 å¦‚æœå½“å‰è§£æçš„Meshæ”¶åˆ°äº†éª¨éª¼çš„å½±å“ï¼Œé‚£ä¹ˆå°±æ˜¯ä¸€ä¸ªSkinnedMesh
+	//2 å¦‚æœæ”¶åˆ°äº†éª¨éª¼å½±å“ï¼Œé‚£ä¹ˆå…¶Attributeå°±éœ€è¦åŠ å…¥skinIdexä»¥åŠskinWeight
 	Object3D::Ptr AssimpLoader::processMesh(
 		const aiMesh* mesh,
 		const aiScene* scene,
-		//µ±Ç°MeshËùÊôµÄNodeÈç¹ûÓĞÄÄÅÂÒ»¸ömesh£¬¾ÍÎŞ·¨ÉèÖÃLocalMatrix
+		//å½“å‰Meshæ‰€å±çš„Nodeå¦‚æœæœ‰å“ªæ€•ä¸€ä¸ªmeshï¼Œå°±æ— æ³•è®¾ç½®LocalMatrix
 		const glm::mat4 localTransform,
 		const std::vector<Material::Ptr>& materials,
 		const std::vector<Bone::Ptr>& bones) {
@@ -218,23 +218,23 @@ namespace ff {
 		Material::Ptr material = nullptr;
 		Geometry::Ptr geometry = Geometry::create();
 
-		std::vector<Bone::Ptr> meshBones;//¶Ôµ±Ç°Mesh²úÉúÓ°ÏìµÄboneµÄÊı×é
-		std::vector<glm::mat4> offsetMatrices;//¶ÔÓ¦ÉÏÊöÊı×éµÄÃ¿Ò»¸öboneµÄoffsetMatrix
+		std::vector<Bone::Ptr> meshBones;//å¯¹å½“å‰Meshäº§ç”Ÿå½±å“çš„boneçš„æ•°ç»„
+		std::vector<glm::mat4> offsetMatrices;//å¯¹åº”ä¸Šè¿°æ•°ç»„çš„æ¯ä¸€ä¸ªboneçš„offsetMatrix
 
-		//Ò»¸öMeshËùĞèÒªµÄËùÓĞattributes
+		//ä¸€ä¸ªMeshæ‰€éœ€è¦çš„æ‰€æœ‰attributes
 		std::vector<float> positions;
 		std::vector<float> normals;
 		std::vector<float> tangents;
 		std::vector<float> bitangents;
 
-		std::vector<std::vector<float>> uvs;//Ã¿Ò»¸öÔªËØ¶¼ÊÇµÚi¸öchannelµÄÎÆÀí×ø±êÊı¾İ
-		std::vector<uint32_t> numUVComponents;//Ã¿Ò»¸öÔªËØ¶¼ÊÇµÚi¸öchannelµÄitemSize
+		std::vector<std::vector<float>> uvs;//æ¯ä¸€ä¸ªå…ƒç´ éƒ½æ˜¯ç¬¬iä¸ªchannelçš„çº¹ç†åæ ‡æ•°æ®
+		std::vector<uint32_t> numUVComponents;//æ¯ä¸€ä¸ªå…ƒç´ éƒ½æ˜¯ç¬¬iä¸ªchannelçš„itemSize
 
 		std::vector<uint32_t> indices;
 		std::vector<float> skinIndices;
 		std::vector<float> skinWeights;
 
-		//°´ÕÕ¶¥µãÀ´±éÀúµÄ
+		//æŒ‰ç…§é¡¶ç‚¹æ¥éå†çš„
 		for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
 			positions.push_back(mesh->mVertices[i].x);
 			positions.push_back(mesh->mVertices[i].y);
@@ -257,54 +257,54 @@ namespace ff {
 			}
 
 			//may have multi-textures, u is the number
-			//1 Ò»¸öÄ£ĞÍ¿ÉÄÜÆäÖĞµÄmesh»áÓĞ¶à¸öÌùÍ¼£¬ÌùÍ¼¿ÉÄÜ»áÓĞÏàÍ¬¹¦ÄÜ£¬±ÈÈçDiffuseMap¿ÉÄÜÓĞ¶àÕÅ£¬ÄÇÃ´ÑÕÉ«¾Í»á»ìºÏ
-			//Ò²ÓĞ¿ÉÄÜÊÇ²»Í¬¹¦ÄÜ£¬±ÈÈçNormalMap SpecularMap DiffuseMap¡£
-			// 2 ¼ÈÈ»ÓĞ¶àÕÅÌùÍ¼¿ÉÄÜ£¬Í¬Ò»¸ö¶¥µã²ÉÑù²»Í¬µÄÎÆÀí£¬¿ÉÄÜ»áÓĞ²»Í¬µÄuv×ø±ê
-			// 3 ÎÆÀí×ø±ê»áÓĞ²»Í¬ÀàĞÍ£¬Èç¹û²ÉÑù¶şÎ»Í¼Æ¬£¬¾ÍÊÇ¼òµ¥µÄ¶şÎ»uv£¬Èç¹û²ÉÑù»·¾³ÌùÍ¼uvw£¨str£©
+			//1 ä¸€ä¸ªæ¨¡å‹å¯èƒ½å…¶ä¸­çš„meshä¼šæœ‰å¤šä¸ªè´´å›¾ï¼Œè´´å›¾å¯èƒ½ä¼šæœ‰ç›¸åŒåŠŸèƒ½ï¼Œæ¯”å¦‚DiffuseMapå¯èƒ½æœ‰å¤šå¼ ï¼Œé‚£ä¹ˆé¢œè‰²å°±ä¼šæ··åˆ
+			//ä¹Ÿæœ‰å¯èƒ½æ˜¯ä¸åŒåŠŸèƒ½ï¼Œæ¯”å¦‚NormalMap SpecularMap DiffuseMapã€‚
+			// 2 æ—¢ç„¶æœ‰å¤šå¼ è´´å›¾å¯èƒ½ï¼ŒåŒä¸€ä¸ªé¡¶ç‚¹é‡‡æ ·ä¸åŒçš„çº¹ç†ï¼Œå¯èƒ½ä¼šæœ‰ä¸åŒçš„uvåæ ‡
+			// 3 çº¹ç†åæ ‡ä¼šæœ‰ä¸åŒç±»å‹ï¼Œå¦‚æœé‡‡æ ·äºŒä½å›¾ç‰‡ï¼Œå°±æ˜¯ç®€å•çš„äºŒä½uvï¼Œå¦‚æœé‡‡æ ·ç¯å¢ƒè´´å›¾uvwï¼ˆstrï¼‰
 			// 
-			// ×Ü½á£º¶ÔÓÚÍ¬Ò»¸öMesh£¬¶ÁÈ¡ÆäÄ³¸ö¶¥µãµÄuv
-			// 1 »áÓĞ¶àÌ×uv£¬·Ö²¼ÔÚ²»Í¬µÄChannel
-			// 2 ¶ÁÈ¡ÎÆÀí×ø±êµÄÊ±ºò£¬ÒªÅĞ¶ÏÊÇuv»¹ÊÇuvw
+			// æ€»ç»“ï¼šå¯¹äºåŒä¸€ä¸ªMeshï¼Œè¯»å–å…¶æŸä¸ªé¡¶ç‚¹çš„uv
+			// 1 ä¼šæœ‰å¤šå¥—uvï¼Œåˆ†å¸ƒåœ¨ä¸åŒçš„Channel
+			// 2 è¯»å–çº¹ç†åæ ‡çš„æ—¶å€™ï¼Œè¦åˆ¤æ–­æ˜¯uvè¿˜æ˜¯uvw
 			//
 
-			//GetNumUVChannels:»ñÈ¡µ±Ç°MeshÓĞ¶àÉÙÌ×ÎÆÀí×ø±ê
-			//½«²»Í¬µÄChannelµÄÎÆÀí×ø±ê´æÔÚÁË²»Í¬µÄvector<float>ÀïÃæ
+			//GetNumUVChannels:è·å–å½“å‰Meshæœ‰å¤šå°‘å¥—çº¹ç†åæ ‡
+			//å°†ä¸åŒçš„Channelçš„çº¹ç†åæ ‡å­˜åœ¨äº†ä¸åŒçš„vector<float>é‡Œé¢
 			for (uint32_t u = 0; u < mesh->GetNumUVChannels(); ++u) {
 				if (u >= uvs.size()) {
 					uvs.push_back(std::vector<float>());
 				}
 				std::vector<float>& uvComponents = uvs[u];
 
-				//²é¿´¶ÔÓÚµ±Ç°Õâ¸öChannelÆäÎÆÀí×ø±êÊÇuv»¹ÊÇuvw
-				//mNumUVComponents ´æ´¢ÁËµ±Ç°µÚu¸öChannelËù¶ÔÓ¦µÄÕâÒ»Ì×ÎÆÀí×ø±êitemSize
+				//æŸ¥çœ‹å¯¹äºå½“å‰è¿™ä¸ªChannelå…¶çº¹ç†åæ ‡æ˜¯uvè¿˜æ˜¯uvw
+				//mNumUVComponents å­˜å‚¨äº†å½“å‰ç¬¬uä¸ªChannelæ‰€å¯¹åº”çš„è¿™ä¸€å¥—çº¹ç†åæ ‡itemSize
 				uint32_t numComponents = mesh->mNumUVComponents[u];
 
-				//uv  or  uvw ´æÏÂÀ´µÄÔ­Òò£¬ÊÇÈç¹û½«µ±Ç°µÄÎÆÀí×ø±ê×÷Îªattribute´«Èëgeometry£¬ÔÚ¹¹½¨
-				//attributeµÄÊ±ºò£¬¾ÍĞèÒªÖªµÀitemSize
+				//uv  or  uvw å­˜ä¸‹æ¥çš„åŸå› ï¼Œæ˜¯å¦‚æœå°†å½“å‰çš„çº¹ç†åæ ‡ä½œä¸ºattributeä¼ å…¥geometryï¼Œåœ¨æ„å»º
+				//attributeçš„æ—¶å€™ï¼Œå°±éœ€è¦çŸ¥é“itemSize
 				if (u >= numUVComponents.size()) {
 					numUVComponents.push_back(numComponents);
 				}
 
-				//°´ÕÕnumComponents½øĞĞ±éÀú¶ÁÈ¡£¬ÒªÃ´Ñ­»·2´Î¼´uv£¬ÒªÃ´Ñ­»·3´Î¼´uvw
+				//æŒ‰ç…§numComponentsè¿›è¡Œéå†è¯»å–ï¼Œè¦ä¹ˆå¾ªç¯2æ¬¡å³uvï¼Œè¦ä¹ˆå¾ªç¯3æ¬¡å³uvw
 				for (uint32_t c = 0; c < numComponents; c++) {
-					//mTextureCoords´æ´¢×ÅËùÓĞµÄÎÆÀí×ø±êÊı¾İ
-					//u´ú±í×ÅµÚu¸öchannel
-					//i´ú±íÁË¶ÁÈ¡µÚi¸ö¶¥µãµÄÊı¾İ
-					//c´ú±íÁËµÚc¸öÎÆÀí×ø±êÊı¾İ
+					//mTextureCoordså­˜å‚¨ç€æ‰€æœ‰çš„çº¹ç†åæ ‡æ•°æ®
+					//uä»£è¡¨ç€ç¬¬uä¸ªchannel
+					//iä»£è¡¨äº†è¯»å–ç¬¬iä¸ªé¡¶ç‚¹çš„æ•°æ®
+					//cä»£è¡¨äº†ç¬¬cä¸ªçº¹ç†åæ ‡æ•°æ®
 					uvComponents.push_back(mesh->mTextureCoords[u][i][c]);
 				}
 			}
 		}
 
-		//¶ÁÈ¡µ±Ç°MeshµÄIndexÊı¾İ
-		//ÔÚaimeshÀïÃæ£¬Ã¿Ò»¸öÈı½ÇĞÎ¶¼ÊÇÒ»¸öFace£¬±éÀúËùÓĞµÄFace£¬½«ÆäindexÈ¡³ö±£´æ
+		//è¯»å–å½“å‰Meshçš„Indexæ•°æ®
+		//åœ¨aimeshé‡Œé¢ï¼Œæ¯ä¸€ä¸ªä¸‰è§’å½¢éƒ½æ˜¯ä¸€ä¸ªFaceï¼Œéå†æ‰€æœ‰çš„Faceï¼Œå°†å…¶indexå–å‡ºä¿å­˜
 		for (uint32_t f = 0; f < mesh->mNumFaces; f++)
 		{
 			aiFace	face = mesh->mFaces[f];
 
 			for (uint32_t id = 0; id < face.mNumIndices; id++)
 			{
-				//ÍÆÈëÃ¿Ò»¸öFaceµÄÃ¿Ò»¸ö¶¥µãµÄID
+				//æ¨å…¥æ¯ä¸€ä¸ªFaceçš„æ¯ä¸€ä¸ªé¡¶ç‚¹çš„ID
 				indices.push_back(face.mIndices[id]);
 			}
 		}
@@ -316,11 +316,11 @@ namespace ff {
 		//traverse every bone
 		bool hasBone = false;
 
-		//mNumBones¶Ôµ±Ç°mesh²úÉúÓ°ÏìµÄ¹Ç÷ÀÊıÁ¿
+		//mNumBoneså¯¹å½“å‰meshäº§ç”Ÿå½±å“çš„éª¨éª¼æ•°é‡
 		for (uint32_t b = 0; b < mesh->mNumBones; ++b) {
 			auto aiBone = mesh->mBones[b];
 
-			//Õâ¸ö¹Ç÷ÀµÄÃû×Ö£¬Ò²ÊÇ¶ÔÓ¦ÁËaiNodeµ±ÖĞµÄÄ³Ò»¸ö½ÚµãµÄÃû×Ö
+			//è¿™ä¸ªéª¨éª¼çš„åå­—ï¼Œä¹Ÿæ˜¯å¯¹åº”äº†aiNodeå½“ä¸­çš„æŸä¸€ä¸ªèŠ‚ç‚¹çš„åå­—
 			std::string name = aiBone->mName.C_Str();
 
 			auto bone = getBoneByName(name, bones);
@@ -330,11 +330,11 @@ namespace ff {
 			offsetMatrices.push_back(getGLMMat4(aiBone->mOffsetMatrix));
 
 			//parse  weight & indices
-			//weightsNum´ú±íÁËµ±Ç°Õâ¸úaiBone¹Ç÷À£¬Ó°ÏìÁË¶àÉÙ¸ö±¾meshµÄ¶¥µã
+			//weightsNumä»£è¡¨äº†å½“å‰è¿™è·ŸaiBoneéª¨éª¼ï¼Œå½±å“äº†å¤šå°‘ä¸ªæœ¬meshçš„é¡¶ç‚¹
 			uint32_t weightsNum = aiBone->mNumWeights;
 			auto weights = aiBone->mWeights;
 			for (uint32_t w = 0; w < weightsNum; ++w) {
-				//Ç°·½µÄ½âÎö¶¥µãµÄË³ĞòÒ²¾ÍÊÇµ±Ç°µÄvertexId
+				//å‰æ–¹çš„è§£æé¡¶ç‚¹çš„é¡ºåºä¹Ÿå°±æ˜¯å½“å‰çš„vertexId
 				auto vertexId = weights[w].mVertexId;
 				auto skinWeight = weights[w].mWeight;
 
@@ -363,35 +363,35 @@ namespace ff {
 			geometry->setAttribute("skinWeight", Attributef::create(skinWeights, 4));
 		}
 
-		//geometryÀïÃæÊÇkey-value£¬key¾ÍÊÇattributeµÄÃû×Ö£¬value¾ÍÊÇattribute¶ÔÏó
-		//Ö÷diffuseMapµÄuvÈÔÈ»½Ğ×öuv
-		//´ÓµÚ¶şÌ×ÎÆÀí×ø±ê¿ªÊ¼£¬¶¼½Ğ×öuv1 uv2.....
+		//geometryé‡Œé¢æ˜¯key-valueï¼Œkeyå°±æ˜¯attributeçš„åå­—ï¼Œvalueå°±æ˜¯attributeå¯¹è±¡
+		//ä¸»diffuseMapçš„uvä»ç„¶å«åšuv
+		//ä»ç¬¬äºŒå¥—çº¹ç†åæ ‡å¼€å§‹ï¼Œéƒ½å«åšuv1 uv2.....
 		std::string uvName;
 
-		//Ñ­»·Ã¿Ò»Ì×ÎÆÀí×ø±ê
+		//å¾ªç¯æ¯ä¸€å¥—çº¹ç†åæ ‡
 		for (uint32_t uvId = 0; uvId < uvs.size(); ++uvId) {
 			uvName = "uv";
 			if (uvId) {
 				uvName += std::to_string(uvId);
 			}
 	
-			//uvName : uv  uv1  uv2 uv3....¡£Ä¿Ç°µÄÒıÇæÏµÍ³½öÖ§³Öuv£¬»¹Ã»ÓĞÀ©Õ¹¶àÌ×uvµÄÇé¿ö
-			//È¡³öuvs[uvId]£ºµÚuvIdÌ×uvÊı¾İvector<float>
-			//numUVComponents[uvId]£ºµÚuvIdÌ×uvµÄitemSize£¬¿ÉÄÜÊÇ2 ¿ÉÄÜÊÇ3
+			//uvName : uv  uv1  uv2 uv3....ã€‚ç›®å‰çš„å¼•æ“ç³»ç»Ÿä»…æ”¯æŒuvï¼Œè¿˜æ²¡æœ‰æ‰©å±•å¤šå¥—uvçš„æƒ…å†µ
+			//å–å‡ºuvs[uvId]ï¼šç¬¬uvIdå¥—uvæ•°æ®vector<float>
+			//numUVComponents[uvId]ï¼šç¬¬uvIdå¥—uvçš„itemSizeï¼Œå¯èƒ½æ˜¯2 å¯èƒ½æ˜¯3
 			geometry->setAttribute(uvName, Attributef::create(uvs[uvId], numUVComponents[uvId]));
 		}
 
 		geometry->setIndex(Attributei::create(indices, 1));
 
 		//process material
-		//´ÓaiMeshÀïÃæ£¬¿ÉÒÔÄÃµ½µ±Ç°MeshËùÊ¹ÓÃµÄMaterialµÄindex£¬¶ÔÓ¦×ÅaiScene->mMaterialsÊı×éµÄ±àºÅ
-		//ÒÑ¾­½âÎöºÃµÄmaterialsÊı×é¸úaiScene->mMaterialsÊÇÒ»Ò»¶ÔÓ¦µÄ
+		//ä»aiMeshé‡Œé¢ï¼Œå¯ä»¥æ‹¿åˆ°å½“å‰Meshæ‰€ä½¿ç”¨çš„Materialçš„indexï¼Œå¯¹åº”ç€aiScene->mMaterialsæ•°ç»„çš„ç¼–å·
+		//å·²ç»è§£æå¥½çš„materialsæ•°ç»„è·ŸaiScene->mMaterialsæ˜¯ä¸€ä¸€å¯¹åº”çš„
 		if (mesh->mMaterialIndex >= 0) {
 			material = materials[mesh->mMaterialIndex];
 		}
 
 		if (hasBone) {
-			//Õâ¸ömeshBonesÊÇ¸ù¾İÄÄĞ©¹Ç÷À¶Ôµ±Ç°Mesh²úÉúÁËÓ°Ïì£¬´ÓbonesÊı×éÀïÃæ³éµ÷¹¹½¨µÄ
+			//è¿™ä¸ªmeshBonesæ˜¯æ ¹æ®å“ªäº›éª¨éª¼å¯¹å½“å‰Meshäº§ç”Ÿäº†å½±å“ï¼Œä»bonesæ•°ç»„é‡Œé¢æŠ½è°ƒæ„å»ºçš„
 			auto skeleton = Skeleton::create(meshBones, offsetMatrices);
 			auto skinnedMesh = SkinnedMesh::create(geometry, material);
 			skinnedMesh->bind(skeleton);
@@ -400,7 +400,7 @@ namespace ff {
 			//attention: localTransform is in bone
 		}
 		else {
-			//×¢Òâ£¡£¡Èç¹ûÃ»ÓĞ¶¯»­Ó°Ïñ£¬ÔòÊ¹ÓÃµ±Ç°½ÚµãµÄTransform¾ØÕó×÷ÎªÆälocalMatrix
+			//æ³¨æ„ï¼ï¼å¦‚æœæ²¡æœ‰åŠ¨ç”»å½±åƒï¼Œåˆ™ä½¿ç”¨å½“å‰èŠ‚ç‚¹çš„TransformçŸ©é˜µä½œä¸ºå…¶localMatrix
 			object = Mesh::create(geometry, material);
 			object->setLocalMatrix(localTransform);
 		}
@@ -413,25 +413,25 @@ namespace ff {
 		assert(scene);
 
 		std::vector<AnimationClip::Ptr> clips;
-		//È¡µÃµ±Ç°Ä£ĞÍÓĞ¶àÉÙ¸ö¶¯»­£¨ÅÜ¶¯£¬³öÈ­£©
+		//å–å¾—å½“å‰æ¨¡å‹æœ‰å¤šå°‘ä¸ªåŠ¨ç”»ï¼ˆè·‘åŠ¨ï¼Œå‡ºæ‹³ï¼‰
 		uint32_t animationNum = scene->mNumAnimations;
 
-		//±éÀúÃ¿Ò»¸ö¶¯»­½øĞĞ¶ÁÈ¡
+		//éå†æ¯ä¸€ä¸ªåŠ¨ç”»è¿›è¡Œè¯»å–
 		for (uint32_t i = 0; i < animationNum; ++i) {
 			auto animation = scene->mAnimations[i];
 			std::string name = animation->mName.C_Str();
 
-			//ÒÔticksÎªµ¥Î»µÄ¶¯»­×ÜÊ±³¤
+			//ä»¥ticksä¸ºå•ä½çš„åŠ¨ç”»æ€»æ—¶é•¿
 			float duration = animation->mDuration;
 
-			//Ò»ÃëÖÓÓĞ¶àÉÙticks
+			//ä¸€ç§’é’Ÿæœ‰å¤šå°‘ticks
 			float ticksPerSecond = animation->mTicksPerSecond;
 
 			std::vector<KeyframeTrack::Ptr> tracks{};
 
-			//±éÀúµ±Ç°¶¯»­µÄËùÓĞTracks²¢ÇÒ¹¹ÔìKeyFrameTracks
-			//mNumChannelsÊÇÖ¸µ±Ç°µÄ¶¯»­Éæ¼°µ½ÁË¶àÉÙ¸ö¹Ç÷À
-			//Ò»¸öChannel´ú±íÁËÒ»¸ö¹Ç÷À£¨aiNode£©
+			//éå†å½“å‰åŠ¨ç”»çš„æ‰€æœ‰Trackså¹¶ä¸”æ„é€ KeyFrameTracks
+			//mNumChannelsæ˜¯æŒ‡å½“å‰çš„åŠ¨ç”»æ¶‰åŠåˆ°äº†å¤šå°‘ä¸ªéª¨éª¼
+			//ä¸€ä¸ªChannelä»£è¡¨äº†ä¸€ä¸ªéª¨éª¼ï¼ˆaiNodeï¼‰
 			for (uint32_t c = 0; c < animation->mNumChannels; ++c) {
 				auto channel = animation->mChannels[c];
 				std::string boneName = channel->mNodeName.C_Str();
@@ -440,7 +440,7 @@ namespace ff {
 				std::vector<float> times;
 				std::string trackName;
 
-				//¿ªÊ¼±éÀúµ±Ç°µÄChannel£¨bone£©ÄÚ²¿µÄÆ½ÒÆÏà¹ØµÄ¶¯»­¹Ø¼üÖ¡
+				//å¼€å§‹éå†å½“å‰çš„Channelï¼ˆboneï¼‰å†…éƒ¨çš„å¹³ç§»ç›¸å…³çš„åŠ¨ç”»å…³é”®å¸§
 				for (uint32_t p = 0; p < channel->mNumPositionKeys; ++p) {
 					auto position = getGLMVec3(channel->mPositionKeys[p].mValue);
 					auto time = channel->mPositionKeys[p].mTime;
@@ -452,10 +452,10 @@ namespace ff {
 					times.push_back(time);
 				}
 
-				//Èç¹ûµ±Ç°È·Êµ¶ÁÈ¡µ½ÁËµÚc¸öchannelµÄposition±ä»»¹Ø¼üÖ¡Êı¾İ
+				//å¦‚æœå½“å‰ç¡®å®è¯»å–åˆ°äº†ç¬¬cä¸ªchannelçš„positionå˜æ¢å…³é”®å¸§æ•°æ®
 				if (times.size()) {
-					//ºÜÖØÒª£¡£¡£¡ÕâÑùĞ´Ãû×Ö£¬¿ÉÒÔÓÃÀ´ÔÚpropertyBindingÀïÃæ×öÕıÔò±í´ïÊ½Æ¥Åä£¬´Ó¶øÖªµÀ
-					//µ±Ç°Õâ¸ökeyFrameTrack¶ÔÓ¦ÄÄ¸ö¹Ç÷ÀµÄÄÄ¸öÊôĞÔ
+					//å¾ˆé‡è¦ï¼ï¼ï¼è¿™æ ·å†™åå­—ï¼Œå¯ä»¥ç”¨æ¥åœ¨propertyBindingé‡Œé¢åšæ­£åˆ™è¡¨è¾¾å¼åŒ¹é…ï¼Œä»è€ŒçŸ¥é“
+					//å½“å‰è¿™ä¸ªkeyFrameTrackå¯¹åº”å“ªä¸ªéª¨éª¼çš„å“ªä¸ªå±æ€§
 					trackName = boneName + ".position";
 					auto positionKeyframe = VectorKeyframeTrack::create(trackName, values, times);
 					tracks.push_back(positionKeyframe);
@@ -464,7 +464,7 @@ namespace ff {
 				values.clear();
 				times.clear();
 
-				//¶ÁÈ¡Ğı×ªÏà¹Ø¹Ø¼üÖ¡
+				//è¯»å–æ—‹è½¬ç›¸å…³å…³é”®å¸§
 				for (uint32_t r = 0; r < channel->mNumRotationKeys; ++r) {
 					auto quaternion = getGLMQuat(channel->mRotationKeys[r].mValue);
 					auto time = channel->mRotationKeys[r].mTime;
@@ -477,7 +477,7 @@ namespace ff {
 					times.push_back(time);
 				}
 
-				//Èç¹ûËÄÔªÊıµÄ¹Ø¼üÖ¡²»Îª0
+				//å¦‚æœå››å…ƒæ•°çš„å…³é”®å¸§ä¸ä¸º0
 				if (times.size() != 0) {
 					trackName = boneName + ".quaternion";
 					auto quaternionKeyframe = QuaternionKeyframeTrack::create(trackName, values, times);
@@ -487,7 +487,7 @@ namespace ff {
 				values.clear();
 				times.clear();
 
-				//¶ÁÈ¡Ëõ·ÅÏà¹ØµÄ¹Ø¼üÖ¡
+				//è¯»å–ç¼©æ”¾ç›¸å…³çš„å…³é”®å¸§
 				for (uint32_t s = 0; s < channel->mNumScalingKeys; ++s) {
 					auto scale = getGLMVec3(channel->mScalingKeys[s].mValue);
 					auto time = channel->mScalingKeys[s].mTime;
@@ -499,7 +499,7 @@ namespace ff {
 					times.push_back(time);
 				}
 
-				//Èç¹ûËõ·Å¹Ø¼üÖ¡²»Îª¿Õ
+				//å¦‚æœç¼©æ”¾å…³é”®å¸§ä¸ä¸ºç©º
 				if (times.size() != 0) {
 					trackName = boneName + ".scale";
 					auto scaleKeyframe = VectorKeyframeTrack::create(trackName, values, times);
@@ -515,15 +515,15 @@ namespace ff {
 	}
 
 	void AssimpLoader::setVertexSkinData(
-		const uint32_t& id,//µ±Ç°µÚ¼¸¸övertexÊÕµ½Ó°Ïì
-		const float& boneId,//µ±Ç°meshÊÕµ½Ó°ÏìµÄ¹Ç÷ÀÃÇ¹¹³ÉÒ»¸öÊı×ébones£¬Õâ¸öÊÇÀïÃæµÄ¹Ç÷ÀµÄidºÅ
-		const float& skinWeight,//µ±Ç°boneIdºÅ¹Ç÷À¶Ôµ±Ç°µÚid¸övertex²úÉúÓ°ÏìµÄÈ¨ÖØÖµ
+		const uint32_t& id,//å½“å‰ç¬¬å‡ ä¸ªvertexæ”¶åˆ°å½±å“
+		const float& boneId,//å½“å‰meshæ”¶åˆ°å½±å“çš„éª¨éª¼ä»¬æ„æˆä¸€ä¸ªæ•°ç»„bonesï¼Œè¿™ä¸ªæ˜¯é‡Œé¢çš„éª¨éª¼çš„idå·
+		const float& skinWeight,//å½“å‰boneIdå·éª¨éª¼å¯¹å½“å‰ç¬¬idä¸ªvertexäº§ç”Ÿå½±å“çš„æƒé‡å€¼
 		std::vector<float>& skinIndices,
 		std::vector<float>& skinWeights) {
 
-		//ÏµÍ³Ö§³Ö£¬µ±Ç°×î¶àÊÕµ½ËÄ¸ù¹Ç÷ÀÓ°Ïì
-		//ÒòÎªµ±Ç°¶¥µã¿ÉÄÜ»áÊÕµ½´óÓÚËÄ¸ù¹Ç÷ÀµÄÓ°Ïì£¬ÄÇÃ´ÏÈµ½ÏÈµÃ
-		//Ã¿¸ö¶¥µã¾ÍÔ¤ÁôÁËËÄ¸ö¹Ç÷ÀÊı¾İµÄ¿Õ¼ä£¬ÌîÂú¾ÍÍ£ÏÂÁË
+		//ç³»ç»Ÿæ”¯æŒï¼Œå½“å‰æœ€å¤šæ”¶åˆ°å››æ ¹éª¨éª¼å½±å“
+		//å› ä¸ºå½“å‰é¡¶ç‚¹å¯èƒ½ä¼šæ”¶åˆ°å¤§äºå››æ ¹éª¨éª¼çš„å½±å“ï¼Œé‚£ä¹ˆå…ˆåˆ°å…ˆå¾—
+		//æ¯ä¸ªé¡¶ç‚¹å°±é¢„ç•™äº†å››ä¸ªéª¨éª¼æ•°æ®çš„ç©ºé—´ï¼Œå¡«æ»¡å°±åœä¸‹äº†
 		for (uint32_t i = 0; i < 4; ++i) {
 			if (skinIndices[id * 4 + i] < 0.0f) {
 				skinIndices[id * 4 + i] = boneId;
@@ -543,7 +543,7 @@ namespace ff {
 		return nullptr;
 	}
 
-	//ÏµÁĞ¹¤¾ßº¯Êı£¬½«ÏòÁ¿¡¢ËÄÔªÊı¡¢¾ØÕó´ÓassimpµÄ¸ñÊ½ÀïÃæ×ª»¯ÎªglmµÄ¸ñÊ½
+	//ç³»åˆ—å·¥å…·å‡½æ•°ï¼Œå°†å‘é‡ã€å››å…ƒæ•°ã€çŸ©é˜µä»assimpçš„æ ¼å¼é‡Œé¢è½¬åŒ–ä¸ºglmçš„æ ¼å¼
 	glm::vec3 AssimpLoader::getGLMVec3(aiVector3D value) noexcept
 	{
 		return glm::vec3(value.x, value.y, value.z);
