@@ -23,14 +23,14 @@ namespace ff {
 
 		~Attribute() noexcept;
 
-		//将value设置到第index个顶点的x值上
+		/// 将value设置到第index个顶点的x值上
 		void setX(const uint32_t& index, T value) noexcept;
 
 		void setY(const uint32_t& index, T value) noexcept;
 
 		void setZ(const uint32_t& index, T value) noexcept;
 
-		//得到第index个顶点的本attribute的x值
+		/// 得到第index个顶点的本attribute的x值
 		T getX(const uint32_t& index) noexcept;
 
 		T getY(const uint32_t& index) noexcept;

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "../core/attribute.h"
 
@@ -6,7 +6,7 @@ namespace ff {
 
 	class Box3 {
 	public:
-		//Ê¹ÓÃÖÇÄÜÖ¸Õë°ü×°
+		/// ä½¿ç”¨æ™ºèƒ½æŒ‡é’ˆåŒ…è£…
 		using Ptr = std::shared_ptr<Box3>;
 		static Ptr create() {
 			return std::make_shared<Box3>();
@@ -16,7 +16,7 @@ namespace ff {
 
 		~Box3() noexcept {}
 
-		//´«ÈëÒ»¸öMeshµÄPositionAttribute£¬¸ø³öÆä°üÎ§ºĞ
+		/// ä¼ å…¥ä¸€ä¸ªMeshçš„PositionAttributeï¼Œç»™å‡ºå…¶åŒ…å›´ç›’
 		void setFromAttribute(const Attributef::Ptr& attribute) noexcept {
 			for (uint32_t i = 0; i < attribute->getCount(); ++i) {
 				float x = attribute->getX(i);
@@ -42,13 +42,13 @@ namespace ff {
 				return glm::vec3(0.0f);
 			}
 
-			//maxÓëmin´¦ÓÚÁ¢·½ÌåµÄ¶Ô½ÇÏßµÄÁ½¸ö¶¥µãÎ»ÖÃ
+			/// maxä¸minå¤„äºç«‹æ–¹ä½“çš„å¯¹è§’çº¿çš„ä¸¤ä¸ªé¡¶ç‚¹ä½ç½®
 			return (mMax + mMin) / 2.0f;
 		}
 
 	public:
-		//minÊÇ°üÎ§ºĞxyz×îĞ¡µÄÄÇ¸öµã,maxÊÇ°üÎ§ºĞxyz×î´óµÄÄÇ¸öµã
-		glm::vec3 mMin = glm::vec3(std::numeric_limits<float>::infinity());//ÓÃfloat×î´óÖµ½øĞĞ³õÊ¼»¯
-		glm::vec3 mMax = glm::vec3(-std::numeric_limits<float>::infinity());//ÓÃfloat×î´óÖµµÄ¸ºÊı½øĞĞ³õÊ¼»¯
+		/// minæ˜¯åŒ…å›´ç›’xyzæœ€å°çš„é‚£ä¸ªç‚¹,maxæ˜¯åŒ…å›´ç›’xyzæœ€å¤§çš„é‚£ä¸ªç‚¹
+		glm::vec3 mMin = glm::vec3(std::numeric_limits<float>::infinity());		/// ç”¨floatæœ€å¤§å€¼è¿›è¡Œåˆå§‹åŒ–
+		glm::vec3 mMax = glm::vec3(-std::numeric_limits<float>::infinity());	/// ç”¨floatæœ€å¤§å€¼çš„è´Ÿæ•°è¿›è¡Œåˆå§‹åŒ–
 	};
 }

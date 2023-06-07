@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 
 namespace ff {
@@ -19,10 +19,10 @@ namespace ff {
 		bool mIsDirectionalLight{ false };
 	};
 
-	//Object3DÊÇËùÓĞ¿Õ¼ä±ä»»¡¢½Úµã½á¹¹µÈµÄ×î»ù´¡µÄÀàĞÍ
+	/// Object3Dæ˜¯æ‰€æœ‰ç©ºé—´å˜æ¢ã€èŠ‚ç‚¹ç»“æ„ç­‰çš„æœ€åŸºç¡€çš„ç±»å‹
 	class Object3D : public std::enable_shared_from_this<Object3D>, public ObjectTypeChecker {
 	public:
-		//Ê¹ÓÃÖÇÄÜÖ¸Õë½øĞĞ¹ÜÀí
+		/// ä½¿ç”¨æ™ºèƒ½æŒ‡é’ˆè¿›è¡Œç®¡ç†
 		using Ptr = std::shared_ptr<Object3D>;
 		static Ptr create() {
 			return std::make_shared <Object3D>();
@@ -32,21 +32,31 @@ namespace ff {
 
 		~Object3D() noexcept;
 
-		//Âú×ã¶¯Ì¬ÀàĞÍ×ª»»
-		//Parent* p = new ChildA();
-		//ChildA* c = p;²»ĞĞ£¬ÒòÎªparent¿ÉÒÔÅÉÉú³öÀ´ChildA ChildB¡£¡£¡£
-		//ChildA* c = dynamic_cast<ChildA>(p);//static_cast reinterpret_cast 
-		//dynamic¶¯Ì¬×ª»»»á½øĞĞÀàĞÍ¼ìÑé£¬Èç¹ûp²¢²»ÊÇChildAÕâÖÖ¶ÔÏó£¬ÄÇÃ´Ê§°Ü£¬·µ»Ønullptr
-		//dynamicÒªÇó¸¸Àà±ØĞëÓĞĞéº¯Êı
-		//ÖÇÄÜÖ¸ÕëÒ²ÓµÓĞÒ»Ì×ÀàĞÍ×ª»»ÌåÏµ£¬ÈçÏÂ£º
-		/*std::reinterpret_pointer_cast
+		/// TODO æ»¡è¶³åŠ¨æ€ç±»å‹è½¬æ¢ 
+		/// Parent* p = new ChildA();
+		/// ChildA* c = p;ä¸è¡Œï¼Œå› ä¸ºparentå¯ä»¥æ´¾ç”Ÿå‡ºæ¥ChildA ChildBã€‚ã€‚ã€‚
+		/// ChildA* c = dynamic_cast<ChildA>(p);//static_cast reinterpret_cast 
+		/// dynamicåŠ¨æ€è½¬æ¢ä¼šè¿›è¡Œç±»å‹æ£€éªŒï¼Œå¦‚æœpå¹¶ä¸æ˜¯ChildAè¿™ç§å¯¹è±¡ï¼Œé‚£ä¹ˆå¤±è´¥ï¼Œè¿”å›nullptr
+		/// dynamicè¦æ±‚çˆ¶ç±»å¿…é¡»æœ‰è™šå‡½æ•°
+		/// æ™ºèƒ½æŒ‡é’ˆä¹Ÿæ‹¥æœ‰ä¸€å¥—ç±»å‹è½¬æ¢ä½“ç³»ï¼Œå¦‚ä¸‹ï¼š
+		/* std::reinterpret_pointer_cast
 		std::dynamic_pointer_cast;
-		std::static_pointer_cast;*/
-		virtual void fakeFunction() noexcept {}
+		std::static_pointer_cast; */
+		virtual auto fakeFunction() noexcept -> void {}
 
-		void setPosition(float x, float y, float z) noexcept;
+		/// \brief è®¾ç½®OBJ3dåæ ‡ä½ç½® åˆ—ä¼˜å…ˆå­˜å‚¨
+		///	åˆ—ä¼˜å…ˆå­˜å‚¨:a e i m b f j n c g k o d h l p
+		/// åˆ—ä¼˜å…ˆå­˜å‚¨:a b c d e f g h i j....
+		/// \param x 
+		/// \param y 
+		/// \param z 
+		auto setPosition(float x, float y, float z) noexcept -> void;
 
-		void setPosition(const glm::vec3& position) noexcept;
+		/// \brief è®¾ç½®OBJ3dåæ ‡ä½ç½® åˆ—ä¼˜å…ˆå­˜å‚¨
+		///	åˆ—ä¼˜å…ˆå­˜å‚¨:a e i m b f j n c g k o d h l p
+		/// åˆ—ä¼˜å…ˆå­˜å‚¨:a b c d e f g h i j....
+		/// \param position 
+		auto setPosition(const glm::vec3& position) noexcept -> void;
 
 		void setQuaternion(float x, float y, float z, float w) noexcept;
 
@@ -68,8 +78,10 @@ namespace ff {
 
 		void setWorldMatrix(const glm::mat4& worldMatrix) noexcept;
 
-		//Ïòµ±Ç°µÄObject3DÀïÃæ£¬¼ÓÈë×Ó½Úµã
-		void addChild(const Object3D::Ptr& child) noexcept;
+		/// \brief å‘å½“å‰çš„Object3Dé‡Œé¢ï¼ŒåŠ å…¥å­èŠ‚ç‚¹
+		/// \param child å­èŠ‚ç‚¹
+		/// return é˜²æ­¢é‡å¤åŠ å…¥å’ŒæŠŠè‡ªå·±ä¹ŸåŠ è¿›å»
+		auto addChild(const Object3D::Ptr& child) noexcept -> bool;
 
 		virtual void updateMatrix() noexcept;
 
@@ -107,50 +119,49 @@ namespace ff {
 		void decompose() noexcept;
 
 	public:
-		//visibleÀ´±íÊ¾ÊÇ·ñ¶ÔÆä½øĞĞäÖÈ¾
+		/// visibleæ¥è¡¨ç¤ºæ˜¯å¦å¯¹å…¶è¿›è¡Œæ¸²æŸ“
 		bool	mVisible{ true };
 
-		//ÊÇ·ñ²úÉúÒõÓ°
+		/// æ˜¯å¦äº§ç”Ÿé˜´å½±
 		bool	mCastShadow{ true };
 
-		//objµÄÃû×Ö
+		/// objçš„åå­—
 		std::string mName;
 
-		//±íÊ¾ÊÇ·ñÇ¿ÖÆ¶Ô¾ØÕó½øĞĞ¸üĞÂ
+		/// è¡¨ç¤ºæ˜¯å¦å¼ºåˆ¶å¯¹çŸ©é˜µè¿›è¡Œæ›´æ–°
 		bool	mNeedsUpdateMatrix{ true };
 
 	protected:
-		ID	mID{ 0 };//È«¾ÖÎ¨Ò»id
+		ID	mID{ 0 };/// å…¨å±€å”¯ä¸€id
 
-		//for setting easy
+		/// for setting easy
 		glm::vec3 mPosition{ glm::vec3(0.0f) };
 
-		//¶ÔÓÚobjectµÄĞı×ª±ä»»£¬ÎÒÃÇÒ»ÂÉ²ÉÓÃËÄÔªÊı£¬¹ØÓÚËÄÔªÊıµÄÏêÏ¸ÍÆµ½£¬·ÖÏí×ÊÁÏ
-		//¼Óqq£º396198587  wechat£ºcarmazzz
+		/// å¯¹äºobjectçš„æ—‹è½¬å˜æ¢ï¼Œæˆ‘ä»¬ä¸€å¾‹é‡‡ç”¨å››å…ƒæ•°
 		glm::quat mQuaternion{ glm::quat(1.0f, 0.0f, 0.0f, 0.0f) };
 
 		glm::vec3 mScale{ glm::vec3(1.0f) };
 
-		//localMatrix¶ÔÆäÄ£ĞÍ×ø±êÏµ½øĞĞÁË±ä»»
+		/// localMatrixå¯¹å…¶æ¨¡å‹åæ ‡ç³»è¿›è¡Œäº†å˜æ¢
 		glm::mat4	mLocalMatrix = glm::mat4(1.0f);
 
-		//worldMatrix½«Ä£ĞÍ¶¥µã´ÓÄ£ĞÍ×ø±êÏµ£¬×ª»»µ½ÊÀ½ç×ø±êÏµ
+		/// worldMatrixå°†æ¨¡å‹é¡¶ç‚¹ä»æ¨¡å‹åæ ‡ç³»ï¼Œè½¬æ¢åˆ°ä¸–ç•Œåæ ‡ç³»
 		glm::mat4	mWorldMatrix = glm::mat4(1.0f);
 
-		//±£Áô²ÎÊı
+		/// ä¿ç•™å‚æ•°
 		bool		mNeedsUpdate{ false };
 
-		//½ÚµãÏµÍ³
-		//¸¸½Úµã²ÉÓÃweakPtr £¬·ÀÖ¹Ñ­»·ÒıÓÃ
+		/// èŠ‚ç‚¹ç³»ç»Ÿ
+		/// çˆ¶èŠ‚ç‚¹é‡‡ç”¨weakPtr ï¼Œé˜²æ­¢å¾ªç¯å¼•ç”¨
 		std::weak_ptr<Object3D>		mParent;
-		//¸¸½Úµã´æ´¢ÁË×Ó½ÚµãµÄsharedPtr£¬½¨Á¢Ò»´ÎÒıÓÃ,±£Ö¤×Ó½ÚµãµÄÒıÓÃ¼ÆÊıÖÁÉÙ´óÓÚ1
+		/// çˆ¶èŠ‚ç‚¹å­˜å‚¨äº†å­èŠ‚ç‚¹çš„sharedPtrï¼Œå»ºç«‹ä¸€æ¬¡å¼•ç”¨,ä¿è¯å­èŠ‚ç‚¹çš„å¼•ç”¨è®¡æ•°è‡³å°‘å¤§äº1
 		std::vector<Object3D::Ptr>	mChildren{};
 
-		//for shading
-		//modelViewMatrix½«Ä£ĞÍ¶¥µã£¬´ÓÄ£ĞÍ×ø±êÏµ£¬×ª»»µ½µ±Ç°ÉãÏñ»ú×ø±êÏµ,viewMatrix * worldMatrix
+		/// for shading
+		/// modelViewMatrixå°†æ¨¡å‹é¡¶ç‚¹ï¼Œä»æ¨¡å‹åæ ‡ç³»ï¼Œè½¬æ¢åˆ°å½“å‰æ‘„åƒæœºåæ ‡ç³»,viewMatrix * worldMatrix
 		glm::mat4	mModelViewMatrix = glm::mat4(1.0f);
 
-		//½«Ä£ĞÍµÄnormal´ÓÄ£ĞÍ×ø±êÏµ£¬×ª»»µ½ÉãÏñ»ú×ø±êÏµ
+		/// å°†æ¨¡å‹çš„normalä»æ¨¡å‹åæ ‡ç³»ï¼Œè½¬æ¢åˆ°æ‘„åƒæœºåæ ‡ç³»
 		glm::mat3	mNormalMatrix = glm::mat3(1.0f);
 	};
 }

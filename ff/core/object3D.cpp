@@ -1,4 +1,4 @@
-#include "object3D.h"
+ï»¿#include "object3D.h"
 #include "../tools/identity.h"
 #include "../global/eventDispatcher.h"
 
@@ -14,18 +14,20 @@ namespace ff {
 		EventDispatcher::getInstance()->dispatchEvent(e);
 	}
 
-	void Object3D::setPosition(float x, float y, float z) noexcept {
+	auto Object3D::setPosition(float x, float y, float z) noexcept -> void
+	{
 		setPosition(glm::vec3(x, y, z));	
 	}
 
-	void Object3D::setPosition(const glm::vec3& position) noexcept {
-		//ÔÚglmÇé¿öÏÂ£¬ÁĞÓÅÏÈ´æ´¢:a e i m b f j n c g k o d h l p
-		//ÔÚglmÇé¿öÏÂ£¬ÁĞÓÅÏÈ´æ´¢:a b c d e f g h i j....
-		//a b c d
-		//e f g h
-		//i j k l
-		//m n o p
-		//»ñÈ¡µÚÈıÁĞ
+	auto Object3D::setPosition(const glm::vec3& position) noexcept -> void
+	{
+		/// åœ¨glmæƒ…å†µä¸‹ï¼Œåˆ—ä¼˜å…ˆå­˜å‚¨:a e i m b f j n c g k o d h l p
+		/// åœ¨glmæƒ…å†µä¸‹ï¼Œåˆ—ä¼˜å…ˆå­˜å‚¨:a b c d e f g h i j....
+		/// a b c d
+		/// e f g h
+		/// i j k l
+		/// m n o p
+		/// è·å–ç¬¬ä¸‰åˆ—
 		mLocalMatrix[3].x = position.x;
 		mLocalMatrix[3].y = position.y;
 		mLocalMatrix[3].z = position.z;
@@ -34,18 +36,18 @@ namespace ff {
 	}
 
 	void Object3D::setQuaternion(float x, float y, float z, float w) noexcept {
-		//ÔÚËÄÔªÊıÇé¿öÏÂ£¬glmµÄ³õÊ¼»¯£¬w xyz
+		//åœ¨å››å…ƒæ•°æƒ…å†µä¸‹ï¼Œglmçš„åˆå§‹åŒ–ï¼Œw xyz
 		glm::quat quaternion(w, x, y, z);
 	
-		//¿¼ÂÇµ½£¬localMatrix¿ÉÄÜÒÑ¾­±»Ê©¼ÓÁËscale·½ÃæµÄ±ä»»
+		//è€ƒè™‘åˆ°ï¼ŒlocalMatrixå¯èƒ½å·²ç»è¢«æ–½åŠ äº†scaleæ–¹é¢çš„å˜æ¢
 		float scaleX = glm::length(glm::vec3(mLocalMatrix[0]));
 		float scaleY = glm::length(glm::vec3(mLocalMatrix[1]));
 		float scaleZ = glm::length(glm::vec3(mLocalMatrix[2]));
  
-		//½«glmµÄËÄÔªÊı×ª»»ÎªÒ»¸öĞı×ª¾ØÕó
+		//å°†glmçš„å››å…ƒæ•°è½¬æ¢ä¸ºä¸€ä¸ªæ—‹è½¬çŸ©é˜µ
 		glm::mat4 rotateMatrix = glm::mat4_cast(quaternion);
 
-		//½«scale±ä»»»Ö¸´½øÈ¥
+		//å°†scaleå˜æ¢æ¢å¤è¿›å»
 		mLocalMatrix[0] = rotateMatrix[0] * scaleX;
 		mLocalMatrix[1] = rotateMatrix[1] * scaleY;
 		mLocalMatrix[2] = rotateMatrix[2] * scaleX;
@@ -55,12 +57,12 @@ namespace ff {
 
 	void Object3D::setScale(float x, float y, float z) noexcept {
 
-		//ÄÃµ½Ä³Ò»ÁĞ£¬normalizeÈ¥µôÖ®Ç°µÄscaleÓ°Ïì,ÔÙ³ËÒÔµ±Ç°µÄÏà¹Øscale
+		//æ‹¿åˆ°æŸä¸€åˆ—ï¼Œnormalizeå»æ‰ä¹‹å‰çš„scaleå½±å“,å†ä¹˜ä»¥å½“å‰çš„ç›¸å…³scale
 		auto col0 = glm::normalize(glm::vec3(mLocalMatrix[0])) * x;
 		auto col1 = glm::normalize(glm::vec3(mLocalMatrix[1])) * y;
 		auto col2 = glm::normalize(glm::vec3(mLocalMatrix[2])) * z;
 
-		//½«ÉèÖÃºÃµÄÇ°ÈıÁĞ£¬ÖØĞÂÉèÖÃµ½localmatrix
+		//å°†è®¾ç½®å¥½çš„å‰ä¸‰åˆ—ï¼Œé‡æ–°è®¾ç½®åˆ°localmatrix
 		mLocalMatrix[0] = glm::vec4(col0, 0.0f);
 		mLocalMatrix[1] = glm::vec4(col1, 0.0f);
 		mLocalMatrix[2] = glm::vec4(col2, 0.0f);
@@ -70,10 +72,10 @@ namespace ff {
 
 
 	void Object3D::rotateX(float angle) noexcept {
-		//Ê×ÏÈ»ñÈ¡µ½µ±Ç°Ä£ĞÍ×´Ì¬ÏÂµÄÓÒ²à·½Ïò
+		//é¦–å…ˆè·å–åˆ°å½“å‰æ¨¡å‹çŠ¶æ€ä¸‹çš„å³ä¾§æ–¹å‘
 		glm::vec3 rotateAxis = glm::vec3(mLocalMatrix[0]);
 
-		//Õë¶ÔÕâ¸öÓÒ²à·½Ïò×÷ÎªĞı×ªÖáÀ´½øĞĞĞı×ª,angleÕı¸ºÓĞÒâÒå£¬µ±angle>0, µ±Äã³å×ÅĞı×ªÖá¿´£¬ÄæÊ±ÕëĞı×ª
+		//é’ˆå¯¹è¿™ä¸ªå³ä¾§æ–¹å‘ä½œä¸ºæ—‹è½¬è½´æ¥è¿›è¡Œæ—‹è½¬,angleæ­£è´Ÿæœ‰æ„ä¹‰ï¼Œå½“angle>0, å½“ä½ å†²ç€æ—‹è½¬è½´çœ‹ï¼Œé€†æ—¶é’ˆæ—‹è½¬
 		glm::mat4 rotateMatrix = glm::rotate(glm::mat4(1.0), glm::radians(angle), rotateAxis);
 		mLocalMatrix = rotateMatrix * mLocalMatrix;
 
@@ -96,14 +98,14 @@ namespace ff {
 		decompose();
 	}
 
-	//ÔÙÉÏÒ»´ÎµÄ»ù´¡ÉÏĞı×ª
+	//å†ä¸Šä¸€æ¬¡çš„åŸºç¡€ä¸Šæ—‹è½¬
 	void Object3D::rotateAroundAxis(const glm::vec3& axis, float angle) noexcept {
 		mLocalMatrix = glm::rotate(mLocalMatrix, glm::radians(angle), axis);
 
 		decompose();
 	}
 
-	//½«Ğı×ªÇå¿Õ£¬ÖØĞÂĞı×ª
+	//å°†æ—‹è½¬æ¸…ç©ºï¼Œé‡æ–°æ—‹è½¬
 	void Object3D::setRotateAroundAxis(const glm::vec3& axis, float angle) noexcept {
 		glm::mat4 rotateMatrix = glm::rotate(glm::mat4(1.0), glm::radians(angle), axis);
 
@@ -113,7 +115,7 @@ namespace ff {
 		float scaleZ = glm::length(glm::vec3(mLocalMatrix[2]));
 		glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0), glm::vec3(scaleX, scaleY, scaleZ));
 
-		//ÁĞÏàµÈ
+		//åˆ—ç›¸ç­‰
 		mLocalMatrix[0] = rotateMatrix[0];
 		mLocalMatrix[1] = rotateMatrix[1];
 		mLocalMatrix[2] = rotateMatrix[2];
@@ -166,28 +168,28 @@ namespace ff {
 		}
 	}
 
-	//Í¨¹ı²ã¼¶matrixÏà³Ë£¬µÃµ½×îºóµÄ×ª»»µ½ÊÀ½ç×ø±êÏµµÄ¾ØÕó
+	//é€šè¿‡å±‚çº§matrixç›¸ä¹˜ï¼Œå¾—åˆ°æœ€åçš„è½¬æ¢åˆ°ä¸–ç•Œåæ ‡ç³»çš„çŸ©é˜µ
 	glm::mat4 Object3D::updateWorldMatrix(bool updateParent, bool updateChildren) noexcept {
 
-		//¼ì²éÓĞÃ»ÓĞ¸¸½Úµã
+		//æ£€æŸ¥æœ‰æ²¡æœ‰çˆ¶èŠ‚ç‚¹
 		if (!mParent.expired() && updateParent) {
-			auto parent = mParent.lock();//ÄÃµ½¸¸½ÚµãµÄsharedPtr
-			parent->updateWorldMatrix(true, false);//µ÷ÓÃ¸¸½ÚµãµÄworldMatrixÉı¼¶¸üĞÂ
+			auto parent = mParent.lock();//æ‹¿åˆ°çˆ¶èŠ‚ç‚¹çš„sharedPtr
+			parent->updateWorldMatrix(true, false);//è°ƒç”¨çˆ¶èŠ‚ç‚¹çš„worldMatrixå‡çº§æ›´æ–°
 		}
 
-		//¸üĞÂ×Ô¼ºµÄlocalMatrix 
+		//æ›´æ–°è‡ªå·±çš„localMatrix 
 		updateMatrix();
 
-		//³õÊ¼»¯worldMatrix£¬Èç¹ûÃ»ÓĞ¸¸½Úµã£¬ÄÇÃ´¶şÕßÏàµÈ
+		//åˆå§‹åŒ–worldMatrixï¼Œå¦‚æœæ²¡æœ‰çˆ¶èŠ‚ç‚¹ï¼Œé‚£ä¹ˆäºŒè€…ç›¸ç­‰
 		mWorldMatrix = mLocalMatrix;
 
-		//Èç¹ûÓĞ¸¸½Úµã£¬ÄÇÃ´ĞèÒª×ö³É¸¸½ÚµãµÄworldMatrix£¬´Ó¶ø°ÑÉÏ·½ËùÓĞ½ÚµãµÄÓ°Ïì´øÈë
+		//å¦‚æœæœ‰çˆ¶èŠ‚ç‚¹ï¼Œé‚£ä¹ˆéœ€è¦åšæˆçˆ¶èŠ‚ç‚¹çš„worldMatrixï¼Œä»è€ŒæŠŠä¸Šæ–¹æ‰€æœ‰èŠ‚ç‚¹çš„å½±å“å¸¦å…¥
 		if (!mParent.expired()) {
 			auto parent = mParent.lock();
 			mWorldMatrix = parent->mWorldMatrix * mWorldMatrix;
 		}
 
-		//ÒÀ´Î¸üĞÂ×Ó½ÚµãµÄworldMatrix
+		//ä¾æ¬¡æ›´æ–°å­èŠ‚ç‚¹çš„worldMatrix
 		if (updateChildren) {
 			for (auto& child : mChildren) {
 				child->updateWorldMatrix(false, true);
@@ -197,7 +199,7 @@ namespace ff {
 		return mWorldMatrix;
 	}
 
-	//´«ÈëÉãÏñ»úviewMatrix
+	//ä¼ å…¥æ‘„åƒæœºviewMatrix
 	glm::mat4 Object3D::updateModelViewMatrix(const glm::mat4& viewMatrix) noexcept {
 		mModelViewMatrix = viewMatrix * mWorldMatrix;
 
@@ -205,7 +207,7 @@ namespace ff {
 	}
 
 	glm::mat3 Object3D::updateNormalMatrix() noexcept {
-		//normalMatrix ÓÉÓÚ´æÔÚscaleµÄÓ°Ïì£¬²»ÄÜÖ±½Ó±ä»»£¬·ñÔònormal»áÎŞ·¨±£Ö¤´¹Ö±ÓÚ±íÃæ
+		//normalMatrix ç”±äºå­˜åœ¨scaleçš„å½±å“ï¼Œä¸èƒ½ç›´æ¥å˜æ¢ï¼Œå¦åˆ™normalä¼šæ— æ³•ä¿è¯å‚ç›´äºè¡¨é¢
 		mNormalMatrix = glm::transpose(glm::inverse(glm::mat3(mModelViewMatrix)));
 
 		return mNormalMatrix;
@@ -251,22 +253,24 @@ namespace ff {
 		return mNormalMatrix;
 	}
 
-	void Object3D::addChild(const Object3D::Ptr& child) noexcept {
-		//Ê×ÏÈÈ·ÈÏ¼ÓÈëµÄ×Ó½Úµã²¢²»ÊÇ×Ô¼º
+
+	auto Object3D::addChild(const Object3D::Ptr& child) noexcept -> bool
+	{
 		if (child == shared_from_this()) {
-			return;
+			return false;
 		}
 
-		//¸øµ½childµÄÊÇÒ»¸ö×ÔÉíµÄÖÇÄÜÖ¸Õë£¬childÊÇÓÃWeakPtrÀ´½ÓÄÉµÄ£¬±ÜÃâÁËÑ­»·ÒıÓÃ
 		child->mParent = shared_from_this();
 
-		//²éÕÒµ±Ç°½ÚµãÏÂ£¬ÊÇ·ñÒÑ¾­¼ÓÈëÁË±¾Child
 		auto iter = std::find(mChildren.begin(), mChildren.end(), child);
-
-		//iteratorµü´úÆ÷£¬Èç¹ûÕÒµ½£¬¾Í»á·µ»Øµ±Ç°Õâ¸öchild¶ÔÓ¦µ½Êı×éÖĞÏàÍ¬ÖµµÄiterator
-		if (iter != mChildren.end()) return;
+		if (iter != mChildren.end())
+		{
+			return false;
+		}
 
 		mChildren.push_back(child);
+
+		return true; 
 	}
 
 	const std::vector<Object3D::Ptr>& Object3D::getChildren() const noexcept {
@@ -281,7 +285,7 @@ namespace ff {
 		glm::vec3 skew;
 		glm::vec4 perspective;
 
-		//ÊÇ½«±ä»»¾ØÕóµ±ÖĞµÄ²ÎÊıÃÇ£¬³éÀë³öÀ´ 
+		//æ˜¯å°†å˜æ¢çŸ©é˜µå½“ä¸­çš„å‚æ•°ä»¬ï¼ŒæŠ½ç¦»å‡ºæ¥ 
 		glm::decompose(mLocalMatrix, mScale, mQuaternion, mPosition,skew, perspective);
 	}
 }

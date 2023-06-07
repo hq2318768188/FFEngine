@@ -1,4 +1,4 @@
-#include "geometry.h"
+ï»¿#include "geometry.h"
 #include "../tools/identity.h"
 #include "../global/eventDispatcher.h"
 
@@ -9,7 +9,7 @@ namespace ff {
 	}
 
 	Geometry::~Geometry() noexcept {
-		//Í¨¹ıDispatcherÕâ¸öµ¥Àı£¬¶ÔËùÓĞ¼àÌıº¯Êı£¬·¢³ö±¾GeometryÏûÍöµÄÏûÏ¢
+		//é€šè¿‡Dispatcherè¿™ä¸ªå•ä¾‹ï¼Œå¯¹æ‰€æœ‰ç›‘å¬å‡½æ•°ï¼Œå‘å‡ºæœ¬Geometryæ¶ˆäº¡çš„æ¶ˆæ¯
 		EventBase::Ptr e = EventBase::create("geometryDispose");
 		e->mTarget = this;
 		EventDispatcher::getInstance()->dispatchEvent(e);
@@ -77,30 +77,30 @@ namespace ff {
 			mBoundingSphere = Sphere::create(glm::vec3(0.0f), 0.0f);
 		}
 
-		//°üÎ§Çò¸ú°üÎ§ºĞ¹²ÏíÁËÒ»¸öcenter
+		/// åŒ…å›´çƒè·ŸåŒ…å›´ç›’å…±äº«äº†ä¸€ä¸ªcenter
 		mBoundingSphere->mCenter = mBoundingBox->getCenter();
 
-		//find smallest sphere :inscribed sphere
+		/// find smallest sphere :inscribed sphere
 		auto position = getAttribute("position");
 		if (position == nullptr) {
 			return;
 		}
 
-		//ÕÒµ½¾àÀëµ±Ç°ÇòĞÄ×î´ó¾àÀëµÄµã
+		/// æ‰¾åˆ°è·ç¦»å½“å‰çƒå¿ƒæœ€å¤§è·ç¦»çš„ç‚¹
 		float maxRadiusSq = 0;
 		for (uint32_t i = 0; i < position->getCount(); ++i) {
-			//°ÑÃ¿¸ö¶¥µãµÄxyz×°³ÉÒ»¸öpoint
+			/// æŠŠæ¯ä¸ªé¡¶ç‚¹çš„xyzè£…æˆä¸€ä¸ªpoint
 			glm::vec3 point = glm::vec3(position->getX(i), position->getY(i), position->getZ(i));
 
-			//¼ÆËãpointµ½centerµÄ¾àÀë
+			/// è®¡ç®—pointåˆ°centerçš„è·ç¦»
 			glm::vec3 radiusVector = mBoundingSphere->mCenter - point;
 
-			//Ô­±¾Ó¦¸Ã¶Ô±ÈÃ¿Ò»¸öµãµ½centerµÄ¾àÀë£¬ÕÒµ½×î´ó¡£µ«ÊÇ¼ÆËãÏòÁ¿³¤¶È£¬±ØĞë¾­¹ı¿ª·½Õâ¸öÔËËã
-			//ÎªÁËĞÔÄÜ¿¼ÂÇ£¬Ö±½Ó¼ÇÂ¼ÆäÆ½·½£¬×îºóµÃµ½×î´óÖµ£¬ÔÙ¿ª¶ş´Î·½
+			/// åŸæœ¬åº”è¯¥å¯¹æ¯”æ¯ä¸€ä¸ªç‚¹åˆ°centerçš„è·ç¦»ï¼Œæ‰¾åˆ°æœ€å¤§ã€‚ä½†æ˜¯è®¡ç®—å‘é‡é•¿åº¦ï¼Œå¿…é¡»ç»è¿‡å¼€æ–¹è¿™ä¸ªè¿ç®—
+			/// ä¸ºäº†æ€§èƒ½è€ƒè™‘ï¼Œç›´æ¥è®°å½•å…¶å¹³æ–¹ï¼Œæœ€åå¾—åˆ°æœ€å¤§å€¼ï¼Œå†å¼€äºŒæ¬¡æ–¹
 			maxRadiusSq = std::max(glm::dot(radiusVector, radiusVector), maxRadiusSq);
 		}
 
-		//¿ª·½ÇóÈ¡radius
+		/// å¼€æ–¹æ±‚å–radius
 		mBoundingSphere->mRadius = std::sqrt(maxRadiusSq);
 	}
 }

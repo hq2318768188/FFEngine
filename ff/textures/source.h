@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "../global/constant.h"
 
 namespace ff {
 
-	//ÓÃÀ´¹ÜÀíÒ»ÕÅÍ¼Æ¬¶ÁÈëºóµÄ½á¹û¼´Êı¾İ
+	/// ç”¨æ¥ç®¡ç†ä¸€å¼ å›¾ç‰‡è¯»å…¥åçš„ç»“æœå³æ•°æ®
 	class Source {
 	public:
 		using Ptr = std::shared_ptr<Source>;
@@ -19,15 +19,15 @@ namespace ff {
 	public:
 		uint32_t			mWidth{ 0 };
 		uint32_t			mHeight{ 0 };
-		//¶ÁÈëµÄÍ¼Æ¬Êı¾İ
+		/// è¯»å…¥çš„å›¾ç‰‡æ•°æ®
 		std::vector<byte>	mData{};
 		bool mNeedsUpdate{ true };
 
-		//ÓĞ¿ÉÄÜÓĞ¶à¸ötextureÒıÓÃÁËÍ¬Ò»¸ösource£¬ËùÒÔsource±ØĞëÓĞÒ»¸ö»º´æ»úÖÆ,»º´æ±ØĞëÊÇkey-valueĞÎÊ½
-		//ËùÒÔÃ¿Ò»¸ösource¶¼ÒªÓĞ×Ô¼ºµÄhashCode
+		/// æœ‰å¯èƒ½æœ‰å¤šä¸ªtextureå¼•ç”¨äº†åŒä¸€ä¸ªsourceï¼Œæ‰€ä»¥sourceå¿…é¡»æœ‰ä¸€ä¸ªç¼“å­˜æœºåˆ¶,ç¼“å­˜å¿…é¡»æ˜¯key-valueå½¢å¼
+		/// æ‰€ä»¥æ¯ä¸€ä¸ªsourceéƒ½è¦æœ‰è‡ªå·±çš„hashCode
 		HashType mHashCode{ 0 };
 
-		//ÔÚ»º´æÇé¿öÏÂ£¬refCount¼ÇÂ¼ÁË±¾Sourceµ±Ç°±»¶àÉÙ¸ö¶ÔÏóÒıÓÃ£¬µ±ÒıÓÃÎª0£¬Ğ¶ÔØÎö¹¹
+		/// åœ¨ç¼“å­˜æƒ…å†µä¸‹ï¼ŒrefCountè®°å½•äº†æœ¬Sourceå½“å‰è¢«å¤šå°‘ä¸ªå¯¹è±¡å¼•ç”¨ï¼Œå½“å¼•ç”¨ä¸º0ï¼Œå¸è½½ææ„
 		uint32_t mRefCount{ 0 };
 	};
 }

@@ -1,4 +1,4 @@
-#include "texture.h"
+ï»¿#include "texture.h"
 #include "../tools/identity.h"
 #include "../global/eventDispatcher.h"
 
@@ -29,7 +29,7 @@ namespace ff {
 	}
 
 	Texture::~Texture() noexcept {
-		//ÏûÍöµÄÊ±ºò£¬Í¨¹ýdispatcherÏòÍâ·¢³ö±¾textureÏûÍöµÄÏûÏ¢
+		/// æ¶ˆäº¡çš„æ—¶å€™ï¼Œé€šè¿‡dispatcherå‘å¤–å‘å‡ºæœ¬textureæ¶ˆäº¡çš„æ¶ˆæ¯
 		EventBase::Ptr e = EventBase::create("textureDispose");
 		e->mTarget = this;
 		EventDispatcher::getInstance()->dispatchEvent(e);

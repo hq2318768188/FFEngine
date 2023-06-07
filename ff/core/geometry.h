@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "attribute.h"
 #include "../math/sphere.h"
@@ -6,14 +6,14 @@
 
 namespace ff {
 
-	//GeometryÓÃÀ´±íÊ¾Ò»¸ömeshµÄ»ù´¡¼¸ºÎÊı¾İ£¬ÀïÃæ°üÀ¨ÁËPosition Color Normal Uv Tangent BitangentµÈµÈµÄAttribute
+	/// Geometryç”¨æ¥è¡¨ç¤ºä¸€ä¸ªmeshçš„åŸºç¡€å‡ ä½•æ•°æ®ï¼Œé‡Œé¢åŒ…æ‹¬äº†Position Color Normal Uv Tangent Bitangentç­‰ç­‰çš„Attribute
 	class Geometry:public std::enable_shared_from_this<Geometry> {
 	public:
 
-		//ÎªAttributeµÄMap×ÖµäÆğÁË¸ö±ğÃû 
+		/// ä¸ºAttributeçš„Mapå­—å…¸èµ·äº†ä¸ªåˆ«å 
 		using AttributeMap = std::unordered_map<std::string, Attributef::Ptr>;
 
-		//ÖÇÄÜÖ¸Õë±ğÃû&createº¯Êı
+		/// æ™ºèƒ½æŒ‡é’ˆåˆ«å&createå‡½æ•°
 		using Ptr = std::shared_ptr<Geometry>;
 		static Ptr create() {
 			return std::make_shared <Geometry>();
@@ -47,11 +47,11 @@ namespace ff {
 		Box3::Ptr getBoundingBox() const noexcept { return mBoundingBox; }
 		
 	protected:
-		ID	mID{ 0 };//È«¾ÖÎ¨Ò»id
-		AttributeMap mAttributes{};//°´ÕÕÃû³Æ-ÖµµÄ·½Ê½´æ·ÅÁËËùÓĞ±¾MeshµÄAttributesÃÇ
-		Attributei::Ptr mIndexAttribute{ nullptr };//indexµÄAttributeµ¥¶À´æ·Å£¬²¢Ã»ÓĞ¼Óµ½mapÀïÃæ
+		ID	mID{ 0 };								/// å…¨å±€å”¯ä¸€id
+		AttributeMap mAttributes{};					/// æŒ‰ç…§åç§°-å€¼çš„æ–¹å¼å­˜æ”¾äº†æ‰€æœ‰æœ¬Meshçš„Attributesä»¬
+		Attributei::Ptr mIndexAttribute{ nullptr };	/// indexçš„Attributeå•ç‹¬å­˜æ”¾ï¼Œå¹¶æ²¡æœ‰åŠ åˆ°mapé‡Œé¢
 
-		Box3::Ptr	mBoundingBox{ nullptr };//°üÎ§ºĞ
-		Sphere::Ptr	mBoundingSphere{ nullptr };//°üÎ§Çò
+		Box3::Ptr	mBoundingBox{ nullptr };		/// åŒ…å›´ç›’
+		Sphere::Ptr	mBoundingSphere{ nullptr };		/// åŒ…å›´çƒ
 	};
 }
