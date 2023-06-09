@@ -44,79 +44,137 @@ namespace ff {
 		std::static_pointer_cast; */
 		virtual auto fakeFunction() noexcept -> void {}
 
-		/// \brief 设置OBJ3d坐标位置 列优先存储
-		///	列优先存储:a e i m b f j n c g k o d h l p
-		/// 列优先存储:a b c d e f g h i j....
+		/// \brief 设置OBJ3D坐标位置 
 		/// \param x 
 		/// \param y 
 		/// \param z 
 		auto setPosition(float x, float y, float z) noexcept -> void;
 
-		/// \brief 设置OBJ3d坐标位置 列优先存储
-		///	列优先存储:a e i m b f j n c g k o d h l p
-		/// 列优先存储:a b c d e f g h i j....
+		/// \brief 设置OBJ3D坐标位置
 		/// \param position 
 		auto setPosition(const glm::vec3& position) noexcept -> void;
 
-		void setQuaternion(float x, float y, float z, float w) noexcept;
+		/// \brief 设置旋转矩阵 -> 四元数
+		/// \param x 
+		/// \param y 
+		/// \param z 
+		/// \param w 
+		auto setQuaternion(float x, float y, float z, float w) noexcept -> void;
 
-		void setScale(float x, float y, float z) noexcept;
+		/// \brief 设置缩放
+		/// \param x 
+		/// \param y 
+		/// \param z 
+		auto setScale(float x, float y, float z) noexcept -> void;
 
-		void rotateX(float angle) noexcept;
+		/// \brief 绕着模型坐标系的x轴旋转 
+		/// \param angle 
+		auto rotateX(float angle) noexcept -> void;
 
-		void rotateY(float angle) noexcept;
+		/// \brief 绕着模型坐标系的Y轴旋转 
+		/// \param angle 
+		auto rotateY(float angle) noexcept -> void;
 
-		void rotateZ(float angle) noexcept;
+		/// \brief 绕着模型坐标系的Z轴旋转 
+		/// \param angle 
+		auto rotateZ(float angle) noexcept -> void;
 
-		void setRotateAroundAxis(const glm::vec3& axis, float angle) noexcept;
+		/// \brief 将旋转清空，重新旋转
+		/// \param axis 
+		/// \param angle 
+		auto setRotateAroundAxis(const glm::vec3& axis, float angle) noexcept -> void;
 
-		void rotateAroundAxis(const glm::vec3& axis, float angle) noexcept;
+		/// \brief 在上一次的基础上持续旋转
+		/// \param axis 
+		/// \param angle 
+		auto rotateAroundAxis(const glm::vec3& axis, float angle) noexcept -> void;
 
-		void lookAt(const glm::vec3& target, const glm::vec3& up) noexcept;
+		/// \brief 设置Object3D看向target的变换
+		/// \param target 看向的位置
+		/// \param up 世界坐标系的up
+		auto lookAt(const glm::vec3& target, const glm::vec3& up) noexcept -> void;
 
-		void setLocalMatrix(const glm::mat4& localMatrix) noexcept;
+		/// \brief 设置Object3D 的模型坐标系（相对于父节点的局部坐标系）
+		/// \param localMatrix 
+		auto setLocalMatrix(const glm::mat4& localMatrix) noexcept -> void;
 
-		void setWorldMatrix(const glm::mat4& worldMatrix) noexcept;
+		/// \brief 设置模型的世界坐标系
+		/// \param worldMatrix 
+		auto setWorldMatrix(const glm::mat4& worldMatrix) noexcept -> void;
 
 		/// \brief 向当前的Object3D里面，加入子节点
 		/// \param child 子节点
 		/// return 防止重复加入和把自己也加进去
 		auto addChild(const Object3D::Ptr& child) noexcept -> bool;
 
-		virtual void updateMatrix() noexcept;
+		/// \brief 更新Object3D 的模型坐标系
+		virtual auto updateMatrix() noexcept -> void;
 
-		virtual glm::mat4 updateWorldMatrix(bool updateParent = false, bool updateChildren = false) noexcept;
+		/// \brief 更新Object3D 的世界坐标系
+		/// \param updateParent 
+		/// \param updateChildren 
+		/// \return 
+		virtual auto updateWorldMatrix(bool updateParent = false, bool updateChildren = false) noexcept -> glm::mat4;
 
-		glm::mat4 updateModelViewMatrix(const glm::mat4& viewMatrix) noexcept;
+		/// \brief	更新Object3D 的View的坐标系
+		/// \param viewMatrix 摄像机viewMatrix
+		/// \return 
+		auto updateModelViewMatrix(const glm::mat4& viewMatrix) noexcept -> glm::mat4;
 
-		glm::mat3 updateNormalMatrix() noexcept;
+		/// \brief 更新Object3D 的normal矩阵
+		/// \return 
+		auto updateNormalMatrix() noexcept -> glm::mat3;
 
-		glm::vec3 getPosition() const noexcept;
+		/// \brief 获得Object3D 的 坐标
+		/// \return 
+		auto getPosition() const noexcept -> glm::vec3;
 
+		/// \brief 获得Object3D的世界坐标系
+		/// \return 
 		glm::vec3 getWorldPosition() const noexcept;
 
-		glm::vec3 getLocalDirection() const noexcept;
+		/// \brief 获得Object3D在模型坐标系的朝向
+		/// \return 
+		auto getLocalDirection() const noexcept -> glm::vec3;
 
-		glm::vec3 getWorldDirection() const noexcept;
+		/// \brief 获得Object3D的世界坐标系的朝向
+		/// \return 
+		auto getWorldDirection() const noexcept -> glm::vec3;
 
-		glm::vec3 getUp() const noexcept;
+		/// \brief 获得Object3D的在模型坐标系的up方向
+		/// \return 
+		auto getUp() const noexcept -> glm::vec3;
 
-		glm::vec3 getRight() const noexcept;
+		/// \brief 获得Object3D的在模型坐标系的right方向
+		/// \return 
+		auto getRight() const noexcept -> glm::vec3;
 
-		glm::mat4 getLocalMatrix() noexcept;
+		/// \brief 获得当前OBJ3D的模型坐标系
+		/// \return 
+		auto getLocalMatrix() const noexcept -> glm::mat4;
 
-		glm::mat4 getWorldMatrix() noexcept;
+		/// \brief 获得当前OBJ3D的世界坐标系
+		/// \return 
+		auto getWorldMatrix() const noexcept -> glm::mat4;
 
-		glm::mat4 getModelViewMatrix() noexcept;
+		/// \brief 获得当前OBJ3D的摄像机坐标系
+		/// \return 
+		auto getModelViewMatrix() const noexcept -> glm::mat4;
 
-		glm::mat3 getNormalMatrix() noexcept;
+		/// \brief 获得当前OBJ3D的normal矩阵
+		/// \return 
+		auto getNormalMatrix() const noexcept -> glm::mat3;
 
-		const std::vector<Object3D::Ptr>& getChildren() const noexcept;
+		/// \brief 获得当前OBJ3D的所有的子节点
+		/// \return 
+		auto getChildren() const noexcept -> const std::vector<Object3D::Ptr>&;
 
-		ID getID() const noexcept;
+		/// \brief 获得OBJ3D的ID
+		/// \return 
+		auto getID() const noexcept -> ID;
 
 	protected:
-		void decompose() noexcept;
+		auto decompose() noexcept -> void;
 
 	public:
 		/// visible来表示是否对其进行渲染

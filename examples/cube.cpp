@@ -21,7 +21,7 @@ ff::Mesh::Ptr cube = nullptr;
 static void onMouseMove(double xpos, double ypos) {
 }
 
-static void onMouseAction(ff::MouseAction action) {
+static void onMouseAction(ff::MouseAction action) { 
 }
 
 static void onKeyboardAction(KeyBoardState action) {
