@@ -174,6 +174,7 @@ namespace ff {
 		auto getID() const noexcept -> ID;
 
 	protected:
+		/// \brief从localMatrix中分解出平移 、旋转、缩放 矩阵 
 		auto decompose() noexcept -> void;
 
 	public:
