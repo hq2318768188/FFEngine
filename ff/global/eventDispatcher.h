@@ -1,4 +1,6 @@
 ﻿#pragma once
+#include <mutex>
+
 #include "base.h"
 
 namespace ff {
@@ -104,23 +106,41 @@ namespace ff {
 
 		static EventDispatcher* getInstance();
 
+		/// \brief 添加事件监听
+		/// \tparam T 
+		/// \param name 
+		/// \param target 
+		/// \param functionPointer 
 		template<typename T>
-		void addEventListener(const std::string& name, T* target, TypedFunctionPointer<T> functionPointer) noexcept;
+		auto addEventListener(const std::string& name, T* target,
+		                      TypedFunctionPointer<T> functionPointer) noexcept -> void;
 
+		/// \brief 移除事件监听
+		/// \tparam T 
+		/// \param name 
+		/// \param target 
+		/// \param functionPointer 
 		template<typename T>
-		void removeEventListener(const std::string& name, T* target, TypedFunctionPointer<T> functionPointer) noexcept;
+		auto removeEventListener(const std::string& name, T* target,
+		                         TypedFunctionPointer<T> functionPointer) noexcept -> void;
 
-		void dispatchEvent(const EventBase::Ptr& event);
+		/// \brief 发送消息
+		/// \param event 
+		auto dispatchEvent(const EventBase::Ptr& event) -> void;
 
 	protected:
 		/// 存储了监听事件名称——监听函数队列
 		/// 同一个事件名称，可能会有多个Listener监听（多个对象的函数）
 		std::unordered_map<std::string, ListenerQueue> mListeners;
+		std::mutex mMutex;
 		static EventDispatcher* mInstance;
 	};
 
 	template<typename T>
-	void EventDispatcher::addEventListener(const std::string& name, T* target, TypedFunctionPointer<T> functionPointer) noexcept {
+	auto EventDispatcher::addEventListener(const std::string& name, T* target,
+	                                       TypedFunctionPointer<T> functionPointer) noexcept -> void
+	{
+		std::lock_guard<std::mutex> lock(mMutex); /// 加锁
 		/// queueIter是当前这个消息（name）对应的map当中的，键值对的迭代器，键值对是（string， ListenerQueue）
 		/// queueIter而言，first是消息名字，second是队列vector<Listener>
 		auto queueIter = mListeners.find(name);
@@ -158,7 +178,11 @@ namespace ff {
 	}
 
 	template<typename T>
-	void EventDispatcher::removeEventListener(const std::string& name, T* target, TypedFunctionPointer<T> functionPointer) noexcept {
+	auto EventDispatcher::removeEventListener(const std::string& name, T* target,
+	                                          TypedFunctionPointer<T> functionPointer) noexcept -> void
+	{
+		std::lock_guard<std::mutex> lock(mMutex); /// 加锁
+
 		auto queueIter = mListeners.find(name);
 
 		if (queueIter == mListeners.end()) {

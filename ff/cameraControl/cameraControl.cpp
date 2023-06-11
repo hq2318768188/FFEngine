@@ -1,4 +1,4 @@
-#include "cameraControl.h"
+﻿#include "cameraControl.h"
 
 namespace ff {
 
@@ -8,9 +8,9 @@ namespace ff {
 
 	CameraControl::~CameraControl() noexcept {}
 
-	void CameraControl::onKeyboard(const KeyBoardState& action) noexcept {}
+	auto CameraControl::onKeyboard(const KeyBoardState& action) noexcept -> void {}
 
-	void CameraControl::onMouseAction(const MouseAction& action) noexcept {}
+	auto CameraControl::onMouseAction(const MouseAction& action) noexcept -> void {}
 
-	void CameraControl::onMouseMove(double xpos, double ypos) noexcept {}
+	auto CameraControl::onMouseMove(double xpos, double ypos) noexcept -> void {}
 }

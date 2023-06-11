@@ -41,7 +41,8 @@ namespace ff {
 		}
 	}
 
-	Texture::Ptr Texture::clone() noexcept {
+	auto Texture::clone() noexcept -> Texture::Ptr
+	{
 		auto texture = Texture::create(mWidth, mHeight, mDataType, mWrapS, mWrapT, mWrapR, mMagFilter, mMinFilter, mFormat);
 		texture->mSource = mSource;
 		texture->mUsage = mUsage;

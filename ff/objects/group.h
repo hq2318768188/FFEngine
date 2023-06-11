@@ -1,9 +1,9 @@
-#include "../core/object3D.h"
+ï»¿#include "../core/object3D.h"
 
 namespace ff {
 
-	//Ò»¸ö×é/Ò»¸ö½Úµã,¿ÉÒÔ½«ºÜ¶àmesh¹ÒÔÚgroupµÄ×Ó½ÚµãÏÂ£¬Í³Ò»½øĞĞÒÆ¶¯¡¢Ğı×ª¡¢Ëõ·ÅµÈ²Ù×÷£¬
-	//groupOrder¿ÉÒÔÖ¸¶¨äÖÈ¾µÄË³Ğò
+	/// ä¸€ä¸ªç»„/ä¸€ä¸ªèŠ‚ç‚¹,å¯ä»¥å°†å¾ˆå¤šmeshæŒ‚åœ¨groupçš„å­èŠ‚ç‚¹ä¸‹ï¼Œç»Ÿä¸€è¿›è¡Œç§»åŠ¨ã€æ—‹è½¬ã€ç¼©æ”¾ç­‰æ“ä½œï¼Œ
+	/// groupOrderå¯ä»¥æŒ‡å®šæ¸²æŸ“çš„é¡ºåº
 	class Group :public Object3D {
 	public:
 		using Ptr = std::shared_ptr<Group>;
@@ -16,7 +16,7 @@ namespace ff {
 		}
 		~Group() noexcept {}
 
-		//bigger first
+		/// bigger first
 		uint32_t mGroupOrder{ 0 };
 	};
 }

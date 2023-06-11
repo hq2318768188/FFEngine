@@ -1,4 +1,6 @@
-#include "eventDispatcher.h"
+ï»¿#include "eventDispatcher.h"
+
+#include <mutex>
 
 namespace ff {
 
@@ -10,9 +12,13 @@ namespace ff {
 
 	EventDispatcher* EventDispatcher::mInstance = nullptr;
 	EventDispatcher* EventDispatcher::getInstance() {
-		if (mInstance == nullptr) {
-			mInstance = new EventDispatcher();
-		}
+
+		std::once_flag onceFlag;
+		std::call_once(onceFlag, []()
+			{
+				mInstance = new EventDispatcher();
+			}
+		);
 
 		return mInstance;
 	}
@@ -24,6 +30,7 @@ namespace ff {
 	void EventDispatcher::dispatchEvent(const EventBase::Ptr& event) {
 		const auto& eventName = event->mEventName;
 
+		std::lock_guard<std::mutex> lock(mMutex); /// åŠ é”
 		auto listenerQueueIter = mListeners.find(eventName);
 		if (listenerQueueIter == mListeners.end()) {
 			return;
@@ -31,7 +38,7 @@ namespace ff {
 
 		auto& queue = listenerQueueIter->second;
 		for (const auto& listener : queue) {
-			//mFunctionÊÇÒÑ¾­bindºÃtarget¸úfunctionµÄº¯ÊýÌå,¿ÉÒÔÖ±½ÓÖ´ÐÐ
+			/// mFunctionæ˜¯å·²ç»bindå¥½targetè·Ÿfunctionçš„å‡½æ•°ä½“,å¯ä»¥ç›´æŽ¥æ‰§è¡Œ
 			listener->mFunction(event);
 		}
 	}

@@ -1,13 +1,13 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "../global/constant.h"
 #include "../textures/texture.h"
 #include "../textures/cubeTexture.h"
 
 namespace ff {
-	//²ÄÖÊÀà£¬ÃèÊöÒ»¸ömesh»æÖÆµÄÊ±ºò£¬ÓÃÊ²Ã´ÌùÍ¼£¬×ßÊ²Ã´ÑùµÄ¹ÜÏß£¬¹ıÊ²Ã´ÑùµÄshader
-	//¸ù¾İ²ÄÖÊÀàĞÍ²»Í¬£¬¿ÉÄÜ»áÓĞÒ»Ğ©ÌØÊâ²ÎÊı
-	//¶à¸ömesh¿ÉÒÔÓ¦ÓÃÍ¬Ò»¸ö²ÄÖÊMaterial Ptr
+	/// æè´¨ç±»ï¼Œæè¿°ä¸€ä¸ªmeshç»˜åˆ¶çš„æ—¶å€™ï¼Œç”¨ä»€ä¹ˆè´´å›¾ï¼Œèµ°ä»€ä¹ˆæ ·çš„ç®¡çº¿ï¼Œè¿‡ä»€ä¹ˆæ ·çš„shader
+	/// æ ¹æ®æè´¨ç±»å‹ä¸åŒï¼Œå¯èƒ½ä¼šæœ‰ä¸€äº›ç‰¹æ®Šå‚æ•°
+	/// å¤šä¸ªmeshå¯ä»¥åº”ç”¨åŒä¸€ä¸ªæè´¨Material Ptr
 	class MaterialTypeChecker {
 	public:
 		bool mIsMaterial = false;
@@ -20,7 +20,7 @@ namespace ff {
 
 	class Material:public MaterialTypeChecker {
 	public:
-		//Ê¹ÓÃÖÇÄÜÖ¸Õë¹ÜÀí
+		/// ä½¿ç”¨æ™ºèƒ½æŒ‡é’ˆç®¡ç†
 		using Ptr = std::shared_ptr<Material>;
 		static Ptr create() {
 			return std::make_shared <Material>();
@@ -31,24 +31,24 @@ namespace ff {
 		~Material() noexcept;
 
 	public:
-		std::string getType() const noexcept { return mType; }
-		ID getID() const noexcept { return mID; }
+		auto getType() const noexcept -> std::string { return mType; }
+		auto getID() const noexcept -> ID { return mID; }
 
-		//±íÊ¾ÔÙbackendÀïÃæ£¬ÊÇ·ñĞèÒª¸üĞÂ²ÄÖÊ²ÎÊı
+		/// è¡¨ç¤ºå†backendé‡Œé¢ï¼Œæ˜¯å¦éœ€è¦æ›´æ–°æè´¨å‚æ•°
 		bool		mNeedsUpdate{ true };
 
-		//version ÓÃÓÚÊ×´Î½âÎö
+		/// version ç”¨äºé¦–æ¬¡è§£æ
 		uint32_t	mVersion{ 1 };
 
-		//raster
+		/// raster
 		FrontFace	mFrontFace{ FrontFace::FrontCounterClockWise };
 		Side		mSide{ Side::DoubleSide };
-		//ÏÖÔÚÒª»æÖÆµÄmesh£¬ÊÇÊ¹ÓÃÈı½ÇĞÎ°¡ Ïß°¡
+		/// ç°åœ¨è¦ç»˜åˆ¶çš„meshï¼Œæ˜¯ä½¿ç”¨ä¸‰è§’å½¢å•Š çº¿å•Š
 		DrawMode	mDrawMode{ DrawMode::Triangles };
 
-		//blending
-		bool				mTransparent{ false };//¿ØÖÆÊÇ·ñ¿ªÆôblending
-		float				mOpacity{ 1.0f };//Í¸Ã÷¶È£¬Ô½Ğ¡£¬Ô½Í¸Ã÷
+		/// blending
+		bool				mTransparent{ false };	/// æ§åˆ¶æ˜¯å¦å¼€å¯blending
+		float				mOpacity{ 1.0f };		///é€æ˜åº¦ï¼Œè¶Šå°ï¼Œè¶Šé€æ˜
 		BlendingType		mBlendingType{ BlendingType::CustomBlending };
 		BlendingFactor		mBlendSrc{ BlendingFactor::SrcAlpha };
 		BlendingFactor		mBlendDst{ BlendingFactor::OneMinusSrcAlpha };
@@ -57,22 +57,22 @@ namespace ff {
 		BlendingFactor		mBlendDstAlpha{ BlendingFactor::Zero };
 		BlendingEquation	mBlendEquationAlpha{ BlendingEquation::AddEquation };
 		
-		//depth
-		bool mDepthTest{ true };//ÊÇ·ñ¿ªÆôÉî¶È¼ì²â
-		bool mDepthWrite{ true };//ÊÇ·ñÔÚÉî¶È¼ì²âÍ¨¹ıºó£¬ÓÃ±¾ÎïÌåµÄÉî¶È¸²¸ÇÔ­À´µÄÉî¶È
+		/// depth
+		bool mDepthTest{ true };					/// æ˜¯å¦å¼€å¯æ·±åº¦æ£€æµ‹
+		bool mDepthWrite{ true };					/// æ˜¯å¦åœ¨æ·±åº¦æ£€æµ‹é€šè¿‡åï¼Œç”¨æœ¬ç‰©ä½“çš„æ·±åº¦è¦†ç›–åŸæ¥çš„æ·±åº¦
 		CompareFunction mDepthFunction{ CompareFunction::LessOrEqual };
 		double mDepthClearColor{ 1.0 };
 
-		//diffuse
+		/// diffuse
 		Texture::Ptr	mDiffuseMap{ nullptr };
 
-		//envMap
+		/// envMap
 		CubeTexture::Ptr	mEnvMap{ nullptr };
 
-		//normalMap
+		/// normalMap
 		Texture::Ptr	mNormalMap{ nullptr };
 
-		//specularMap
+		/// specularMap
 		Texture::Ptr	mSpecularMap{ nullptr };
 
 	protected:

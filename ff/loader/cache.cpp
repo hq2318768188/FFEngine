@@ -1,79 +1,104 @@
-#include "cache.h"
+ï»¿#include "cache.h"
+
+#include <mutex>
+
 #include "../textures/texture.h"
 #include "../textures/cubeTexture.h"
 
-namespace ff {
+namespace ff
+{
 	Cache* Cache::mInstance = nullptr;
-	Cache* Cache::getInstance() {
-		if (mInstance == nullptr) {
-			mInstance = new Cache();
-		}
+
+	Cache* Cache::getInstance()
+	{
+		static std::once_flag oneFlag;
+		std::call_once(oneFlag, []()
+		               {
+			               mInstance = new Cache();
+		               }
+			);
+
 
 		return mInstance;
 	}
 
-	Cache::Cache() noexcept {
+	Cache::Cache() noexcept
+	{
 		EventDispatcher::getInstance()->addEventListener("sourceRelease", this, &Cache::onSourceRelease);
 	}
 
-	Cache::~Cache() noexcept {}
+	Cache::~Cache() noexcept
+	{
+	}
 
-	Source::Ptr Cache::getSource(const std::string& path) noexcept {
+	auto Cache::getSource(const std::string& path) noexcept -> Source::Ptr
+	{
 		std::hash<std::string> hasher;
 		auto hashCode = hasher(path);
+
+		std::lock_guard<std::mutex> lock(mMutex); /// ä½¿ç”¨äº’æ–¥é”ä¿æŠ¤å…±äº«æ•°æ®
 
 		Source::Ptr source = nullptr;
 
 		auto iter = mSources.find(hashCode);
-		if (iter != mSources.end()) {
+		if (iter != mSources.end())
+		{
 			source = iter->second;
 
-			//Ã¿´Îµ÷ÓÃget£¬±ØÈ»ÓĞÒ»¸ötextureÔÚÊ¹ÓÃËû£¬refCount +1
+			/// æ¯æ¬¡è°ƒç”¨getï¼Œå¿…ç„¶æœ‰ä¸€ä¸ªtextureåœ¨ä½¿ç”¨ä»–ï¼ŒrefCount +1
 			source->mRefCount++;
 		}
 
 		return source;
 	}
 
-	//path¿ÉÄÜÊÇÓ²ÅÌÎÄ¼şÂ·¾¶£¬Ò²¿ÉÄÜÊÇÍøÂçÊı¾İÁ÷µÄurl£¬Ò²¿ÉÄÜÊÇÇ¶ÈëÊ½ÎÆÀíÔÚÄ£ĞÍµ±ÖĞµÄpath/name
-	void Cache::cacheSource(const std::string& path, Source::Ptr source) noexcept {
+	/// pathå¯èƒ½æ˜¯ç¡¬ç›˜æ–‡ä»¶è·¯å¾„ï¼Œä¹Ÿå¯èƒ½æ˜¯ç½‘ç»œæ•°æ®æµçš„urlï¼Œä¹Ÿå¯èƒ½æ˜¯åµŒå…¥å¼çº¹ç†åœ¨æ¨¡å‹å½“ä¸­çš„path/name
+	auto Cache::cacheSource(const std::string& path, Source::Ptr source) noexcept -> void
+	{
 		std::hash<std::string> hasher;
 		auto hashCode = hasher(path);
 
-		//Ñ°ÕÒÊÇ·ñÖØ¸´
+		std::lock_guard<std::mutex> lock(mMutex); /// ä½¿ç”¨äº’æ–¥é”ä¿æŠ¤å…±äº«æ•°æ®
+
+		/// å¯»æ‰¾æ˜¯å¦é‡å¤
 		auto iter = mSources.find(hashCode);
-		if (iter != mSources.end()) {
+		if (iter != mSources.end())
+		{
 			return;
 		}
 
-		//Ã»ÕÒµ½Í¬ÃûÍ¬ĞÕµÄsource
+		/// æ²¡æ‰¾åˆ°åŒååŒå§“çš„source
 		source->mHashCode = hashCode;
 
-		//Ã¿´ÎÖ»ÒªÉú³Ésource£¬¾ÍÒ»¶¨»áÓĞÒ»¸ötextureÀ´Ê¹ÓÃËû£¬refCount¾Í±ØÈ»+1
-		//Todo£ºÎÒÃÇ¿ÉÒÔ½«refCount×ö³Éprivate£¬friend Cache£¬¾Í»áÔì³ÉÖ»ÄÜÔÚcacheÀï·ÃÎÊ
+		/// æ¯æ¬¡åªè¦ç”Ÿæˆsourceï¼Œå°±ä¸€å®šä¼šæœ‰ä¸€ä¸ªtextureæ¥ä½¿ç”¨ä»–ï¼ŒrefCountå°±å¿…ç„¶+1
+		/// Todoï¼šæˆ‘ä»¬å¯ä»¥å°†refCountåšæˆprivateï¼Œfriend Cacheï¼Œå°±ä¼šé€ æˆåªèƒ½åœ¨cacheé‡Œè®¿é—®
 		source->mRefCount++;
 
 		mSources.insert(std::make_pair(hashCode, source));
 	}
 
-	//cache»á¼àÌısourceRelease
-	void Cache::onSourceRelease(const EventBase::Ptr& e) {
+	/// cacheä¼šç›‘å¬sourceRelease
+	auto Cache::onSourceRelease(const EventBase::Ptr& e) -> void
+	{
 		auto source = static_cast<Source*>(e->mTarget);
 		auto hashCode = source->mHashCode;
 
+		std::lock_guard<std::mutex> lock(mMutex); /// ä½¿ç”¨äº’æ–¥é”ä¿æŠ¤å…±äº«æ•°æ®
+
 		auto iter = mSources.find(hashCode);
-		if (iter == mSources.end()) {
+		if (iter == mSources.end())
+		{
 			return;
 		}
 
-		//Èç¹ûÈ·Êµ´æÔÚÔÚcacheÀïÃæ£¬ÔòÒıÓÃ¼ÆÊı-1
+		/// å¦‚æœç¡®å®å­˜åœ¨åœ¨cacheé‡Œé¢ï¼Œåˆ™å¼•ç”¨è®¡æ•°-1
 		source->mRefCount--;
 
-		//Èç¹ûÒıÓÃ¼ÆÊı = 0£¬ËµÃ÷Õû¸ö³ÌĞòÃ»ÓĞÈËÔÙÊ¹ÓÃÕâ¸ösource£¬ÄÇÃ´¾Í´ÓcacheÀïÇå³ı
-		if (source->mRefCount == 0) {
-
-			//sourceÍ¨¹ısharedPtr¹ÜÀí£¬ÄÇÃ´ÔÙeraseÖ®ºó£¬²¢ÇÒÒÔÇ°³ÖÓĞËûµÄ¶ÔÏó¶¼²»ÔÙ³ÖÓĞ£¬
-			//sourceÕâ¸öÖÇÄÜÖ¸ÕëµÄÒıÓÃ¼ÆÊı±äÎªÁË0£¬Ôò»á¹¹³ÉsourceµÄÎö¹¹
+		/// å¦‚æœå¼•ç”¨è®¡æ•° = 0ï¼Œè¯´æ˜æ•´ä¸ªç¨‹åºæ²¡æœ‰äººå†ä½¿ç”¨è¿™ä¸ªsourceï¼Œé‚£ä¹ˆå°±ä»cacheé‡Œæ¸…é™¤
+		if (source->mRefCount == 0)
+		{
+			/// sourceé€šè¿‡sharedPtrç®¡ç†ï¼Œé‚£ä¹ˆå†eraseä¹‹åï¼Œå¹¶ä¸”ä»¥å‰æŒæœ‰ä»–çš„å¯¹è±¡éƒ½ä¸å†æŒæœ‰ï¼Œ
+			/// sourceè¿™ä¸ªæ™ºèƒ½æŒ‡é’ˆçš„å¼•ç”¨è®¡æ•°å˜ä¸ºäº†0ï¼Œåˆ™ä¼šæ„æˆsourceçš„ææ„
 			mSources.erase(iter);
 		}
 	}

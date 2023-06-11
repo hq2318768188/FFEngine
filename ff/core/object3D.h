@@ -111,8 +111,8 @@ namespace ff {
 		virtual auto updateMatrix() noexcept -> void;
 
 		/// \brief 更新Object3D 的世界坐标系
-		/// \param updateParent 
-		/// \param updateChildren 
+		/// \param updateParent 如果有父节点，那么需要做成父节点的worldMatrix，从而把上方所有节点的影响带入 
+		/// \param updateChildren 依次更新子节点的worldMatrix
 		/// \return 
 		virtual auto updateWorldMatrix(bool updateParent = false, bool updateChildren = false) noexcept -> glm::mat4;
 

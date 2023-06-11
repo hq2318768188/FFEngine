@@ -1,4 +1,4 @@
-#include "boxGeometry.h"
+ï»¿#include "boxGeometry.h"
 
 namespace ff {
 
@@ -33,7 +33,7 @@ namespace ff {
 
 	BoxGeometry::~BoxGeometry() noexcept {}
 
-	void BoxGeometry::buildPlane(
+	auto BoxGeometry::buildPlane(
 		uint32_t u, uint32_t v, uint32_t w,
 		int16_t udir, int16_t vdir,
 		float width, float height, float depth,
@@ -43,7 +43,8 @@ namespace ff {
 		NormalArray& normals,
 		UVArray& uvs,
 		IndexArray& indices
-	) noexcept {
+		) noexcept -> void
+	{
 		const float segmentWidth = width / (float)gradX;
 		const float segmentHeight = height / (float)gradY;
 
@@ -68,7 +69,7 @@ namespace ff {
 			y = iy * segmentHeight - heightHalf;
 
 			for (uint32_t ix = 0; ix < gradX1; ++ix) {
-				//´Ó0¿ªÊ¼¿´£¬È»ºó×óÒÆwidthhalf
+				//ä»Ž0å¼€å§‹çœ‹ï¼Œç„¶åŽå·¦ç§»widthhalf
 				x = ix * segmentWidth - widthHalf;
 
 				//positions

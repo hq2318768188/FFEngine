@@ -1,11 +1,11 @@
-#pragma once 
+ï»¿#pragma once 
 #include "../global/base.h"
 #include "skeleton.h"
 #include "mesh.h"
 
 namespace ff {
 
-	//¹Ç÷À¶¯»­Ïà¹ØµÄMesh
+	/// éª¨éª¼åŠ¨ç”»ç›¸å…³çš„Mesh
 	class SkinnedMesh :public Mesh {
 	public:
 		using Ptr = std::shared_ptr<SkinnedMesh>;

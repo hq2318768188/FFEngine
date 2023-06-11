@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "../core/object3D.h"
 #include "../material/material.h"
@@ -17,11 +17,11 @@ namespace ff {
 
 		~Scene() noexcept;
 		
-		//ÎÒÃÇ¿ÉÒÔÖ¸¶¨Õû¸ö³¡¾°ÀïÃæ£¬ËùÓĞÎïÌåÒ»ÆğÊ¹ÓÃÄÄ¸ömaterial
-		//²»¹Ü¸÷¸öÎïÌåÊÇ·ñÓµÓĞ×Ô¼ºµÄmaterial£¬¶¼±»Ç¿ÖÆÊ¹ÓÃÕâ¸ömaterial
+		/// æˆ‘ä»¬å¯ä»¥æŒ‡å®šæ•´ä¸ªåœºæ™¯é‡Œé¢ï¼Œæ‰€æœ‰ç‰©ä½“ä¸€èµ·ä½¿ç”¨å“ªä¸ªmaterial
+		/// ä¸ç®¡å„ä¸ªç‰©ä½“æ˜¯å¦æ‹¥æœ‰è‡ªå·±çš„materialï¼Œéƒ½è¢«å¼ºåˆ¶ä½¿ç”¨è¿™ä¸ªmaterial
 		Material::Ptr	mOverrideMaterial = nullptr;
 
-		//Ìì¿ÕºĞ
+		/// å¤©ç©ºç›’
 		CubeTexture::Ptr mBackground = nullptr;
 	};
 }

@@ -48,11 +48,11 @@ namespace ff {
 
 		~Texture() noexcept;
 
-		ID getID() const noexcept { return mID; }
+		auto getID() const noexcept -> ID { return mID; }
 
-		TextureUsage getUsage() const noexcept { return mUsage; }
+		auto getUsage() const noexcept -> TextureUsage { return mUsage; }
 
-		virtual Texture::Ptr clone() noexcept;
+		virtual auto clone() noexcept -> Texture::Ptr;
 
 	public:
 		/// Filter，Nearest四舍五入， 直接取得某个像素的颜色值

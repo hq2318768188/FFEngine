@@ -143,6 +143,7 @@ int main() {
 		rDc.mHeight = 800;
 
 		camera = PerspectiveCamera::create(0.1, 10000, static_cast<float>(rDc.mWidth) / static_cast<float>(rDc.mHeight), 45.0f);
+		// camera = OrthographicCamera::create(-10, 10, -10, 10, -10, 10);
 		camera->setPosition(3, 4, 15);
 
 		cameraControl = GameCameraControl::create(camera);

@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "loader.h"
 #include "../textures/texture.h"
 
@@ -10,7 +10,8 @@ namespace ff {
 
 		~TextureLoader() noexcept;
 
-		//¿ÉÒÔ¶ÁÈ¡Ó²ÅÌÉÏµÄÍ¼Æ¬£¬»òÕß¶ÁÈ¡ÒÑ¾­ÄÃµ½µÄÍ¼Æ¬Êý¾ÝÁ÷
-		static Texture::Ptr load(const std::string& path, unsigned char* dataIn = nullptr, uint32_t widthIn = 0, uint32_t heightIn = 0);
+		/// å¯ä»¥è¯»å–ç¡¬ç›˜ä¸Šçš„å›¾ç‰‡ï¼Œæˆ–è€…è¯»å–å·²ç»æ‹¿åˆ°çš„å›¾ç‰‡æ•°æ®æµ
+		static auto load(const std::string& path, unsigned char* dataIn = nullptr, uint32_t widthIn = 0,
+		                 uint32_t heightIn = 0) -> Texture::Ptr;
 	};
 }

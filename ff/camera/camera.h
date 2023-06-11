@@ -1,13 +1,13 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "../core/object3D.h"
 
 namespace ff {
 
-	//worldMatrix:½«¶¥µã´ÓÄ£ĞÍ×ø±êÏµ£¬×ª»»µ½ÊÀ½ç×ø±êÏµ
-	//viewMatrix£º½«¶¥µã´ÓÊÀ½ç×ø±êÏµ£¬×ª»»µ½Ä£ĞÍ×ø±êÏµ
-	//Äæ¾ØÕó£¨Inverse Matrix£©AÓëB»¥ÎªÄæ¾ØÕó£¬ÄÇÃ´A * B = I£¨µ¥Î»Õó£©
-	//Camera:Ò»¸öÊÇ×÷ÎªÓÎÏ·Ö÷ÊÓ½Ç£¬×÷Îª¹âÕÕµÄÖ÷ÊÓ½Ç
+	/// worldMatrix:å°†é¡¶ç‚¹ä»æ¨¡å‹åæ ‡ç³»ï¼Œè½¬æ¢åˆ°ä¸–ç•Œåæ ‡ç³»
+	/// viewMatrixï¼šå°†é¡¶ç‚¹ä»ä¸–ç•Œåæ ‡ç³»ï¼Œè½¬æ¢åˆ°æ¨¡å‹åæ ‡ç³»
+	/// é€†çŸ©é˜µï¼ˆInverse Matrixï¼‰Aä¸Bäº’ä¸ºé€†çŸ©é˜µï¼Œé‚£ä¹ˆA * B = Iï¼ˆå•ä½é˜µï¼‰
+	/// Camera:ä¸€ä¸ªæ˜¯ä½œä¸ºæ¸¸æˆä¸»è§†è§’ï¼Œä½œä¸ºå…‰ç…§çš„ä¸»è§†è§’
 	class Camera:public Object3D {
 	public:
 		using Ptr = std::shared_ptr<Camera>;
@@ -16,13 +16,19 @@ namespace ff {
 
 		~Camera() noexcept;
 
-		glm::mat4 updateWorldMatrix(bool updateParent = false, bool updateChildren = false) noexcept override;
+		auto updateWorldMatrix(bool updateParent = false, bool updateChildren = false) noexcept -> glm::mat4 override;
 
-		glm::mat4 getWorldMatrixInverse() noexcept { return mWorldMatrixInverse; }
+		/// \brief è·å¾—æ‘„åƒæœºçš„ä¸–ç•Œåæ ‡çŸ©é˜µçš„é€†çŸ©é˜µ
+		/// \return 
+		auto getWorldMatrixInverse() const noexcept -> glm::mat4 { return mWorldMatrixInverse; }
 
-		glm::mat4 getProjectionMatrix() noexcept { return mProjectionMatrix; }
+		/// \brief è·å¾—æ‘„åƒæœºçš„æŠ•å½±çŸ©é˜µ
+		/// \return 
+		auto getProjectionMatrix() const noexcept -> glm::mat4 { return mProjectionMatrix; }
 
-		virtual glm::mat4 updateProjectionMatrix() noexcept = 0;//´¿Ğéº¯Êı,ĞèÒªÔÚ×ÓÀàµ±ÖĞÊµÏÖ
+		/// \brief æ›´æ–°æ‘„åƒæœºçš„æŠ•å½±çŸ©é˜µ
+		/// \return 
+		virtual auto updateProjectionMatrix() noexcept -> glm::mat4 = 0;
 
 	protected:
 		glm::mat4 mWorldMatrixInverse = glm::mat4(1.0f);

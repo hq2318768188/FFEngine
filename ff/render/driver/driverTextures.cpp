@@ -1,4 +1,4 @@
-#include "driverTextures.h"
+ï»¿#include "driverTextures.h"
 #include "../MultipleRenderTarget.h"
 
 namespace ff {
@@ -31,8 +31,8 @@ namespace ff {
 	void DriverTextures::update(const Texture::Ptr& texture) noexcept {
 		auto dTexture = get(texture);
 
-		//mNeedsUpdateÔÚtexture³õ´Î´´½¨µÄÊ±ºò£¬»áÊÇtrue
-		//ÔÚÊ¹ÓÃÕß¸ü¸ÄÁËtextureÏà¹ØµÄ¶«Î÷Ö®ºó£¬¿ÉÒÔÊÖ¶¯½«ÆäÖÃÎªtrue£¬¾Í»á´¥·¢¸ü¸Ä
+		/// mNeedsUpdateåœ¨textureåˆæ¬¡åˆ›å»ºçš„æ—¶å€™ï¼Œä¼šæ˜¯true
+		/// åœ¨ä½¿ç”¨è€…æ›´æ”¹äº†textureç›¸å…³çš„ä¸œè¥¿ä¹‹åï¼Œå¯ä»¥æ‰‹åŠ¨å°†å…¶ç½®ä¸ºtrueï¼Œå°±ä¼šè§¦å‘æ›´æ”¹
 		if (texture->mNeedsUpdate) {
 			texture->mNeedsUpdate = false;
 			setupDriverTexture(texture);
@@ -49,7 +49,7 @@ namespace ff {
 		}
 		glBindTexture(toGL(texture->mTextureType), dtexture->mHandle);
 
-		//ÉèÖÃÎÆÀí²ÎÊı
+		//è®¾ç½®çº¹ç†å‚æ•°
 		glTexParameteri(toGL(texture->mTextureType), GL_TEXTURE_MIN_FILTER, toGL(texture->mMinFilter));
 		glTexParameteri(toGL(texture->mTextureType), GL_TEXTURE_MAG_FILTER, toGL(texture->mMagFilter));
 		glTexParameteri(toGL(texture->mTextureType), GL_TEXTURE_WRAP_S, toGL(texture->mWrapS));
@@ -57,23 +57,23 @@ namespace ff {
 		glTexParameteri(toGL(texture->mTextureType), GL_TEXTURE_WRAP_R, toGL(texture->mWrapR));
 
 		if (texture->mTextureType == TextureType::Texture2D) {
-			//±ØĞëÊÇÌùÍ¼×¨ÓÃµÄtexture¶ø²»ÊÇäÖÈ¾Ä¿±ê£¬²Å¿ÉÄÜÓĞÍ¼Æ¬Êı¾İ
+			//å¿…é¡»æ˜¯è´´å›¾ä¸“ç”¨çš„textureè€Œä¸æ˜¯æ¸²æŸ“ç›®æ ‡ï¼Œæ‰å¯èƒ½æœ‰å›¾ç‰‡æ•°æ®
 			const byte* data = (texture->getUsage() == TextureUsage::SamplerTexture) ? texture->mSource->mData.data() : nullptr;
 
-			//1 ¿ª±ÙÄÚ´æ¿Õ¼ä
-			//2 ´«ÊäÍ¼Æ¬Êı¾İ
+			//1 å¼€è¾Ÿå†…å­˜ç©ºé—´
+			//2 ä¼ è¾“å›¾ç‰‡æ•°æ®
 			glTexImage2D(GL_TEXTURE_2D, 0, toGL(texture->mInternalFormat), texture->mWidth, texture->mHeight, 0, toGL(texture->mFormat), toGL(texture->mDataType), data);
 			glGenerateMipmap(GL_TEXTURE_2D);
 		}
 		else {
 
-			//Îªµ±Ç°µÄcubeMapµÄtexture×öÁù´ÎÄÚ´æ¿ª±ÙÒÔ¼°Êı¾İ¸üĞÂ
+			//ä¸ºå½“å‰çš„cubeMapçš„textureåšå…­æ¬¡å†…å­˜å¼€è¾Ÿä»¥åŠæ•°æ®æ›´æ–°
 			for (uint32_t i = 0; i < CubeTexture::CUBE_TEXTURE_COUNT; ++i) {
 				auto cubeTexture = std::static_pointer_cast<CubeTexture>(texture);
 				const byte* data = (texture->getUsage() == TextureUsage::SamplerTexture) ? cubeTexture->mSources[i]->mData.data() : nullptr;
 
-				//¿ª±ÙÄÚ´æ¼°¸üĞÂÊı¾İµÄË³Ğò£ºÓÒ×óÉÏÏÂÇ°ºó
-				//Òª¸øÄÄÒ»¸öÃæ¿ª±ÙÄÚ´æ¸üĞÂÊı¾İ£¬¾ÍÊäÈëÄÄÒ»¸öÃæµÄtarget
+				//å¼€è¾Ÿå†…å­˜åŠæ›´æ–°æ•°æ®çš„é¡ºåºï¼šå³å·¦ä¸Šä¸‹å‰å
+				//è¦ç»™å“ªä¸€ä¸ªé¢å¼€è¾Ÿå†…å­˜æ›´æ–°æ•°æ®ï¼Œå°±è¾“å…¥å“ªä¸€ä¸ªé¢çš„target
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, toGL(texture->mInternalFormat), texture->mWidth, texture->mHeight, 0, toGL(texture->mFormat), toGL(texture->mDataType), data);
 			}
 		}
@@ -100,11 +100,11 @@ namespace ff {
 		}
 
 		//TODO: support stencil buffer
-		//Èç¹ûĞèÒªDepthTest£¬²¢ÇÒÓÃ»§Ö¸¶¨ÁËÒ»ÕÅÓÃ»§´´½¨µÄTexture
+		//å¦‚æœéœ€è¦DepthTestï¼Œå¹¶ä¸”ç”¨æˆ·æŒ‡å®šäº†ä¸€å¼ ç”¨æˆ·åˆ›å»ºçš„Texture
 		if (renderTarget->mNeedsDepth && renderTarget->mDepthTexture) {
 			setupDepthTexture(dRenderTarget->mFrameBuffer, renderTarget);
 		}
-		//Èç¹ûÓÃ»§Ã»ÓĞÖ¸¶¨£¬×Ô¼ºÄ¬ÈÏ´´½¨Ò»¸öÓÃÓÚÉî¶È¼ì²âµÄRenderBuffer
+		//å¦‚æœç”¨æˆ·æ²¡æœ‰æŒ‡å®šï¼Œè‡ªå·±é»˜è®¤åˆ›å»ºä¸€ä¸ªç”¨äºæ·±åº¦æ£€æµ‹çš„RenderBuffer
 		else if (renderTarget->mNeedsDepth) {
 			setupDepthRenderBuffer(dRenderTarget->mFrameBuffer, renderTarget);
 		}
@@ -128,16 +128,16 @@ namespace ff {
 	void DriverTextures::setupDepthRenderBuffer(const GLuint& frameBuffer, const RenderTarget::Ptr& renderTarget) {
 		auto dRenderTarget = mRenderTargets->get(renderTarget);
 	
-		//´´½¨RenderBuffer
+		//åˆ›å»ºRenderBuffer
 		glGenRenderbuffers(1, &dRenderTarget->mDepthRenderBuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, dRenderTarget->mDepthRenderBuffer);
 
-		//ÎªrenderBuffer¶ÔÏó¿ª±Ù¿Õ¼ä
+		//ä¸ºrenderBufferå¯¹è±¡å¼€è¾Ÿç©ºé—´
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, renderTarget->mWidth, renderTarget->mHeight);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
 
-		//ÏòframeBuffer½øĞĞ°ó¶¨
+		//å‘frameBufferè¿›è¡Œç»‘å®š
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, dRenderTarget->mDepthRenderBuffer);
 
@@ -162,7 +162,7 @@ namespace ff {
 		//GL_TEXTURE1 = GL_TEXTURE0+1
 		//GL_TEXTURE2 = GL_TEXTURE0+2
 		glActiveTexture(textureUnit);
-		//¸üĞÂ»òÕß´´½¨textureID
+		//æ›´æ–°æˆ–è€…åˆ›å»ºtextureID
 		update(texture);
 		auto dTexture = get(texture);
 		glBindTexture(toGL(texture->mTextureType), dTexture->mHandle);

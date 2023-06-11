@@ -1,4 +1,4 @@
-#include "textureLoader.h"
+ï»¿#include "textureLoader.h"
 #include <stb_image.h>
 #include "../global/config.h"
 #include "cache.h"
@@ -9,16 +9,18 @@ namespace ff {
 
 	TextureLoader::~TextureLoader() noexcept {}
 
-	Texture::Ptr TextureLoader::load(const std::string& path, unsigned char* dataIn, uint32_t widthIn, uint32_t heightIn) {
+	auto TextureLoader::load(const std::string& path, unsigned char* dataIn, uint32_t widthIn,
+	                         uint32_t heightIn) -> Texture::Ptr
+	{
 		Texture::Ptr texture = nullptr;
 		std::string filePath = path;
 
-		//Èç¹ûÂ·¾¶Îª¿Õ£¬ÔòÊ¹ÓÃÄ¬ÈÏÍ¼Æ¬
+		/// å¦‚æœè·¯å¾„ä¸ºç©ºï¼Œåˆ™ä½¿ç”¨é»˜è®¤å›¾ç‰‡
 		if (filePath.empty()) {
 			filePath = DefaultTexturePath;
 		}
 
-		//¼ì²éÊÇ·ñÒÑ¾­Éú³É¹ısource£¬Èç¹ûÉú³ÉÁË¾Í´ÓcacheÀïÃæÈ¡³öÀ´
+		/// æ£€æŸ¥æ˜¯å¦å·²ç»ç”Ÿæˆè¿‡sourceï¼Œå¦‚æœç”Ÿæˆäº†å°±ä»cacheé‡Œé¢å–å‡ºæ¥
 		Source::Ptr source = Cache::getInstance()->getSource(path);
 
 		if (source) {
@@ -27,24 +29,24 @@ namespace ff {
 		}
 		else {
 			source = Source::create();
-			//ÒÔÏÂÊı¾İ¶¼ÊÇĞÂÊı¾İ,ËùÒÔfalseµô
+			/// ä»¥ä¸‹æ•°æ®éƒ½æ˜¯æ–°æ•°æ®,æ‰€ä»¥falseæ‰
 			source->mNeedsUpdate = false;
 
-			//Ê¹ÓÃÒıÓÃÀàĞÍ£¬¿ÉÒÔÖ±½Ó¶Ôdata½øĞĞ¸ü¸Ä£¬½á¹û»áÍ¬²½µ½sourceµÄDataµ±ÖĞ
+			/// ä½¿ç”¨å¼•ç”¨ç±»å‹ï¼Œå¯ä»¥ç›´æ¥å¯¹dataè¿›è¡Œæ›´æ”¹ï¼Œç»“æœä¼šåŒæ­¥åˆ°sourceçš„Dataå½“ä¸­
 			auto& data = source->mData;
 
 			int			picType = 0;
 			int width = 0, height = 0;
 
-			//Õû¸ö¶ÁÈ¡³öÀ´µÄÍ¼Æ¬Êı¾İ´óĞ¡
+			/// æ•´ä¸ªè¯»å–å‡ºæ¥çš„å›¾ç‰‡æ•°æ®å¤§å°
 			uint32_t dataSize{ 0 };
 
-			//¶ÁÈ¡³öÀ´µÄÍ¼Æ¬Êı¾İÖ¸Õë
+			/// è¯»å–å‡ºæ¥çš„å›¾ç‰‡æ•°æ®æŒ‡é’ˆ
 			unsigned char* bits{ nullptr };
 
-			//ÒªÃ´´ÓÓ²ÅÌ¶ÁÈ¡£¬ÒªÃ´´ÓÊı¾İÁ÷¶ÁÈ¡
+			/// è¦ä¹ˆä»ç¡¬ç›˜è¯»å–ï¼Œè¦ä¹ˆä»æ•°æ®æµè¯»å–
 			if (dataIn == nullptr) {
-				//if nofile, use default
+				/// if nofile, use default
 				std::fstream file(filePath);
 				if (!file.is_open()) {
 					filePath = DefaultTexturePath;
@@ -56,10 +58,10 @@ namespace ff {
 				bits = stbi_load(filePath.c_str(), &width, &height, &picType, toStbImageFormat(TextureFormat::RGBA));
 			}
 			else {
-				//¼ÇÂ¼ÁËÕû¸öÊı¾İµÄ´óĞ¡
+				/// è®°å½•äº†æ•´ä¸ªæ•°æ®çš„å¤§å°
 				uint32_t dataInSize = 0;
 
-				//Ò»¸öfbxÄ£ĞÍÓĞ¿ÉÄÜ´ò°ü½øÀ´jpg£¬´øÓĞÑ¹Ëõ¸ñÊ½µÄÍ¼Æ¬Çé¿öÏÂ£¬height¿ÉÄÜÎª0£¬width¾Í´ú±íÁËÕû¸öÍ¼Æ¬µÄ´óĞ¡
+				/// ä¸€ä¸ªfbxæ¨¡å‹æœ‰å¯èƒ½æ‰“åŒ…è¿›æ¥jpgï¼Œå¸¦æœ‰å‹ç¼©æ ¼å¼çš„å›¾ç‰‡æƒ…å†µä¸‹ï¼Œheightå¯èƒ½ä¸º0ï¼Œwidthå°±ä»£è¡¨äº†æ•´ä¸ªå›¾ç‰‡çš„å¤§å°
 				if (!heightIn) {
 					dataInSize = widthIn;
 				}
@@ -67,21 +69,21 @@ namespace ff {
 					dataInSize = widthIn * heightIn;
 				}
 
-				//ÎÒÃÇÏÖÔÚÄÃµ½µÄdataIn£¬²¢²»ÊÇÕ¹¿ªµÄÎ»Í¼Êı¾İ£¬ÓĞ¿ÉÄÜÊÇÒ»¸öjpg pngµÈ¸ñÊ½µÄÍ¼Æ¬Êı¾İÁ÷
+				/// æˆ‘ä»¬ç°åœ¨æ‹¿åˆ°çš„dataInï¼Œå¹¶ä¸æ˜¯å±•å¼€çš„ä½å›¾æ•°æ®ï¼Œæœ‰å¯èƒ½æ˜¯ä¸€ä¸ªjpg pngç­‰æ ¼å¼çš„å›¾ç‰‡æ•°æ®æµ
 				bits = stbi_load_from_memory(dataIn, dataInSize, &width, &height, &picType, toStbImageFormat(TextureFormat::RGBA));
 			}
 
 			dataSize = width * height * toByteSize(TextureFormat::RGBA);
 
-			//¾­¹ıÉÏÊö¹ı³Ì£¬ÖÕÓÚ×¼±¸ºÃÁËËùÓĞµÄ±ØÒªÊı¾İ£¬½ÓÏÂÀ´Ìî³äsourceµÄdata(Vector<Byte>)
+			/// ç»è¿‡ä¸Šè¿°è¿‡ç¨‹ï¼Œç»ˆäºå‡†å¤‡å¥½äº†æ‰€æœ‰çš„å¿…è¦æ•°æ®ï¼Œæ¥ä¸‹æ¥å¡«å……sourceçš„data(Vector<Byte>)
 			if (dataSize && bits) {
 				data.resize(dataSize);
 
-				//´ÓbitsÏòdataµÄµØÖ·¿ªÍ·£¬¿½±´dataSize¸öByteµÄÊı¾İ
+				/// ä»bitså‘dataçš„åœ°å€å¼€å¤´ï¼Œæ‹·è´dataSizeä¸ªByteçš„æ•°æ®
 				memcpy(data.data(), bits, dataSize);
 			}
 
-			//´ËÊ±£¬bitsÖ¸ÏòµÄÓÉstbimage¸øµ½µÄÄÚ´æÊı¾İ£¬¾ÍdeleteÁË
+			/// æ­¤æ—¶ï¼ŒbitsæŒ‡å‘çš„ç”±stbimageç»™åˆ°çš„å†…å­˜æ•°æ®ï¼Œå°±deleteäº†
 			stbi_image_free(bits);
 
 			source->mWidth = width;

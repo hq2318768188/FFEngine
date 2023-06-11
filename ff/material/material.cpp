@@ -1,4 +1,4 @@
-#include "material.h"
+ï»¿#include "material.h"
 #include "../tools/identity.h"
 #include "../global/eventDispatcher.h"
 
@@ -12,7 +12,7 @@ namespace ff {
 
 	Material::~Material() noexcept {
 
-		//ÔÙÎö¹¹µÄÊ±ºò£¬ÏòÍâ·¢³öÏûÏ¢£¬Í¨Öª¼àÌýº¯ÊýÃÇ£¬ÄÄÒ»¸ö²ÄÖÊÏûÍöÁË
+		/// å†æžæž„çš„æ—¶å€™ï¼Œå‘å¤–å‘å‡ºæ¶ˆæ¯ï¼Œé€šçŸ¥ç›‘å¬å‡½æ•°ä»¬ï¼Œå“ªä¸€ä¸ªæè´¨æ¶ˆäº¡äº†
 		EventBase::Ptr e = EventBase::create("materialDispose");
 		e->mTarget = this;
 		EventDispatcher::getInstance()->dispatchEvent(e);

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "camera.h"
 
 namespace ff {
@@ -15,7 +15,7 @@ namespace ff {
 		~OrthographicCamera() noexcept;
 
 	private:
-		glm::mat4 updateProjectionMatrix() noexcept override;
+		auto updateProjectionMatrix() noexcept -> glm::mat4 override;
 		
 	private:
 		float mLeft{ 0.0f };

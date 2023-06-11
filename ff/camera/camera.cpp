@@ -1,4 +1,4 @@
-#include "camera.h"
+﻿#include "camera.h"
 
 namespace ff {
 
@@ -8,7 +8,8 @@ namespace ff {
 
 	Camera::~Camera() noexcept {}
 
-	glm::mat4 Camera::updateWorldMatrix(bool updateParent, bool updateChildren) noexcept {
+	auto Camera::updateWorldMatrix(bool updateParent, bool updateChildren) noexcept -> glm::mat4
+	{
 		Object3D::updateWorldMatrix(updateParent, updateChildren);
 		mWorldMatrixInverse = glm::inverse(mWorldMatrix);
 

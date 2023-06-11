@@ -1,4 +1,4 @@
-#pragma once 
+ï»¿#pragma once 
 #include "cameraControl.h"
 #include "../global/constant.h"
 
@@ -20,32 +20,44 @@ namespace ff {
 
 		~GameCameraControl() noexcept;
 
-		void setSpeed(float speed) noexcept;
+		/// \brief è®¾ç½®é¼ æ ‡æ§åˆ¶æ‘„åƒæœºçš„é€Ÿåº¦
+		/// \param speed 
+		auto setSpeed(float speed) noexcept -> void;
 
-		void setSensitivity(float s) noexcept;
+		/// \brief è®¾ç½®é¼ æ ‡æ§åˆ¶æ‘„åƒæœºçš„çµæ•åº¦
+		/// \param s 
+		auto setSensitivity(float s) noexcept -> void;
 
-		void onKeyboard(const KeyBoardState& action) noexcept override;
+		/// \brief æ‘„åƒæœºé”®ç›˜äº‹ä»¶
+		/// \param action 
+		auto onKeyboard(const KeyBoardState& action) noexcept -> void override;
 
-		void onMouseAction(const MouseAction& action) noexcept override;
+		/// \brief æ‘„åƒæœºé¼ æ ‡æŒ‰ä¸‹äº‹ä»¶
+		/// \param action 
+		auto onMouseAction(const MouseAction& action) noexcept -> void override;
 
-		void onMouseMove(double xpos, double ypos) noexcept override;
+		/// \brief æ‘„åƒæœºé¼ æ ‡ç§»åŠ¨äº‹ä»¶
+		/// \param xpos 
+		/// \param ypos 
+		auto onMouseMove(double xpos, double ypos) noexcept -> void override;
 
-		void update() noexcept;
+		/// \brief åˆ·æ–°æ‘„åƒæœº
+		auto update() noexcept -> void;
 
 	private:
-		float mSpeed{ 0.1f };//ÒÆ¶¯ËÙ¶È
-		float mSensitivity{ 0.1f };//ÁéÃô¶È£¬Êó±êÒÆ¶¯Ôì³É¶à´ó³Ì¶ÈµÄĞı×ª
+		float		mSpeed{ 0.1f };						/// ç§»åŠ¨é€Ÿåº¦
+		float		mSensitivity{ 0.1f };				/// çµæ•åº¦ï¼Œé¼ æ ‡ç§»åŠ¨é€ æˆå¤šå¤§ç¨‹åº¦çš„æ—‹è½¬
 
-		glm::vec3	mFront = glm::vec3(0.0f);//µ±Ç°Ïà»úµÄ³åÏò
+		glm::vec3	mFront = glm::vec3(0.0f);		/// å½“å‰ç›¸æœºçš„å†²å‘
 		float		mPitchAngle{ 0.0f };
 		float		mYawAngle{ -90.0f };
 
-		//control parameters
+		/// control parameters
 		glm::vec2	mCurrentMousePosition = glm::vec2(0.0f);
-		//ÓÃÀ´¼ÇÂ¼µ±Ç°ÕıÔÚÒÆ¶¯µÄ·½Ïò£¬¿ÉÒÔÍ¬Ê±¶à¸ö
+		/// ç”¨æ¥è®°å½•å½“å‰æ­£åœ¨ç§»åŠ¨çš„æ–¹å‘ï¼Œå¯ä»¥åŒæ—¶å¤šä¸ª
 		glm::bvec4	mMoveState = glm::bvec4(false);
 
-		//ÊÇ·ñÕıÔÚĞı×ª,Êó±êÓÒ¼üµã×¡Ö®ºó£¬¿ÉÒÔÍÏ¶¯ÉÏÏÂ×óÓÒĞı×ªÊÓ½Ç,Ì§ÆğÖ®ºó£¬¾Í²»ÄÜÁË
+		/// æ˜¯å¦æ­£åœ¨æ—‹è½¬,é¼ æ ‡å³é”®ç‚¹ä½ä¹‹åï¼Œå¯ä»¥æ‹–åŠ¨ä¸Šä¸‹å·¦å³æ—‹è½¬è§†è§’,æŠ¬èµ·ä¹‹åï¼Œå°±ä¸èƒ½äº†
 		bool		mRotationState = false;
 		bool		mMouseStateReset = true;
 	};

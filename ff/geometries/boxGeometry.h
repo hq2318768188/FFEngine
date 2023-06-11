@@ -1,4 +1,4 @@
-#pragma once 
+﻿#pragma once 
 #include "../core/geometry.h"
 
 namespace ff {
@@ -24,17 +24,17 @@ namespace ff {
 		~BoxGeometry() noexcept;
 
 	private:
-		void buildPlane(
-			uint32_t u, uint32_t v, uint32_t w, 
-			int16_t udir, int16_t vdir, 
-			float width, float height, float depth, 
+		auto buildPlane(
+			uint32_t u, uint32_t v, uint32_t w,
+			int16_t udir, int16_t vdir,
+			float width, float height, float depth,
 			uint32_t gradX, uint32_t gradY,
 			uint32_t& numberOfVertices,
 			PositionArray& positions,
 			NormalArray& normals,
 			UVArray& uvs,
 			IndexArray& indices
-		) noexcept;
+			) noexcept -> void;
 
 	private:
 		float mWidth{ 0.0f };

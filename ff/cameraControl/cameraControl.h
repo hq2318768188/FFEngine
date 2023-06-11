@@ -1,12 +1,12 @@
-#pragma once
+ï»¿#pragma once
 #include "../global/base.h"
 #include "../global/constant.h"
 #include "../camera/camera.h"
 
 namespace ff {
 
-	//ÈÎÎñ£º¸ù¾İ¼üÅÌÊó±ê£¬¸ü¸ÄcameraµÄ¾ØÕó
-	//ÖÖÀà£ºgameCameraControl wasd Êó±êÓÒ¼ü trackBallControl cad/caeÈí¼şµ±ÖĞ
+	/// ä»»åŠ¡ï¼šæ ¹æ®é”®ç›˜é¼ æ ‡ï¼Œæ›´æ”¹cameraçš„çŸ©é˜µ
+	/// ç§ç±»ï¼šgameCameraControl wasd é¼ æ ‡å³é”® trackBallControl cad/caeè½¯ä»¶å½“ä¸­
 	class CameraControl {
 	public:
 		using Ptr = std::shared_ptr<CameraControl>;
@@ -15,14 +15,22 @@ namespace ff {
 
 		~CameraControl() noexcept;
 
-		//±¾ÖÊÉÏÀ´½²¾ÍÊÇbitÎ»¼¯ºÏ£¬Ò»¹²108¼ü
-		virtual void onKeyboard(const KeyBoardState& action) noexcept;
+		
+		/// \brief é”®ç›˜äº‹ä»¶
+		///	æœ¬è´¨ä¸Šæ¥è®²å°±æ˜¯bitä½é›†åˆï¼Œä¸€å…±108é”®
+		/// \param action 
+		virtual auto onKeyboard(const KeyBoardState& action) noexcept -> void;
 
-		virtual void onMouseAction(const MouseAction& action) noexcept;
+		/// \brief é¼ æ ‡æŒ‰ä¸‹äº‹ä»¶
+		/// \param action 
+		virtual auto onMouseAction(const MouseAction& action) noexcept -> void;
 
-		virtual void onMouseMove(double xpos, double ypos) noexcept;
+		/// \brief é¼ æ ‡ç§»åŠ¨äº‹ä»¶
+		/// \param xpos 
+		/// \param ypos 
+		virtual auto onMouseMove(double xpos, double ypos) noexcept -> void;
 
 	protected:
-		Camera::Ptr	mCamera{ nullptr };//Õı½»Ïà»ú  Í¸ÊÓÏà»ú
+		Camera::Ptr	mCamera{ nullptr };/// æ­£äº¤ç›¸æœº  é€è§†ç›¸æœº
 	};
 }

@@ -1,4 +1,6 @@
-#pragma once
+ï»¿#pragma once
+#include <mutex>
+
 #include "../global/base.h"
 #include "../global/constant.h"
 #include "../textures/source.h"
@@ -6,9 +8,9 @@
 
 namespace ff {
 
-	//´ÓÖÐ¶ÁÈ¡µ½ÒÑ¾­±£´æ¹ýµÄsource
-	//½«ÐÂµÄsource »º´æµ½Õâ¸öÀàÀïÃæ
-	//sourceÔÚ±»ÆäËû¶ÔÏó·ÅÆúÊ¹ÓÃÈ¨µÄÊ±ºò£¬ÄÜ¹»ÖªÏþ£¬²¢ÇÒÃ»ÓÐÈËÓÃµÄÊ±ºò£¬Îö¹¹
+	/// ä»Žä¸­è¯»å–åˆ°å·²ç»ä¿å­˜è¿‡çš„source
+	/// å°†æ–°çš„source ç¼“å­˜åˆ°è¿™ä¸ªç±»é‡Œé¢
+	/// sourceåœ¨è¢«å…¶ä»–å¯¹è±¡æ”¾å¼ƒä½¿ç”¨æƒçš„æ—¶å€™ï¼Œèƒ½å¤ŸçŸ¥æ™“ï¼Œå¹¶ä¸”æ²¡æœ‰äººç”¨çš„æ—¶å€™ï¼Œæžæž„
 	class Cache {
 	public:
 		static Cache* getInstance();
@@ -17,16 +19,26 @@ namespace ff {
 
 		~Cache() noexcept;
 
-		Source::Ptr getSource(const std::string& path) noexcept;
+		/// \brief ä»Žç¼“å­˜ä¸­èŽ·å¾—source
+		/// \param path 
+		/// \return 
+		auto getSource(const std::string& path) noexcept -> Source::Ptr;
 
-		void cacheSource(const std::string& path, Source::Ptr source) noexcept;
+		/// \brief ç¼“å­˜source
+		/// \param path 
+		/// \param source 
+		auto cacheSource(const std::string& path, Source::Ptr source) noexcept -> void;
 
-		void onSourceRelease(const EventBase::Ptr& e);
+		/// \brief ç›‘å¬
+		/// \param e 
+		auto onSourceRelease(const EventBase::Ptr& e) -> void;
 
 	private:
 		static Cache* mInstance;
 
-		//hashType = size_t
+		/// hashType = size_t
 		std::unordered_map<HashType, Source::Ptr> mSources{};
+
+		std::mutex mMutex;
 	};
 }

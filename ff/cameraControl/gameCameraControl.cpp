@@ -1,4 +1,4 @@
-#include "gameCameraControl.h"
+ï»¿#include "gameCameraControl.h"
 
 namespace ff {
 
@@ -6,15 +6,18 @@ namespace ff {
 
 	GameCameraControl::~GameCameraControl() noexcept {}
 
-	void GameCameraControl::setSpeed(float speed) noexcept {
+	auto GameCameraControl::setSpeed(float speed) noexcept -> void
+	{
 		mSpeed = speed;
 	}
 
-	void GameCameraControl::setSensitivity(float s) noexcept {
+	auto GameCameraControl::setSensitivity(float s) noexcept -> void
+	{
 		mSensitivity = s;
 	}
 
-	void GameCameraControl::onKeyboard(const KeyBoardState& action) noexcept {
+	auto GameCameraControl::onKeyboard(const KeyBoardState& action) noexcept -> void
+	{
 		if (action[WKey]) {
 			mMoveState[MoveFront] = true;
 		}
@@ -44,19 +47,21 @@ namespace ff {
 		}
 	}
 
-	void GameCameraControl::onMouseAction(const MouseAction& action) noexcept {
+	auto GameCameraControl::onMouseAction(const MouseAction& action) noexcept -> void
+	{
 		if (action == MouseAction::RightDown) {
 			mRotationState = true;
 		}
 		else if (action == MouseAction::RightUp) {
 			mRotationState = false;
-			//ÓÃÀ´±ê¶¨£¬ÊÇ·ñµÚÒ»´Î°´ÏÂÊó±ê
+			/// ç”¨æ¥æ ‡å®šï¼Œæ˜¯å¦ç¬¬ä¸€æ¬¡æŒ‰ä¸‹é¼ æ ‡
 			mMouseStateReset = true;
 		}
 	}
 
-	void GameCameraControl::onMouseMove(double xpos, double ypos) noexcept {
-		//Èç¹ûÓÒ¼üÃ»ÓĞ°´ÏÂ£¬ÄÇÃ´²»´¦ÀíĞı×ª
+	auto GameCameraControl::onMouseMove(double xpos, double ypos) noexcept -> void
+	{
+		/// å¦‚æœå³é”®æ²¡æœ‰æŒ‰ä¸‹ï¼Œé‚£ä¹ˆä¸å¤„ç†æ—‹è½¬
 		if (!mRotationState) {
 			return;
 		}
@@ -75,7 +80,7 @@ namespace ff {
 			mPitchAngle += angleY;
 			mYawAngle += angleX;
 
-			//²»ÄÜÑöÃæ·­¹ıÈ¥£¬Ò²²»ÄÜÇ°¹ö·­
+			/// ä¸èƒ½ä»°é¢ç¿»è¿‡å»ï¼Œä¹Ÿä¸èƒ½å‰æ»šç¿»
 			if (mPitchAngle >= 90.0f) {
 				mPitchAngle = 89.0f;
 			}
@@ -88,7 +93,7 @@ namespace ff {
 			mFront.x = cos(glm::radians(mYawAngle)) * cos(glm::radians(mPitchAngle));
 			mFront.z = sin(glm::radians(mYawAngle)) * cos(glm::radians(mPitchAngle));
 
-			//Ò»¶¨Òª×¢Òâ´«½øÈ¥µÄÊÇ¿´ÏòÄÄ¸öµã£¬¶ø²»ÊÇÖ±½Ó°Ñ·½Ïò´«½øÈ¥
+			/// ä¸€å®šè¦æ³¨æ„ä¼ è¿›å»çš„æ˜¯çœ‹å‘å“ªä¸ªç‚¹ï¼Œè€Œä¸æ˜¯ç›´æ¥æŠŠæ–¹å‘ä¼ è¿›å»
 			mCamera->lookAt(mFront + mCamera->getPosition(), glm::vec3(0.0, 1.0, 0.0));
 		}
 
@@ -96,12 +101,13 @@ namespace ff {
 		mCurrentMousePosition.y = ypos;
 	}
 
-	//ÔÚonMouseMoveµÄÊ±ºò£¬ÒÑ¾­¼ÆËãÍê±ÏÁËcameraµÄ³¯Ïò£¬ ¼´Ğı×ª¾ØÕó£¬µ«ÊÇ»¹Ã»ÓĞ¸üĞÂÎ»ÖÃ
-	void GameCameraControl::update() noexcept {
-		//µ±Ç°cameraÕâ¸öobjectµÄÄ£ĞÍ×ø±êÏµ£¬¸ºz·½Ïò
+	/// åœ¨onMouseMoveçš„æ—¶å€™ï¼Œå·²ç»è®¡ç®—å®Œæ¯•äº†cameraçš„æœå‘ï¼Œ å³æ—‹è½¬çŸ©é˜µï¼Œä½†æ˜¯è¿˜æ²¡æœ‰æ›´æ–°ä½ç½®
+	auto GameCameraControl::update() noexcept -> void
+	{
+		/// å½“å‰cameraè¿™ä¸ªobjectçš„æ¨¡å‹åæ ‡ç³»ï¼Œè´Ÿzæ–¹å‘
 		glm::vec3 front = mCamera->getLocalDirection();
 
-		//cameraµÄÓÒ±ß( Ä£ĞÍ×ø±êÏµ)
+		/// cameraçš„å³è¾¹( æ¨¡å‹åæ ‡ç³»)
 		glm::vec3 right = mCamera->getRight();
 
 		glm::vec3 position = mCamera->getPosition();
@@ -130,7 +136,7 @@ namespace ff {
 		}
 
 		if (needsUpdate && (direction.x != 0.0 || direction.y != 0.0 || direction.z != 0.0)) {
-			//È¥³ı·½ÏòÏòÁ¿µÄ³¤¶ÈÓ°Ïì
+			/// å»é™¤æ–¹å‘å‘é‡çš„é•¿åº¦å½±å“
 			direction = glm::normalize(direction);
 			position += direction * mSpeed;
 

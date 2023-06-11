@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../core/object3D.h"
 #include "../core/geometry.h"
 #include "../material/material.h"
@@ -11,12 +11,12 @@ namespace ff {
 	class Scene;
 	class Camera;
 
-	//Ò»ÇĞ¿ÉäÖÈ¾ÎïÌåµÄ»ùÀà
+	/// ä¸€åˆ‡å¯æ¸²æŸ“ç‰©ä½“çš„åŸºç±»
 	class RenderableObject :public Object3D {
 	public:
 		using OnBeforeRenderCallback = std::function<void(Renderer*, Scene*, Camera*)>;
 
-		//Ê¹ÓÃÖÇÄÜÖ¸Õë½øĞĞ¹ÜÀí
+		/// ä½¿ç”¨æ™ºèƒ½æŒ‡é’ˆè¿›è¡Œç®¡ç†
 		using Ptr = std::shared_ptr<RenderableObject>;
 		static Ptr create(const Geometry::Ptr& geometry, const Material::Ptr& material) {
 			return std::make_shared <RenderableObject>(geometry, material);
@@ -26,15 +26,23 @@ namespace ff {
 
 		~RenderableObject() noexcept;
 
+		/// \brief è·å¾—å¯æ¸²æŸ“ç‰©ä½“çš„ Geometry
+		/// \return 
 		auto getGeometry() const noexcept { return mGeometry; }
 
+		/// \brief è·å¾—å¯æ¸²æŸ“ç‰©ä½“çš„ Material
+		/// \return 
 		auto getMaterial() const noexcept { return mMaterial; }
 
-		//ÔÚ±¾ÎïÌåäÖÈ¾Ç°£¬»áµ÷ÓÃ±¾º¯Êı£¬ÔÊĞíÓÃ»§Ö¸¶¨äÖÈ¾Ç°×öÄÄĞ©´¦Àí
-		void onBeforeRender(Renderer* renderer, Scene* scene, Camera* camera);
+		
+		/// \brief åœ¨æœ¬ç‰©ä½“æ¸²æŸ“å‰ï¼Œä¼šè°ƒç”¨æœ¬å‡½æ•°ï¼Œå…è®¸ç”¨æˆ·æŒ‡å®šæ¸²æŸ“å‰åšå“ªäº›å¤„ç†
+		/// \param renderer 
+		/// \param scene 
+		/// \param camera 
+		auto onBeforeRender(Renderer* renderer, Scene* scene, Camera* camera) const -> void;
 
 	public:
-		//ÔÚ±¾¿É»æÖÆÎïÌå£¬½øĞĞäÖÈ¾Ö®Ç°£¬»á»Øµ÷Õâ¸öº¯Êı½øĞĞÍ¨Öª
+		/// åœ¨æœ¬å¯ç»˜åˆ¶ç‰©ä½“ï¼Œè¿›è¡Œæ¸²æŸ“ä¹‹å‰ï¼Œä¼šå›è°ƒè¿™ä¸ªå‡½æ•°è¿›è¡Œé€šçŸ¥
 		OnBeforeRenderCallback mOnBeforeRenderCallback{ nullptr };
 
 	protected:

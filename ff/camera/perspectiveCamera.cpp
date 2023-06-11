@@ -1,4 +1,4 @@
-#include "perspectiveCamera.h"
+﻿#include "perspectiveCamera.h"
 
 namespace ff {
 
@@ -14,7 +14,8 @@ namespace ff {
 
 	PerspectiveCamera::~PerspectiveCamera() noexcept {}
 
-	glm::mat4 PerspectiveCamera::updateProjectionMatrix() noexcept {
+	auto PerspectiveCamera::updateProjectionMatrix() noexcept -> glm::mat4
+	{
 		mProjectionMatrix = glm::perspective(glm::radians(mFov), mAspect, mNear, mFar);
 
 		return mProjectionMatrix;
