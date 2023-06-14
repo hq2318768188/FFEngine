@@ -1,11 +1,11 @@
-#pragma once
+ï»¿#pragma once
 #include "../../global/base.h"
 #include "../../core/attribute.h"
 #include "../../global/eventDispatcher.h"
 
 namespace ff {
 
-	//DriverAttribute ÊÇÓëAttributeÒ»Ò»¶ÔÓ¦
+	/// DriverAttribute æ˜¯ä¸Attributeä¸€ä¸€å¯¹åº”
 	class DriverAttribute {
 	public:
 		using Ptr = std::shared_ptr<DriverAttribute>;
@@ -17,11 +17,12 @@ namespace ff {
 
 		~DriverAttribute() noexcept;
 
-		//mHandle¾ÍÊÇVBO
-		//VBO£¬ÊÇOpenGLµÄÒ»¸ö¸ÅÄî£¬VertexBufferObject¡£´ú±íÁËÔÚGPU ÉÏµÄÒ»¿éÄÚ´æ¿Õ¼ä£¬×¨ÃÅÓÃÀ´
-		//´æ´¢Mesh¶¥µãµÄAttributeÊı¾İ
+		
+		/// \brief mHandleå°±æ˜¯VBO
 		GLuint		mHandle{ 0 };
 	};
+
+
 
 	class DriverAttributes {
 	public:
@@ -30,35 +31,40 @@ namespace ff {
 			return std::make_shared <DriverAttributes>();
 		}
 
-		//ID:Ç°¶ËµÄAttributeµÄID
-		//Value£º±¾IDËù¶ÔÓ¦µÄAttributeÉú³ÉµÄDriverAttribute
+		/// ID:å‰ç«¯çš„Attributeçš„ID
+		/// Valueï¼šæœ¬IDæ‰€å¯¹åº”çš„Attributeç”Ÿæˆçš„DriverAttribute
 		using DriverAttributesMap = std::unordered_map<ID, DriverAttribute::Ptr>;
 		DriverAttributes() noexcept;
 
 		~DriverAttributes() noexcept;
 
-		//¹¦ÄÜ£º
-		// 1 Èç¹û±¾AttributeÃ»ÓĞ¶ÔÓ¦µÄDriverAttribute£¬¾ÍÎªÆäÉú³É£¬ÇÒ¸üĞÂÊı¾İ
-		// 2 Èç¹û±¾AttributeÓµÓĞÒ»¸ö¶ÔÓ¦µÄDriverAttribute£¬Ôò¼ì²éÆäVBO Êı¾İÊÇ·ñĞèÒª¸üĞÂ
-		//bufferType±íÊ¾ÁË±¾AttributeÊÇÒ»¸öindexAttribute»òÕßÊÇÒ»¸öÆÕÍ¨µÄAttribute
+		
+		/// \brief ï¼š
+		///  1 å¦‚æœæœ¬Attributeæ²¡æœ‰å¯¹åº”çš„DriverAttributeï¼Œå°±ä¸ºå…¶ç”Ÿæˆï¼Œä¸”æ›´æ–°æ•°æ®
+		///  2 å¦‚æœæœ¬Attributeæ‹¥æœ‰ä¸€ä¸ªå¯¹åº”çš„DriverAttributeï¼Œåˆ™æ£€æŸ¥å…¶VBO æ•°æ®æ˜¯å¦éœ€è¦æ›´æ–°
+		/// \tparam T 
+		/// \param attribute 
+		/// \param bufferType è¡¨ç¤ºäº†æœ¬Attributeæ˜¯ä¸€ä¸ªindexAttributeæˆ–è€…æ˜¯ä¸€ä¸ªæ™®é€šçš„Attribute 
+		/// \return 
 		template<typename T>
-		DriverAttribute::Ptr update(
+		auto update(
 			const std::shared_ptr<Attribute<T>>& attribute,
-			const BufferType& bufferType) noexcept;
-
+			const BufferType& bufferType) noexcept -> DriverAttribute::Ptr;
+		
 		template<typename T>
-		DriverAttribute::Ptr get(const std::shared_ptr<Attribute<T>>& attribute) noexcept;
+		auto get(const std::shared_ptr<Attribute<T>>& attribute) noexcept -> DriverAttribute::Ptr;
 
-		void remove(ID attributeID) noexcept;
+		auto remove(ID attributeID) noexcept -> void;
 
-		void onAttributeDispose(const EventBase::Ptr& e);
+		auto onAttributeDispose(const EventBase::Ptr& e) -> void;
 
 	private:
 		DriverAttributesMap mAttributes{};
 	};
 
 	template<typename T>
-	DriverAttribute::Ptr DriverAttributes::get(const std::shared_ptr<Attribute<T>>& attribute) noexcept {
+	auto DriverAttributes::get(const std::shared_ptr<Attribute<T>>& attribute) noexcept -> DriverAttribute::Ptr
+	{
 		auto iter = mAttributes.find(attribute->getID());
 		if (iter != mAttributes.end()) {
 			return iter->second;
@@ -68,54 +74,55 @@ namespace ff {
 	}
 
 	template<typename T>
-	DriverAttribute::Ptr DriverAttributes::update(
+	auto DriverAttributes::update(
 		const std::shared_ptr<Attribute<T>>& attribute,
 		const BufferType& bufferType
-	) noexcept {
+		) noexcept -> DriverAttribute::Ptr
+	{
 		DriverAttribute::Ptr dattribute = nullptr;
 
-		//Ñ°ÕÒ£¬¿´¿´ÊÇ·ñÎÒÃÇµÄmapÀïÓĞ±¾Attribute¶ÔÓ¦µÄDriverAttribute
+		/// å¯»æ‰¾ï¼Œçœ‹çœ‹æ˜¯å¦æˆ‘ä»¬çš„mapé‡Œæœ‰æœ¬Attributeå¯¹åº”çš„DriverAttribute
 		auto iter = mAttributes.find(attribute->getID());
 		if (iter != mAttributes.end()) {
 			dattribute = iter->second;
 		}
 		else {
 
-			//Èç¹ûÃ»ÓĞÕÒµ½£¬Ôò´´½¨Ò»¸öĞÂµÄDriverAttribute
+			/// å¦‚æœæ²¡æœ‰æ‰¾åˆ°ï¼Œåˆ™åˆ›å»ºä¸€ä¸ªæ–°çš„DriverAttribute
 			dattribute = DriverAttribute::create();
 
-			//ÄÃµ½AttributeÀïÃæµÄÊı¾İ
+			/// æ‹¿åˆ°Attributeé‡Œé¢çš„æ•°æ®
 			auto data = attribute->getData();
 
-			//Îª±¾Attribute¶ÔÓ¦µÄDriverAttributeÉú³ÉVBO ²¢ÇÒ¸üĞÂÊı¾İ
+			/// ä¸ºæœ¬Attributeå¯¹åº”çš„D riverAttributeç”ŸæˆVBO å¹¶ä¸”æ›´æ–°æ•°æ®
 			glGenBuffers(1, &dattribute->mHandle);
 
-			//bufferTypeÒªÃ´ÊÇGL_ARRAY_BUFFER ÒªÃ´ÊÇ GL_ELEMENT_ARRAY_BUFFER
+			/// bufferTypeè¦ä¹ˆæ˜¯GL_ARRAY_BUFFER è¦ä¹ˆæ˜¯ GL_ELEMENT_ARRAY_BUFFER
 			glBindBuffer(toGL(bufferType), dattribute->mHandle);
 
-			//VBOÄÚ´æ¿ª±Ù£¬ÒÔ¼°VBO Êı¾İµÄ¹àÈë
+			/// VBOå†…å­˜å¼€è¾Ÿï¼Œä»¥åŠVBO æ•°æ®çš„çŒå…¥
 			glBufferData(toGL(bufferType), data.size() * sizeof(T), data.data(), toGL(attribute->getBufferAllocType()));
 			glBindBuffer(toGL(bufferType), 0);
 
 			mAttributes.insert(std::make_pair(attribute->getID(), dattribute));
 
-			//½«AttributeµÄĞèÒª¸üĞÂµÄ×´Ì¬Çå¿Õ
+			/// å°†Attributeçš„éœ€è¦æ›´æ–°çš„çŠ¶æ€æ¸…ç©º
 			attribute->clearUpdateRange();
 			attribute->clearNeedsUpdate();
 		}
 
-		//Èç¹ûÔ­À´¾Í´æÔÚDriverAttribute£¬ÄÇÃ´¾ÍµÃ¼ì²éÊÇ·ñĞèÒª¸üĞÂ
+		/// å¦‚æœåŸæ¥å°±å­˜åœ¨DriverAttributeï¼Œé‚£ä¹ˆå°±å¾—æ£€æŸ¥æ˜¯å¦éœ€è¦æ›´æ–°
 		if (attribute->getNeedsUpdate()) {
 			attribute->clearNeedsUpdate();
 
-			//»ñÈ¡¸üĞÂµÄoffsetÒÔ¼°Count
+			/// è·å–æ›´æ–°çš„offsetä»¥åŠCount
 			auto updateRange = attribute->getUpdateRange();
 			auto data = attribute->getData();
 
-			//°ó¶¨µ±Ç°VBO
+			/// ç»‘å®šå½“å‰VBO
 			glBindBuffer(toGL(bufferType), dattribute->mHandle);
 
-			//Èç¹ûÓÃ»§È·ÊµÖ¸¶¨µÄ¸üĞÂµÄRange
+			/// å¦‚æœç”¨æˆ·ç¡®å®æŒ‡å®šçš„æ›´æ–°çš„Range
 			if (updateRange.mCount > 0) {
 				glBufferSubData(
 					toGL(bufferType),
@@ -123,7 +130,7 @@ namespace ff {
 					updateRange.mCount * sizeof(T),
 					data.data() + updateRange.mOffset * sizeof(T));
 			}
-			//Èç¹ûÓÃ»§Ã»ÓĞÖ¸¶¨µÄ¸üĞÂµÄRange£¬Ôò¸üĞÂÕû¸öVBO
+			/// å¦‚æœç”¨æˆ·æ²¡æœ‰æŒ‡å®šçš„æ›´æ–°çš„Rangeï¼Œåˆ™æ›´æ–°æ•´ä¸ªVBO
 			else {
 				glBufferData(toGL(bufferType), data.size() * sizeof(T), data.data(), toGL(attribute->getBufferAllocType()));
 			}

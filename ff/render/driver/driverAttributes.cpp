@@ -1,4 +1,4 @@
-#include "driverAttributes.h"
+﻿#include "driverAttributes.h"
 
 namespace ff {
 
@@ -18,14 +18,16 @@ namespace ff {
 			EventDispatcher::getInstance()->removeEventListener("attributeDispose", this, &DriverAttributes::onAttributeDispose);
 		}
 
-		void DriverAttributes::remove(ID attributeID) noexcept {
+		auto DriverAttributes::remove(ID attributeID) noexcept -> void
+		{
 			auto iter = mAttributes.find(attributeID);
 			if (iter != mAttributes.end()) {
 				mAttributes.erase(iter);
 			}
 		}
 
-		void DriverAttributes::onAttributeDispose(const EventBase::Ptr& e) {
+		auto DriverAttributes::onAttributeDispose(const EventBase::Ptr& e) -> void
+		{
 			ID attrID = *((ID*)e->mpUserData);
 			remove(attrID);
 		}

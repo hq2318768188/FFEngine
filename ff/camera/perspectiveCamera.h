@@ -1,4 +1,4 @@
-#include "camera.h"
+﻿#include "camera.h"
 
 namespace ff {
 
@@ -14,7 +14,7 @@ namespace ff {
 		~PerspectiveCamera() noexcept;
 
 	private:
-		glm::mat4 updateProjectionMatrix() noexcept override;
+		auto updateProjectionMatrix() noexcept -> glm::mat4 override;
 
 	private:
 

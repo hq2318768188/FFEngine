@@ -30,6 +30,8 @@ namespace ff {
 		struct Descriptor {
 			uint32_t mWidth{ 800 };
 			uint32_t mHeight{ 600 };
+
+			/// TODO 是否抗锯齿........
 		};
 
 		using OnSizeCallback = std::function<void(int width, int height)>;
@@ -43,19 +45,23 @@ namespace ff {
 
 		~Renderer() noexcept;
 
-		bool render(Scene::Ptr scene, Camera::Ptr camera);
+	    /// \brief 渲染刷新
+		/// \param scene 
+		/// \param camera 
+		/// \return 
+		auto render(Scene::Ptr scene, Camera::Ptr camera) -> bool;
 
 		void swap() noexcept;
 
-		void setSize(int width, int height) noexcept;
+		auto setSize(int width, int height) noexcept -> void;
 
-		void setRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept;
+		auto setRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept -> void;
 
-		void setFrameSizeCallBack(const OnSizeCallback& callback) noexcept;
+		auto setFrameSizeCallBack(const OnSizeCallback& callback) noexcept -> void;
 
-		void setMouseMoveCallBack(const DriverWindow::MouseMoveCallback& callback) noexcept;
+		auto setMouseMoveCallBack(const DriverWindow::MouseMoveCallback& callback) noexcept -> void;
 
-		void setMouseActionCallback(const DriverWindow::MouseActionCallback& callback) noexcept;
+		auto setMouseActionCallback(const DriverWindow::MouseActionCallback& callback) noexcept -> void;
 
 		void setKeyboardActionCallBack(const DriverWindow::KeyboardActionCallback& callback) noexcept;
 
@@ -74,45 +80,77 @@ namespace ff {
 		bool mAutoClear{ true };
 
 	private:
+		/// ///////////////////////////// 层级渲染 /////////////////////////////////////// /// 
+		
+	    /// \brief				project：将层级架构的组织，展开成为列表
+		/// \param object		当前需要被project的object，
+		/// \param groupOrder	groupOrder 当前其所处于的group的渲染优先级
+		/// \param sortObjects	sortObjects 是否在渲染列表中，对item进行排序
+		auto projectObject(const Object3D::Ptr& object, uint32_t groupOrder, bool sortObjects) noexcept -> void;
 
-		///  1 object 当前需要被project的object，project：将层级架构的组织，展开成为列表
-		///  2 groupOrder 当前其所处于的group的渲染优先级
-		///  3 sortObjects 是否在渲染列表中，对item进行排序
-		void projectObject(const Object3D::Ptr& object, uint32_t groupOrder, bool sortObjects) noexcept;
-
-		/// 第一层级，在场景级别，进行一些状态的处理与设置，并且根据
+		
+	    /// \brief
+	    /// 第一层级，在场景级别，进行一些状态的处理与设置，并且根据
 		/// 实体/透明物体进行队列渲染-renderObjects
-		void renderScene(const DriverRenderList::Ptr& currentRenderList, const Scene::Ptr& scene, const Camera::Ptr& camera) noexcept;
+		/// \param currentRenderList 
+		/// \param scene 
+		/// \param camera 
+		auto renderScene(const DriverRenderList::Ptr& currentRenderList, const Scene::Ptr& scene,
+		                 const Camera::Ptr& camera) noexcept -> void;
 
-		/// 第二层级，在队列级别，进行一些状态的处理与设置
+	    /// \brief
+	    ///	第二层级，在队列级别，进行一些状态的处理与设置
 		/// 依次调用每个渲染单元，进入到renderObject
-		void renderObjects(
-			const std::vector<RenderItem::Ptr>& renderItems, 
-			const Scene::Ptr& scene, 
-			const Camera::Ptr& camera) noexcept;
+		/// \param renderItems 
+		/// \param scene 
+		/// \param camera 
+		auto renderObjects(
+			const std::vector<RenderItem::Ptr>& renderItems,
+			const Scene::Ptr& scene,
+			const Camera::Ptr& camera) noexcept -> void;
 
-		/// 第三层级，在单个渲染单元层面上，进行一些状态的处理与设置
+		
+	    /// \brief
+	    ///	第三层级，在单个渲染单元层面上，进行一些状态的处理与设置
 		/// 并且调用跟API相关深重的renderBufferDirect
-		void renderObject(
-			const RenderableObject::Ptr& object,
-			const Scene::Ptr& scene, 
-			const Camera::Ptr& camera,
-			const Geometry::Ptr& geometry,
-			const Material::Ptr& material) noexcept;
-
-		void renderBufferDirect(
+		/// \param object 
+		/// \param scene 
+		/// \param camera 
+		/// \param geometry 
+		/// \param material 
+		auto renderObject(
 			const RenderableObject::Ptr& object,
 			const Scene::Ptr& scene,
 			const Camera::Ptr& camera,
 			const Geometry::Ptr& geometry,
-			const Material::Ptr& material) noexcept;
+			const Material::Ptr& material) noexcept -> void;
 
-		DriverProgram::Ptr setProgram(
+	    /// \brief 
+		/// \param object 
+		/// \param scene 
+		/// \param camera 
+		/// \param geometry 
+		/// \param material 
+		auto renderBufferDirect(
+			const RenderableObject::Ptr& object,
+			const Scene::Ptr& scene,
 			const Camera::Ptr& camera,
-			const Scene::Ptr& scene, 
 			const Geometry::Ptr& geometry,
-			const Material::Ptr& material, 
-			const RenderableObject::Ptr& object) noexcept;
+			const Material::Ptr& material) noexcept -> void;
+
+	    /// \brief 
+		/// \param camera 
+		/// \param scene 
+		/// \param geometry 
+		/// \param material 
+		/// \param object 
+		/// \return 
+		auto setProgram(
+			const Camera::Ptr& camera,
+			const Scene::Ptr& scene,
+			const Geometry::Ptr& geometry,
+			const Material::Ptr& material,
+			const RenderableObject::Ptr& object) noexcept -> DriverProgram::Ptr;
 
 		DriverProgram::Ptr getProgram(
 			const Material::Ptr& material,

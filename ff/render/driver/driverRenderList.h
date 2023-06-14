@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../../global/base.h"
 #include "../../objects/renderableObject.h"
 #include "../../core/geometry.h"
@@ -6,7 +6,7 @@
 
 namespace ff {
 
-	//mesh line skinnedMesh ¶¼»á±»½âÎöÎªRenderItem
+	/// mesh line skinnedMesh éƒ½ä¼šè¢«è§£æä¸ºRenderItem
 	class RenderItem {
 	public:
 		using Ptr = std::shared_ptr<RenderItem>;
@@ -19,42 +19,43 @@ namespace ff {
 		~RenderItem() noexcept;
 
 	public:
-		ID					mID{ 0 };
-		float				mZ = 0;//ÓÃÀ´ÅÅĞò-äÖÈ¾Í¸Ã÷ÎïÌåµÄÊ±ºò£¬ÊÇ´ÓÔ¶µ½½ü½øĞĞäÖÈ¾
+		ID						mID{ 0 };
+		float					mZ = 0;				/// ç”¨æ¥æ’åº-æ¸²æŸ“é€æ˜ç‰©ä½“çš„æ—¶å€™ï¼Œæ˜¯ä»è¿œåˆ°è¿‘è¿›è¡Œæ¸²æŸ“
 		RenderableObject::Ptr	mObject{ nullptr };
-		Material::Ptr		mMaterial{ nullptr };
-		Geometry::Ptr		mGeometry{ nullptr };
-		uint32_t			mGroupOrder{ 0 };//Ó°ÏìäÖÈ¾Ë³Ğò
+		Material::Ptr			mMaterial{ nullptr };
+		Geometry::Ptr			mGeometry{ nullptr };
+		uint32_t				mGroupOrder{ 0 };	/// å½±å“æ¸²æŸ“é¡ºåº
 	};
 
 	using RenderListSortFunction = std::function<bool(const RenderItem::Ptr&, const RenderItem::Ptr&)>;
 
-	//ÅÅĞòµÄÔ­Òò:
-	//1 opaqueÎïÌåĞèÒªÅÅĞò£¬
-	// 
-	//>±íÊ¾´óµÄÔÚÇ°Ãæ
-	static bool  smallerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) {
-		//Ê×ÏÈ±£Ö¤groupOrder´óµÄÎïÌåÏÈ»æÖÆ
+	/// æ’åºçš„åŸå› :
+	/// 1 opaqueç‰©ä½“éœ€è¦æ’åºï¼Œ
+	/// >è¡¨ç¤ºå¤§çš„åœ¨å‰é¢
+	static auto smallerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) -> bool
+	{
+		/// é¦–å…ˆä¿è¯groupOrderå¤§çš„ç‰©ä½“å…ˆç»˜åˆ¶
 		if (item0->mGroupOrder != item1->mGroupOrder) {
 			return  item0->mGroupOrder > item1->mGroupOrder;
 		}
-		//Ğ¡µÄz£¬ÅÅÔÚÇ°Ãæ
+		/// å°çš„zï¼Œæ’åœ¨å‰é¢
 		else if(item0->mZ != item1->mZ) {
 			return item0->mZ < item1->mZ;
 		}
 		else {
-			//Èç¹ûgroupOrderÓëz·Ö±ğÏàµÈ,µ«ÊÇsortº¯Êı£¬±ØĞëÒª¸øµ½ÆäÒ»¸ötrue or false
-			//idÔ½´ó£¬ËµÃ÷´´½¨µÄÔ½Íí£¬Ôò´´½¨Ô½ÍíµÄÎïÌå£¬Ô½ÏÈ»æÖÆ
+			/// å¦‚æœgroupOrderä¸zåˆ†åˆ«ç›¸ç­‰,ä½†æ˜¯sortå‡½æ•°ï¼Œå¿…é¡»è¦ç»™åˆ°å…¶ä¸€ä¸ªtrue or false
+			/// idè¶Šå¤§ï¼Œè¯´æ˜åˆ›å»ºçš„è¶Šæ™šï¼Œåˆ™åˆ›å»ºè¶Šæ™šçš„ç‰©ä½“ï¼Œè¶Šå…ˆç»˜åˆ¶
 			return item0->mID > item1->mID;
 		}
 	}
 
-	static bool  biggerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) {
+	static auto biggerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) -> bool
+	{
 		if (item0->mGroupOrder != item1->mGroupOrder) {
 			return  item0->mGroupOrder > item1->mGroupOrder;
 		}
 		else if (item0->mZ != item1->mZ) {
-			//zÔ½´ó£¬ÅÅĞòÔ½¿¿Ç°
+			/// zè¶Šå¤§ï¼Œæ’åºè¶Šé å‰
 			return item0->mZ > item1->mZ;
 		}
 		else {
@@ -62,7 +63,7 @@ namespace ff {
 		}
 	}
 
-	//driverRenderListÓÃÀ´´æ´¢£¬»ù´¡µÄäÖÈ¾µ¥Ôª
+	/// driverRenderListç”¨æ¥å­˜å‚¨ï¼ŒåŸºç¡€çš„æ¸²æŸ“å•å…ƒ
 	class DriverRenderList {
 	public:
 		using Ptr = std::shared_ptr<DriverRenderList>;
@@ -74,46 +75,71 @@ namespace ff {
 
 		~DriverRenderList();
 
-		//Ã¿Ò»Ö¡¿ªÊ¼µÄrenderµÄÊ±ºò£¬¶¼ĞèÒªÍ¨¹ıinitÀ´³õÊ¼»¯äÖÈ¾ÁĞ±í
-		void init() noexcept;
+		/// \brief æ¯ä¸€å¸§å¼€å§‹çš„renderçš„æ—¶å€™ï¼Œéƒ½éœ€è¦é€šè¿‡initæ¥åˆå§‹åŒ–æ¸²æŸ“åˆ—è¡¨
+		auto init() noexcept -> void;
 
-		//ÏòäÖÈ¾ÁĞ±íµ±ÖĞ¼ÓÈëÒ»¸örenderItem
-		void push(
-			const RenderableObject::Ptr& object,
-			const Geometry::Ptr& geometry,
-			const Material::Ptr& material,
-			const uint32_t&	groupOrder,
-			float z) noexcept;
-
-		//ÅÅĞò²Ù×÷,ÔÊĞí¸ø³ö¶ÔÓÚ·ÇÍ¸Ã÷ÎïÌåÒÔ¼°Í¸Ã÷ÎïÌåµÄÅÅĞò¹æÔòº¯Êı
-		void sort(
-			const RenderListSortFunction& opaqueSort = smallerZFirstSort, //ÎªÁËearlyz
-			const RenderListSortFunction& transparentSort = biggerZFirstSort) noexcept;//ÎªÁËÑÕÉ«»ìºÏÕıÈ·
-
-		//ÔÚÃ¿Ò»´Î¹¹½¨Íê±ÏäÖÈ¾ÁĞ±íµÄÊ±ºò£¬µ÷ÓÃfinish
-		void finish() noexcept;
-
-		const auto& getOpaques() const noexcept { return mOpaques; }
-
-		const auto& getTransparents() const noexcept { return mTransparents; }
-
-	private:
-		//Ã¿Ò»´ÎpushÒ»¸ö¿ÉäÖÈ¾ÎïÌå£¬¶¼»áµ÷ÓÃ±¾º¯Êı£¬²»¹ÜÊÇÖØĞÂÉú³ÉrenderItem»¹ÊÇ
-		//´ÓcacheÀïÃæ»ñÈ¡Ò»¸ö¿ÉÓÃµÄ£¬¶¼»á·µ»ØÒ»¸ö¿ÉÓÃµÄrenderItem
-		RenderItem::Ptr getNextRenderItem(
+		
+		/// \brief å‘æ¸²æŸ“åˆ—è¡¨å½“ä¸­åŠ å…¥ä¸€ä¸ªrenderItem
+		/// \param object 
+		/// \param geometry 
+		/// \param material 
+		/// \param groupOrder 
+		/// \param z 
+		auto push(
 			const RenderableObject::Ptr& object,
 			const Geometry::Ptr& geometry,
 			const Material::Ptr& material,
 			const uint32_t& groupOrder,
-			float z) noexcept;
+			float z) noexcept -> void;
+
+		
+		/// \brief æ’åºæ“ä½œ,å…è®¸ç»™å‡ºå¯¹äºéé€æ˜ç‰©ä½“ä»¥åŠé€æ˜ç‰©ä½“çš„æ’åºè§„åˆ™å‡½æ•°
+		/// \param opaqueSort		ä¸ºäº†earlyz
+		/// \param transparentSort	ä¸ºäº†é¢œè‰²æ··åˆæ­£ç¡®
+		auto sort(
+			const RenderListSortFunction& opaqueSort = smallerZFirstSort,                     
+			const RenderListSortFunction& transparentSort = biggerZFirstSort) noexcept -> void; 
+
+		/// \brief åœ¨æ¯ä¸€æ¬¡æ„å»ºå®Œæ¯•æ¸²æŸ“åˆ—è¡¨çš„æ—¶å€™ï¼Œè°ƒç”¨finish
+		auto finish() noexcept -> void;
+
+		/// \brief è·å¾—éé€æ˜çš„OBJé˜Ÿåˆ—
+		/// \return 
+		auto getOpaques() const noexcept -> const auto& { return mOpaques; }
+
+		/// \brief è·å¾—é€æ˜çš„OBJé˜Ÿåˆ—
+		/// \return 
+		auto getTransparents() const noexcept -> const auto& { return mTransparents; }
 
 	private:
-		//ÓÃÀ´¼ÆÊıµ±Ç°äÖÈ¾ÁĞ±íµÄitemÊıÁ¿£¬Ã¿Ò»Ö¡¿ªÊ¼Ê±ºòÔÚinitÀïÃæ¶¼»á±»ÖÃÎª0
+		
+		/// \brief
+		/// æ¯ä¸€æ¬¡pushä¸€ä¸ªå¯æ¸²æŸ“ç‰©ä½“ï¼Œéƒ½ä¼šè°ƒç”¨æœ¬å‡½æ•°ï¼Œä¸ç®¡æ˜¯é‡æ–°ç”ŸæˆrenderItemè¿˜æ˜¯
+		/// ä»cacheé‡Œé¢è·å–ä¸€ä¸ªå¯ç”¨çš„ï¼Œéƒ½ä¼šè¿”å›ä¸€ä¸ªå¯ç”¨çš„renderItem
+		/// \param object 
+		/// \param geometry 
+		/// \param material 
+		/// \param groupOrder 
+		/// \param z 
+		/// \return 
+		auto getNextRenderItem(
+			const RenderableObject::Ptr& object,
+			const Geometry::Ptr& geometry,
+			const Material::Ptr& material,
+			const uint32_t& groupOrder,
+			float z) noexcept -> RenderItem::Ptr;
+
+	private:
+		/// ç”¨æ¥è®¡æ•°å½“å‰æ¸²æŸ“åˆ—è¡¨çš„itemæ•°é‡ï¼Œæ¯ä¸€å¸§å¼€å§‹æ—¶å€™åœ¨inité‡Œé¢éƒ½ä¼šè¢«ç½®ä¸º0
 		uint32_t mRenderItemIndex{ 0 };
 
-		std::vector<RenderItem::Ptr> mOpaques{};//´æ´¢·ÇÍ¸Ã÷ÎïÌåµÄÖÇÄÜÖ¸Õë
-		std::vector<RenderItem::Ptr> mTransparents{};//´æ´¢Í¸Ã÷ÎïÌåµÄÖÇÄÜÖ¸Õë
+		/// \brief å­˜å‚¨éé€æ˜ç‰©ä½“çš„æ™ºèƒ½æŒ‡é’ˆ
+		std::vector<RenderItem::Ptr> mOpaques{};
 
-		std::vector<RenderItem::Ptr> mRenderItemCache{};//»º´ærenderItem
+		/// \brief å­˜å‚¨é€æ˜ç‰©ä½“çš„æ™ºèƒ½æŒ‡é’ˆ
+		std::vector<RenderItem::Ptr> mTransparents{};
+
+		/// \brief ç¼“å­˜renderItem
+		std::vector<RenderItem::Ptr> mRenderItemCache{};
 	};
 }

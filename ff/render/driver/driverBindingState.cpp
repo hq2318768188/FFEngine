@@ -1,4 +1,4 @@
-#include "driverBindingState.h"
+ï»¿#include "driverBindingState.h"
 #include "../../core/geometry.h"
 
 namespace ff {
@@ -17,13 +17,14 @@ namespace ff {
 
 	DriverBindingStates::~DriverBindingStates() {}
 
-	//Ñ°ÕÒµ±Ç°geometryÊÇ·ñÔø¾­Éú³É¹ýÒ»¸öDriverBindingState£¬Èç¹ûÃ»ÓÐ£¬ÔòÐÂÉú³ÉÒ»¸ö£¬·ñÔò°ÑÒÔÍùµÄ½»»ØÈ¥
-	DriverBindingState::Ptr DriverBindingStates::getBindingState(const Geometry::Ptr& geometry) noexcept {
+	/// å¯»æ‰¾å½“å‰geometryæ˜¯å¦æ›¾ç»ç”Ÿæˆè¿‡ä¸€ä¸ªDriverBindingStateï¼Œå¦‚æžœæ²¡æœ‰ï¼Œåˆ™æ–°ç”Ÿæˆä¸€ä¸ªï¼Œå¦åˆ™æŠŠä»¥å¾€çš„äº¤å›žåŽ»
+	auto DriverBindingStates::getBindingState(const Geometry::Ptr& geometry) noexcept -> DriverBindingState::Ptr
+	{
 		DriverBindingState::Ptr state = nullptr;
 
 		auto gKeyIter = mBindingStates.find(geometry->getID());
 		if (gKeyIter == mBindingStates.end()) {
-			gKeyIter = mBindingStates.insert(std::make_pair(geometry->getID(), createBindingState(createVAO()))).first;
+			gKeyIter = mBindingStates.insert(std::make_pair(geometry->getID(), createBindingState(createVao()))).first;
 		}
 	
 		state = gKeyIter->second;
@@ -31,17 +32,18 @@ namespace ff {
 		return state;
 	}
 
-	void DriverBindingStates::setup(
+	auto DriverBindingStates::setup(
 		const Geometry::Ptr& geometry,
 		const Attributei::Ptr& index
-	) {
+		) -> void
+	{
 		bool updateBufferLayout = false;
 
-		//Ê¹ÓÃgeometryÑ°ÕÒ¶ÔÓ¦µÄDriverBindingState£¬Èç¹ûÓÐ¾Í¸ø»Ø£»Èç¹ûÃ»ÓÐ¾ÍÖØÐÂÉú³É£¬²¢ÇÒVAOÒ²Á¬´øÉú³ÉÒ»¸ö
+		/// ä½¿ç”¨geometryå¯»æ‰¾å¯¹åº”çš„DriverBindingStateï¼Œå¦‚æžœæœ‰å°±ç»™å›žï¼›å¦‚æžœæ²¡æœ‰å°±é‡æ–°ç”Ÿæˆï¼Œå¹¶ä¸”VAOä¹Ÿè¿žå¸¦ç”Ÿæˆä¸€ä¸ª
 		auto state = getBindingState(geometry);
 		if (mCurrentBindingState != state) {
 			mCurrentBindingState = state;
-			bindVAO(state->mVAO);
+			bindVao(state->mVAO);
 		}
 
 		updateBufferLayout = needsUpdate(geometry, index);
@@ -49,19 +51,19 @@ namespace ff {
 			saveCache(geometry, index);
 		}
 
-		//×¢Òâ£¡ÕâÀï´¦ÀíÁËindexAttributeµ½DriverAttributeµÄ¶ÔÓ¦£¬¼´EBOµÄ´´½¨
-		//indexÓ¦¸ÃÓëvaoÆ½¼¶´¦Àí
+		/// æ³¨æ„ï¼è¿™é‡Œå¤„ç†äº†indexAttributeåˆ°DriverAttributeçš„å¯¹åº”ï¼Œå³EBOçš„åˆ›å»º
+		/// indexåº”è¯¥ä¸Žvaoå¹³çº§å¤„ç†
 		if (index != nullptr) {
 			mAttributes->update(index, BufferType::IndexBuffer);
 		}
 
-		//Èç¹ûÐèÒª¸üÐÂ¹Ò¹³¹ØÏµ£¬ÄÇÃ´¾ÍÒªÔÚsetupVertexAttributesÀïÃæ´¦Àí
+		/// å¦‚æžœéœ€è¦æ›´æ–°æŒ‚é’©å…³ç³»ï¼Œé‚£ä¹ˆå°±è¦åœ¨setupVertexAttributesé‡Œé¢å¤„ç†
 		if (updateBufferLayout) {
 			setupVertexAttributes(geometry);
 
-			//Èç¹ûÓÐindex ÔòÐèÒª½øÐÐeboµÄ°ó¶¨
+			/// å¦‚æžœæœ‰index åˆ™éœ€è¦è¿›è¡Œeboçš„ç»‘å®š
 			if (index != nullptr) {
-				//´ÓDriverAttributesÀïÃæÄÃ³öÀ´indexAttribute¶ÔÓ¦µÄDriverAttribute
+				/// ä»ŽDriverAttributesé‡Œé¢æ‹¿å‡ºæ¥indexAttributeå¯¹åº”çš„DriverAttribute
 				auto bkIndex = mAttributes->get(index);
 				if (bkIndex != nullptr) {
 					glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, bkIndex->mHandle);
@@ -71,26 +73,29 @@ namespace ff {
 		}
 	}
 
-	DriverBindingState::Ptr DriverBindingStates::createBindingState(GLuint vao) noexcept {
+	auto DriverBindingStates::createBindingState(GLuint vao) noexcept -> DriverBindingState::Ptr
+	{
 		auto bindingState = DriverBindingState::create();
 		bindingState->mVAO = vao;
 
 		return bindingState;
 	}
 
-	//°ó¶¨VAOÖ®ºó£¬ÐèÒªÊ¹ÓÃglVertexAttribPointerµÈº¯Êý£¬¶ÔvaoÓë¸÷¸övboÖ®¼äµÄ¹Ò¹³¹ØÏµ×öÉèÖÃ
-	//µ«ÊÇ£¬Èç¹ûµÚÒ»Ö¡»æÖÆÍê±ÏÖ®ºó£¬µÚ¶þÖ¡¼ÌÐø»æÖÆÍ¬ÑùµÄVAO£¬ÄÇÃ´Õâ¸ö¹Ò¹³¹ØÏµµÄÉèÖÃ£¬¾Í²»ÐèÒª×öµÚ¶þ´ÎÀ²
-	//±¾º¯ÊýµÄÒâÒå£¬¾ÍÔÚÓÚ¼ì²éµ±Ç°µÄvaoÊÇ·ñÐèÒªÖØÐÂÉèÖÃÒ»´ÎÓë¸÷¸övboÖ®¼äµÄ¹Ò¹³¹ØÏµ
-	//ÐèÒªÖØÐÂ¹Ò¹³µÄÇé¿ö£º
-	//1 geometryÀïÃæµÄattributeÊýÁ¿·¢Éú¸Ä±ä(Ôö¶à»òÕß¼õÉÙ£©
-	//2 geometryÀïÃæµÄkeyËù¶ÔÓ¦µÄattribute·¢ÉúÁË±ä»¯£¬¼´µ÷ÓÃÁËsetAttribute,ÓÉÓÚÍ¬ÑùµÄkey¸ü»»ÁËÐÂµÄattribute
-	//Ôò±¾Attribute»áÉú³ÉÐÂµÄvbo£¬ËùÒÔÐèÒªÖØÐÂ°ó¶¨
+	/// ç»‘å®šVAOä¹‹åŽï¼Œéœ€è¦ä½¿ç”¨glVertexAttribPointerç­‰å‡½æ•°ï¼Œå¯¹vaoä¸Žå„ä¸ªvboä¹‹é—´çš„æŒ‚é’©å…³ç³»åšè®¾ç½®
+	/// ä½†æ˜¯ï¼Œå¦‚æžœç¬¬ä¸€å¸§ç»˜åˆ¶å®Œæ¯•ä¹‹åŽï¼Œç¬¬äºŒå¸§ç»§ç»­ç»˜åˆ¶åŒæ ·çš„VAOï¼Œé‚£ä¹ˆè¿™ä¸ªæŒ‚é’©å…³ç³»çš„è®¾ç½®ï¼Œå°±ä¸éœ€è¦åšç¬¬äºŒæ¬¡å•¦
+	/// æœ¬å‡½æ•°çš„æ„ä¹‰ï¼Œå°±åœ¨äºŽæ£€æŸ¥å½“å‰çš„vaoæ˜¯å¦éœ€è¦é‡æ–°è®¾ç½®ä¸€æ¬¡ä¸Žå„ä¸ªvboä¹‹é—´çš„æŒ‚é’©å…³ç³»
+	/// éœ€è¦é‡æ–°æŒ‚é’©çš„æƒ…å†µï¼š
+	/// 1 geometryé‡Œé¢çš„attributeæ•°é‡å‘ç”Ÿæ”¹å˜(å¢žå¤šæˆ–è€…å‡å°‘ï¼‰
+	/// 2 geometryé‡Œé¢çš„keyæ‰€å¯¹åº”çš„attributeå‘ç”Ÿäº†å˜åŒ–ï¼Œå³è°ƒç”¨äº†setAttribute,ç”±äºŽåŒæ ·çš„keyæ›´æ¢äº†æ–°çš„attribute
+	/// åˆ™æœ¬Attributeä¼šç”Ÿæˆæ–°çš„vboï¼Œæ‰€ä»¥éœ€è¦é‡æ–°ç»‘å®š
 
-	bool DriverBindingStates::needsUpdate(const Geometry::Ptr& geometry, const Attributei::Ptr& index) noexcept {
-		//id->Ãû×Ö£¬value->attribute id
+	auto DriverBindingStates::needsUpdate(const Geometry::Ptr& geometry,
+	                                      const Attributei::Ptr& index) const noexcept -> bool
+	{
+		/// id->åå­—ï¼Œvalue->attribute id
 		auto cachedAttributes = mCurrentBindingState->mAttributes;
 
-		//id->Ãû×Ö£¬value->attribute¶ÔÏó
+		/// id->åå­—ï¼Œvalue->attributeå¯¹è±¡
 		auto geometryAttributes = geometry->getAttributes();
 
 		uint32_t attributesNum = 0;
@@ -98,14 +103,14 @@ namespace ff {
 			auto key = iter.first;
 			auto geometryAttribute = iter.second;
 
-			//´Ó»º´æÀïÃæÑ°ÕÒ£¬µ«·²ÓÐÒ»¸öattributeÃ»ÕÒµ½£¬ËµÃ÷¾Í²»Ò»ÑùÁË
+			/// ä»Žç¼“å­˜é‡Œé¢å¯»æ‰¾ï¼Œä½†å‡¡æœ‰ä¸€ä¸ªattributeæ²¡æ‰¾åˆ°ï¼Œè¯´æ˜Žå°±ä¸ä¸€æ ·äº†
 			auto cachedIter = cachedAttributes.find(key);
 			if (cachedIter == cachedAttributes.end()) {
 				return true;
 			}
 
-			//´Ó»º´æµ±ÖÐ£¬È·ÊµÕÒµ½ÁËÕâ¸öattribute£¬ÄÇÃ´¾ÍµÃ¶Ô±ÈidÊÇ·ñÒ»ÖÂÁË
-			//´Ó¶øÈ·¶¨£¬Í¬ÑùÃû×ÖµÄattributeÊÇ·ñÊÇÍ¬Ò»¸ö
+			/// ä»Žç¼“å­˜å½“ä¸­ï¼Œç¡®å®žæ‰¾åˆ°äº†è¿™ä¸ªattributeï¼Œé‚£ä¹ˆå°±å¾—å¯¹æ¯”idæ˜¯å¦ä¸€è‡´äº†
+			/// ä»Žè€Œç¡®å®šï¼ŒåŒæ ·åå­—çš„attributeæ˜¯å¦æ˜¯åŒä¸€ä¸ª
 			auto cachedAttribute = cachedIter->second;
 			if (cachedAttribute != geometryAttribute->getID()) {
 				return true;
@@ -114,33 +119,35 @@ namespace ff {
 			attributesNum++;
 		}
 
-		//¾ÙÀý£ºÈç¹û¾ÉµÄgeometryÓÐ3¸öÊôÐÔ£¬ÐÂµÄgeometryÈ¥µôÁËÒ»¸ö£¬¾ÍÊ£ÏÂ2¸öÁË
+		/// ä¸¾ä¾‹ï¼šå¦‚æžœæ—§çš„geometryæœ‰3ä¸ªå±žæ€§ï¼Œæ–°çš„geometryåŽ»æŽ‰äº†ä¸€ä¸ªï¼Œå°±å‰©ä¸‹2ä¸ªäº†
 		if (mCurrentBindingState->mAttributesNum != attributesNum) {
 			return true;
 		}
 
-		//indexAttribute Èç¹û²»Í¬£¬ÈÔÈ»ÐèÒªÖØÐÂ¹Ò¹³
+		/// indexAttribute å¦‚æžœä¸åŒï¼Œä»ç„¶éœ€è¦é‡æ–°æŒ‚é’©
 		if (index != nullptr && mCurrentBindingState->mIndex != index->getID()) {
 			return true;
 		}
 
-		//Èç¹ûÉÏÊö½á¹û¶¼Ò»ÖÂ£¬ÄÇÃ´¾ÍËµÃ÷±¾geometry²¢Ã»ÓÐ±ä»¯£¬Ôò·µ»Ø²»ÐèÒªÖØÐÂ¹Ò¹´
+		/// å¦‚æžœä¸Šè¿°ç»“æžœéƒ½ä¸€è‡´ï¼Œé‚£ä¹ˆå°±è¯´æ˜Žæœ¬geometryå¹¶æ²¡æœ‰å˜åŒ–ï¼Œåˆ™è¿”å›žä¸éœ€è¦é‡æ–°æŒ‚å‹¾
 		return false;
 	}
 
-	void DriverBindingStates::saveCache(const Geometry::Ptr& geometry, const Attributei::Ptr& index) noexcept {
-		//Ê×ÏÈÇå¿ÕµôbindingStateÀïÃæµÄattributes £¨Map£©
+	auto DriverBindingStates::saveCache(const Geometry::Ptr& geometry,
+	                                    const Attributei::Ptr& index) const noexcept -> void
+	{
+		/// é¦–å…ˆæ¸…ç©ºæŽ‰bindingStateé‡Œé¢çš„attributes ï¼ˆMapï¼‰
 		auto& cachedAttributes = mCurrentBindingState->mAttributes;
 		cachedAttributes.clear();
 
 		auto attributes = geometry->getAttributes();
 		uint32_t attributesNum = 0;
 
-		//±éÀúgeometryµÄÃ¿Ò»¸öattribute
+		/// éåŽ†geometryçš„æ¯ä¸€ä¸ªattribute
 		for (const auto& iter : attributes) {
 			auto attribute = iter.second;
 
-			//²åÈëkey-attributeName£¬value-attributeID
+			/// æ’å…¥key-attributeNameï¼Œvalue-attributeID
 			cachedAttributes.insert(std::make_pair(iter.first, attribute->getID()));
 			attributesNum++;
 		}
@@ -152,27 +159,27 @@ namespace ff {
 		}
 	}
 
-	//ÎÒ·½ÒýÇæµÄÉè¼ÆË¼Â·£º
-	//ÁîpositionAttributeÓÀÔ¶location = 0
-	//ÁînormalAttributeÓÀÔ¶location = 1....
-	//ÌáÇ°Éè¼ÆºÃµÄÕ¼¿Ó·½°¸
-	void DriverBindingStates::setupVertexAttributes(const Geometry::Ptr& geometry) noexcept {
+	/// æˆ‘æ–¹å¼•æ“Žçš„è®¾è®¡æ€è·¯ï¼š
+	/// ä»¤positionAttributeæ°¸è¿œlocation = 0
+	/// ä»¤normalAttributeæ°¸è¿œlocation = 1....
+	/// æå‰è®¾è®¡å¥½çš„å å‘æ–¹æ¡ˆ
+	auto DriverBindingStates::setupVertexAttributes(const Geometry::Ptr& geometry) const noexcept -> void
+	{
 		const auto geometryAttributes = geometry->getAttributes();
-
 		for (const auto& iter : geometryAttributes) {
 			auto name = iter.first;
 			auto attribute = iter.second;
 
-			//itemSize±¾attributeÓÐ¶àÉÙ¸öÊý×Ö£¬±ÈÈçposition¾ÍÊÇ3¸öÊý×Ö
+			/// itemSizeæœ¬attributeæœ‰å¤šå°‘ä¸ªæ•°å­—ï¼Œæ¯”å¦‚positionå°±æ˜¯3ä¸ªæ•°å­—
 			auto itemSize = attribute->getItemSize();
 
-			//Ã¿¸öµ¥¶ÀµÄÊý¾ÝµÄÀàÐÍ
+			/// æ¯ä¸ªå•ç‹¬çš„æ•°æ®çš„ç±»åž‹
 			auto dataType = attribute->getDataType();
 
-			//½«attribute¶ÔÓ¦µÄDriverAttributeÈ¡³öÀ´
+			/// å°†attributeå¯¹åº”çš„DriverAttributeå–å‡ºæ¥
 			auto bkAttribute = mAttributes->get(attribute);
 
-			//½«±¾attributeµÄlocation(binding)Í¨¹ýattributeµÄnameÈ¡³öÀ´
+			/// å°†æœ¬attributeçš„location(binding)é€šè¿‡attributeçš„nameå–å‡ºæ¥
 			auto bindingIter = LOCATION_MAP.find(name);
 			if (bindingIter == LOCATION_MAP.end()) {
 				continue;
@@ -180,28 +187,32 @@ namespace ff {
 
 			auto binding = bindingIter->second;
 
-			//¿ªÊ¼ÏòvaoÀïÃæ×ö¹Ò¹³¹ØÏµ
+			/// å¼€å§‹å‘vaoé‡Œé¢åšæŒ‚é’©å…³ç³»
 			glBindBuffer(GL_ARRAY_BUFFER, bkAttribute->mHandle);
-			//¼¤»î¶ÔÓ¦µÄbindingµã
+			/// æ¿€æ´»å¯¹åº”çš„bindingç‚¹
 			glEnableVertexAttribArray(binding);
-			//ÏòvaoÀïÃæ¼ÇÂ¼£¬¶ÔÓÚ±¾bindingµãËù¶ÔÓ¦µÄattribute£¬ÎÒÃÇÓ¦¸ÃÈçºÎ´ÓbkAttribute->mHandleÒ»¸övboÀïÃæ¶ÁÈ¡Êý¾Ý
+			/// éž intervalAttribute çš„attribute
+			/// å‘vaoé‡Œé¢è®°å½•ï¼Œå¯¹äºŽæœ¬bindingç‚¹æ‰€å¯¹åº”çš„attributeï¼Œæˆ‘ä»¬åº”è¯¥å¦‚ä½•ä»ŽbkAttribute->mHandleä¸€ä¸ªvboé‡Œé¢è¯»å–æ•°æ®
 			glVertexAttribPointer(binding, itemSize, toGL(dataType), false, itemSize * toSize(dataType), (void*)0);
 		}
 	}
 
-	//ÕæÕýµÄÉú³ÉÁËÒ»¸öVAO
-	GLuint DriverBindingStates::createVAO() noexcept {
+	/// çœŸæ­£çš„ç”Ÿæˆäº†ä¸€ä¸ªVAO
+	auto DriverBindingStates::createVao() noexcept -> GLuint
+	{
 		GLuint vao = 0;
 		glGenVertexArrays(1, &vao);
 		return vao;
 	}
 
-	// ÕæÕý¸Ä±äÁËOpenGL×´Ì¬»ú£¬Ê¹Ö®°ó¶¨µ±Ç°µÄvao
-	void DriverBindingStates::bindVAO(GLuint vao) noexcept {
+	/// çœŸæ­£æ”¹å˜äº†OpenGLçŠ¶æ€æœºï¼Œä½¿ä¹‹ç»‘å®šå½“å‰çš„vao
+	auto DriverBindingStates::bindVao(GLuint vao) noexcept -> void
+	{
 		glBindVertexArray(vao);
 	}
 
-	void DriverBindingStates::releaseStatesOfGeometry(ID geometryID) noexcept {
+	auto DriverBindingStates::releaseStatesOfGeometry(ID geometryID) noexcept -> void
+	{
 		auto iter = mBindingStates.find(geometryID);
 		if (iter != mBindingStates.end()) {
 			mBindingStates.erase(iter);

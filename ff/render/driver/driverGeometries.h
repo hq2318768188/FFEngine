@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../../global/base.h"
 #include "../../core/geometry.h"
 #include "driverAttributes.h"
@@ -7,7 +7,7 @@
 
 namespace ff {
 
-	//ÔÚ¼¸ºÎÊı¾İ²ãÃæÉÏ£¬¶ÔbackendµÄÊı¾İ½øĞĞ¹ÜÀí
+	/// åœ¨å‡ ä½•æ•°æ®å±‚é¢ä¸Šï¼Œå¯¹backengçš„æ•°æ®è¿›è¡Œç®¡ç†
 	class DriverGeometries {
 	public:
 		using Ptr = std::shared_ptr<DriverGeometries>;
@@ -27,17 +27,17 @@ namespace ff {
 
 		~DriverGeometries() noexcept;
 
-		Geometry::Ptr get(const Geometry::Ptr& geometry) noexcept;
+		auto get(const Geometry::Ptr& geometry) noexcept -> Geometry::Ptr;
 
-		void onGeometryDispose(const EventBase::Ptr& event);
+		auto onGeometryDispose(const EventBase::Ptr& event) -> void;
 
-		void update(const Geometry::Ptr& geometry) noexcept;
+		auto update(const Geometry::Ptr& geometry) const noexcept -> void;
 		
 	private:
 		DriverAttributes::Ptr mAttributes{ nullptr };
 		DriverInfo::Ptr mInfo{ nullptr };
 
-		//¶¥µã°ó¶¨VAOÓĞ¹ØÏµ
+		/// é¡¶ç‚¹ç»‘å®šVAOæœ‰å…³ç³»
 		DriverBindingStates::Ptr mBindingStates{ nullptr };
 
 		std::unordered_map<ID, bool> mGeometries{};

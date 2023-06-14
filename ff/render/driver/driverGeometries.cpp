@@ -1,4 +1,4 @@
-#include "driverGeometries.h"
+ï»¿#include "driverGeometries.h"
 #include "../../global/eventDispatcher.h"
 
 namespace ff {
@@ -24,16 +24,16 @@ namespace ff {
 
 		mGeometries.erase(geometry->getID());
 
-		//ÒòÎªÒ»¸ögeometry»á¶ÔÓ¦Ò»¸ödriverBindingState£¬¼´Ò»¸övao
+		//å› ä¸ºä¸€ä¸ªgeometryä¼šå¯¹åº”ä¸€ä¸ªdriverBindingStateï¼Œå³ä¸€ä¸ªvao
 		mBindingStates->releaseStatesOfGeometry(geometry->getID());
 
 		mInfo->mMemory.mGeometries--;
 	}
 
-	//¸øÁËÒ»¸ö»ú»á£¬ ¿ÉÒÔÔÚÃ¿Ò»´ÎupdateµÄÖ®Ç°£¬¶ÔgeometryÏà¹ØÊý¾Ý×öÒ»´Î¸üÐÂ
-	Geometry::Ptr DriverGeometries::get(const Geometry::Ptr& geometry) noexcept {
-//geometriesÊÇÒ»¸öid-boolÀàÐÍµÄmap£¬ÓÃÀ´¼ÇÂ¼µ±Ç°Õâ¸ögeometryÊÇ·ñ±»¼ÆËã¹ýinfoÒ»´Î
-
+	/// ç»™äº†ä¸€ä¸ªæœºä¼šï¼Œ å¯ä»¥åœ¨æ¯ä¸€æ¬¡updateçš„ä¹‹å‰ï¼Œå¯¹geometryç›¸å…³æ•°æ®åšä¸€æ¬¡æ›´æ–°
+	auto DriverGeometries::get(const Geometry::Ptr& geometry) noexcept -> Geometry::Ptr
+	{	
+		/// geometriesæ˜¯ä¸€ä¸ªid-boolç±»åž‹çš„mapï¼Œç”¨æ¥è®°å½•å½“å‰è¿™ä¸ªgeometryæ˜¯å¦è¢«è®¡ç®—è¿‡infoä¸€æ¬¡
 		auto iter = mGeometries.find(geometry->getID());
 		if (iter != mGeometries.end()) {
 			if (iter->second == true) {
@@ -48,10 +48,11 @@ namespace ff {
 		return geometry;
 	}
 
-	void DriverGeometries::update(const Geometry::Ptr& geometry) noexcept {
+	auto DriverGeometries::update(const Geometry::Ptr& geometry) const noexcept -> void
+	{
 		const auto geometryAttributes = geometry->getAttributes();
 		for (const auto& iter: geometryAttributes) {
-			//Ö»´¦Àí³ýÁËindexAttributeÖ®ÍâµÄattributes 
+			/// åªå¤„ç†é™¤äº†indexAttributeä¹‹å¤–çš„attributes 
 			mAttributes->update(iter.second , BufferType::ArrayBuffer);
 		}
 	}

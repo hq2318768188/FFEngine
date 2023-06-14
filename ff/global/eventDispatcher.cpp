@@ -27,7 +27,8 @@ namespace ff {
 
 	EventDispatcher::~EventDispatcher() noexcept {}
 
-	void EventDispatcher::dispatchEvent(const EventBase::Ptr& event) {
+	auto EventDispatcher::dispatchEvent(const EventBase::Ptr& event) -> void
+	{
 		const auto& eventName = event->mEventName;
 
 		std::lock_guard<std::mutex> lock(mMutex); /// 加锁

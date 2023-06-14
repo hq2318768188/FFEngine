@@ -1,4 +1,4 @@
-#include "orthographicCamera.h"
+﻿#include "orthographicCamera.h"
 
 namespace ff {
 
@@ -16,7 +16,8 @@ namespace ff {
 
 	OrthographicCamera::~OrthographicCamera() noexcept {}
 
-	glm::mat4 OrthographicCamera::updateProjectionMatrix() noexcept {
+	auto OrthographicCamera::updateProjectionMatrix() noexcept -> glm::mat4
+	{
 		mProjectionMatrix = glm::ortho(mLeft, mRight, mBottom, mTop, mNear, mFar);
 		return mProjectionMatrix;
 	}

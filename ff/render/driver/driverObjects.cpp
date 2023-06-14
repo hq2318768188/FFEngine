@@ -1,4 +1,4 @@
-#include"driverObjects.h"
+ï»¿#include"driverObjects.h"
 #include "../../global/eventDispatcher.h"
 
 namespace ff {
@@ -15,31 +15,32 @@ namespace ff {
 
 	DriverObjects::~DriverObjects() noexcept {}
 
-	//µ÷ÓÃobjectµÄgeometryÖ®update
-	//²»Í¬µÄobject¿ÉÄÜ»á¹²ÏíÍ¬Ò»¸ögeometry
-	//µÃÔÚÕâÀï£¬±£Ö¤Ã¿¸ögeometryÃ¿Ò»Ö¡£¬Ö»updateÒ»´Î
-	Geometry::Ptr DriverObjects::update(const RenderableObject::Ptr& object) noexcept {
-		//1 ÄÃµ½µ±Ç°µ½ÁËµÚ¼¸Ö¡
+	/// è°ƒç”¨objectçš„geometryä¹‹update
+	/// ä¸åŒçš„objectå¯èƒ½ä¼šå…±äº«åŒä¸€ä¸ªgeometry
+	/// å¾—åœ¨è¿™é‡Œï¼Œä¿è¯æ¯ä¸ªgeometryæ¯ä¸€å¸§ï¼Œåªupdateä¸€æ¬¡
+	auto DriverObjects::update(const RenderableObject::Ptr& object) noexcept -> Geometry::Ptr
+	{
+		/// 1 æ‹¿åˆ°å½“å‰åˆ°äº†ç¬¬å‡ å¸§
 		const auto frame = mInfo->mRender.mFrame;
 
-		//2 ÄÃ³ögeometry£¬²¢ÇÒÔÚgetÀïÃæ×öÏà¹ØµÄÊı¾İ¼ÇÂ¼
+		/// 2 æ‹¿å‡ºgeometryï¼Œå¹¶ä¸”åœ¨geté‡Œé¢åšç›¸å…³çš„æ•°æ®è®°å½•
 		const auto geometry = mGeometries->get(object->getGeometry());
 		
-		//update once per frame,muti-objects-one geometry
+		/// update once per frame,muti-objects-one geometry
 
-		//key£ºgeometryµÄID
-		//value£ºframeNumber
+		/// keyï¼šgeometryçš„ID
+		/// valueï¼šframeNumber
 		auto iter = mUpdateMap.find(geometry->getID());
 
-		//Èç¹ûµ±Ç°frameÊÇ5
-		//geometry3µÚÒ»´Î½øÈë£¬geometry¾Í»á±»DriverGeomtry¸øupdate
-		//mUpdateMapÀïÃæ¾Í»á¼ÓÈë£¨3£¬5£©
-		//Èç¹ûÔÚ±¾Ö¡Ö®ÄÚ£¬ÓĞÁíÒ»¸öobjectÒ²Ê¹ÓÃÁËgeometry3
-		//µ±Ç°3ºÅgeometryËù¶ÔÓ¦µÄframeÊÇ5£¬¾Í»áÖ±½Ó²»´¦Àí
+		/// å¦‚æœå½“å‰frameæ˜¯5
+		/// geometry3ç¬¬ä¸€æ¬¡è¿›å…¥ï¼Œgeometryå°±ä¼šè¢«DriverGeomtryç»™update
+		/// mUpdateMapé‡Œé¢å°±ä¼šåŠ å…¥ï¼ˆ3ï¼Œ5ï¼‰
+		/// å¦‚æœåœ¨æœ¬å¸§ä¹‹å†…ï¼Œæœ‰å¦ä¸€ä¸ªobjectä¹Ÿä½¿ç”¨äº†geometry3
+		/// å½“å‰3å·geometryæ‰€å¯¹åº”çš„frameæ˜¯5ï¼Œå°±ä¼šç›´æ¥ä¸å¤„ç†
 
-		//Èç¹û´ËÊ±½øÈëµ½frame=6µÄÇé¿ö
-		//geometry3ÔÙ´Î±»½øĞĞÑ°ÕÒ£¬ÕÒµ½ÁËÒ»¸ö¼üÖµ¶Ô£¨3£¬5£©£¬µ±Ç°frameÓë5²»ÏàµÈ
-		//geometry3¾ÍµÃµ½ÁËÒ»´ÎupdateµÄ»ú»á,²¢ÇÒmUpdateMapÀïÃæµÄ¼üÖµ¶Ô¾Í»á±»¸üĞÂ³É£¨3£¬6£©
+		/// å¦‚æœæ­¤æ—¶è¿›å…¥åˆ°frame=6çš„æƒ…å†µ
+		/// geometry3å†æ¬¡è¢«è¿›è¡Œå¯»æ‰¾ï¼Œæ‰¾åˆ°äº†ä¸€ä¸ªé”®å€¼å¯¹ï¼ˆ3ï¼Œ5ï¼‰ï¼Œå½“å‰frameä¸5ä¸ç›¸ç­‰
+		/// geometry3å°±å¾—åˆ°äº†ä¸€æ¬¡updateçš„æœºä¼š,å¹¶ä¸”mUpdateMapé‡Œé¢çš„é”®å€¼å¯¹å°±ä¼šè¢«æ›´æ–°æˆï¼ˆ3ï¼Œ6ï¼‰
 		
 		if(iter == mUpdateMap.end() || mUpdateMap[geometry->getID()] != frame) {
 			mGeometries->update(geometry);

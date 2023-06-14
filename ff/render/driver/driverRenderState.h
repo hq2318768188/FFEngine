@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../../global/base.h"
 #include "../../global/constant.h"
 #include "driverLights.h"
@@ -9,7 +9,7 @@
 
 namespace ff {
 
-	//´æ´¢ÁË¹âÓëÓ°
+	/// å­˜å‚¨äº†å…‰ä¸å½±
 	class DriverRenderState {
 	public:
 		using Ptr = std::shared_ptr<DriverRenderState>;
@@ -21,7 +21,7 @@ namespace ff {
 
 		~DriverRenderState() noexcept;
 
-		//Ã¿Ò»Ö¡£¬¶¼»áµ÷ÓÃinit£¬ÇåÀíµôËùÓĞµÄÊı×é
+		/// æ¯ä¸€å¸§ï¼Œéƒ½ä¼šè°ƒç”¨initï¼Œæ¸…ç†æ‰æ‰€æœ‰çš„æ•°ç»„
 		void init() noexcept;
 
 		void setupLights() noexcept;
@@ -35,7 +35,7 @@ namespace ff {
 	public:
 		DriverLights::Ptr mLights = DriverLights::create();
 
-		std::vector<Light::Ptr> mLightsArray{};//ËùÓĞ³¡¾°µ±ÖĞµÄ¹âÔ´
-		std::vector<Light::Ptr> mShadowsArray{};//ËùÓĞ³¡¾°µ±ÖĞ¿ÉÒÔ²úÉúÒõÓ°µÄ¹âÔ´
+		std::vector<Light::Ptr> mLightsArray{};/// æ‰€æœ‰åœºæ™¯å½“ä¸­çš„å…‰æº
+		std::vector<Light::Ptr> mShadowsArray{};/// æ‰€æœ‰åœºæ™¯å½“ä¸­å¯ä»¥äº§ç”Ÿé˜´å½±çš„å…‰æº
 	};
 }

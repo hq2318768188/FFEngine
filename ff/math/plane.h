@@ -18,12 +18,22 @@ namespace ff {
 
 		~Plane() noexcept {}
 
-		/// 求取一个点到平面的距离（与法线通向者距离为正，与法线反向者距离为负）
-		float distanceToPoint(const glm::vec3& point) noexcept {
+		
+		/// \brief 求取一个点到平面的距离（与法线通向者距离为正，与法线反向者距离为负）
+		/// \param point 
+		/// \return 
+		auto distanceToPoint(const glm::vec3& point) const noexcept -> float
+		{
 			return glm::dot(mNormal, point) + mConstant;
 		}
 
-		void setComponents(float x, float y, float z, float w) noexcept {
+		/// \brief 设置平面的矩阵
+		/// \param x 
+		/// \param y 
+		/// \param z 
+		/// \param w 
+		auto setComponents(float x, float y, float z, float w) noexcept -> void
+		{
 			mNormal.x = x;
 			mNormal.y = y;
 			mNormal.z = z;

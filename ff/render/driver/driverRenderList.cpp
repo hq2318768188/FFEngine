@@ -1,4 +1,4 @@
-#include "driverRenderList.h"
+ï»¿#include "driverRenderList.h"
 
 namespace ff {
 
@@ -10,30 +10,32 @@ namespace ff {
 
 	DriverRenderList::~DriverRenderList() {}
 
-	//Ã¿Ò»Ö¡¿ªÊ¼µÄÊ±ºò£¬äÖÈ¾ÁĞ±í¶¼»á±»Çå¿Õ
-	void DriverRenderList::init() noexcept {
+	/// æ¯ä¸€å¸§å¼€å§‹çš„æ—¶å€™ï¼Œæ¸²æŸ“åˆ—è¡¨éƒ½ä¼šè¢«æ¸…ç©º
+	auto DriverRenderList::init() noexcept -> void
+	{
 		mRenderItemIndex = 0;
 		mOpaques.clear();
 		mTransparents.clear();
 	}
 
-	//ÔÚÕâÀïÎÒÃÇpush½øÈ¥Ò»¸ö¿ÉäÖÈ¾ÎïÌåµÄÏà¹Ø²ÎÊı£¬½â°üµÄ·½Ê½
-	//ÎªÊ²Ã´ĞèÒª½â°ü´«ËÍ,ÓĞ¿ÉÄÜ»áÓĞÌæ´ú,¾ÙÀı£º±¾À´objectÓµÓĞÒ»¸ömaterial£¬µ«ÊÇsceneÒ²ÓµÓĞÒ»¸öoverrideMaterial
-	//ÄÇÃ´¾Í²»ÄÜÊ¹ÓÃobjectÔ­À´µÄmaterial
-	void DriverRenderList::push(
+	/// åœ¨è¿™é‡Œæˆ‘ä»¬pushè¿›å»ä¸€ä¸ªå¯æ¸²æŸ“ç‰©ä½“çš„ç›¸å…³å‚æ•°ï¼Œè§£åŒ…çš„æ–¹å¼
+	/// ä¸ºä»€ä¹ˆéœ€è¦è§£åŒ…ä¼ é€,æœ‰å¯èƒ½ä¼šæœ‰æ›¿ä»£,ä¸¾ä¾‹ï¼šæœ¬æ¥objectæ‹¥æœ‰ä¸€ä¸ªmaterialï¼Œä½†æ˜¯sceneä¹Ÿæ‹¥æœ‰ä¸€ä¸ªoverrideMaterial
+	/// é‚£ä¹ˆå°±ä¸èƒ½ä½¿ç”¨objectåŸæ¥çš„material
+	auto DriverRenderList::push(
 		const RenderableObject::Ptr& object,
 		const Geometry::Ptr& geometry,
 		const Material::Ptr& material,
 		const uint32_t& groupOrder,
 		float z
-	) noexcept {
-		//Ã¿Ò»Ö¡¶¼»áÖØĞÂ¹¹½¨renderList£¬ËùÒÔ±ÈÈçÓĞ5¸öÎïÌå£¬Èç¹û²»×örenderItemµÄ»º´æ£¬ÄÇÃ´
-		//Ã¿Ò»Ö¡¶¼ÒªÖØĞÂnew 5¸örenderItem
-		//ËùÒÔÉÏÒ»Ö¡¼ÙÉèÎÒÃÇÒÑ¾­Éú³ÉÁË10¸örenderItem£¬ÄÇÃ´»á½«Æä»º´æÔÚrenderItemCacheÀïÃæ£¬ÔÚĞèÒªµÄÊ±ºò£¬¾Í
-		//´ÓÖĞÈ¡³öÒ»¸ö¸øµ½renderListÊ¹ÓÃ
+		) noexcept -> void
+	{
+		/// æ¯ä¸€å¸§éƒ½ä¼šé‡æ–°æ„å»ºrenderListï¼Œæ‰€ä»¥æ¯”å¦‚æœ‰5ä¸ªç‰©ä½“ï¼Œå¦‚æœä¸åšrenderItemçš„ç¼“å­˜ï¼Œé‚£ä¹ˆ
+		/// æ¯ä¸€å¸§éƒ½è¦é‡æ–°new 5ä¸ªrenderItem
+		/// æ‰€ä»¥ä¸Šä¸€å¸§å‡è®¾æˆ‘ä»¬å·²ç»ç”Ÿæˆäº†10ä¸ªrenderItemï¼Œé‚£ä¹ˆä¼šå°†å…¶ç¼“å­˜åœ¨renderItemCacheé‡Œé¢ï¼Œåœ¨éœ€è¦çš„æ—¶å€™ï¼Œå°±
+		/// ä»ä¸­å–å‡ºä¸€ä¸ªç»™åˆ°renderListä½¿ç”¨
 		const auto renderItem = getNextRenderItem(object, geometry, material, groupOrder, z);
 
-		//¼ì²âÊÇ·ñ¿ªÆôÍ¸Ã÷
+		/// æ£€æµ‹æ˜¯å¦å¼€å¯é€æ˜
 		if (material->mTransparent) {
 			mTransparents.push_back(renderItem);
 		}
@@ -42,17 +44,18 @@ namespace ff {
 		}
 	}
 
-	RenderItem::Ptr DriverRenderList::getNextRenderItem(
+	auto DriverRenderList::getNextRenderItem(
 		const RenderableObject::Ptr& object,
 		const Geometry::Ptr& geometry,
 		const Material::Ptr& material,
 		const uint32_t& groupOrder,
 		float z
-	) noexcept {
+		) noexcept -> RenderItem::Ptr
+	{
 		RenderItem::Ptr renderItem = nullptr;
 
-		//Èç¹ûµ±Ç°renderItemµÄ×ÜÊıÒÑ¾­´óÓÚÁË»º´æÊıÁ¿£¬ÄÇÃ´¾ÍÖØĞÂÉú³É
-		//·ñÔòÖ±½Ó´Ó»º´æµ±ÖĞ³éÆÛµÚmRenderItemIndex¸öitem
+		/// å¦‚æœå½“å‰renderItemçš„æ€»æ•°å·²ç»å¤§äºäº†ç¼“å­˜æ•°é‡ï¼Œé‚£ä¹ˆå°±é‡æ–°ç”Ÿæˆ
+		/// å¦åˆ™ç›´æ¥ä»ç¼“å­˜å½“ä¸­æŠ½å–ç¬¬mRenderItemIndexä¸ªitem
 		if (mRenderItemIndex >= mRenderItemCache.size()) {
 			renderItem = RenderItem::create();
 			mRenderItemCache.push_back(renderItem);
@@ -73,32 +76,34 @@ namespace ff {
 		return renderItem;
 	}
 
-	void DriverRenderList::sort(
+	auto DriverRenderList::sort(
 		const RenderListSortFunction& opaqueSort,
-		const RenderListSortFunction& transparentSort) noexcept {
+		const RenderListSortFunction& transparentSort) noexcept -> void
+	{
 
 		if (!mOpaques.empty()) std::sort(mOpaques.begin(), mOpaques.end(), opaqueSort);
 
 		if (!mTransparents.empty()) std::sort(mTransparents.begin(), mTransparents.end(), transparentSort);
 	}
 
-	//Èç¹û»º´æµ±ÖĞ´æÔÚ10¸öitem£¬±¾Ö¡Ö»ÓĞ5¸öÎïÌåĞèÒªäÖÈ¾£¬ÄÇÃ´¾Í»áÊ¹ÓÃµ½10¸öitemÀïÃæµÄÎå¸ö
-	//µ«ÊÇ£¡Ê£ÏÂµÄÃ»ÓĞÊ¹ÓÃµ½µÄÎå¸ö£¬itemÀïÃæ£¬È´´æÓĞobject¡¢materil¡¢geometryµÄÖÇÄÜÖ¸Õë,ÔòÆäÄÚ´æÎŞ·¨±»ÊÍ·Å
-	//ËùÒÔfinishĞèÒª¼ì²âÊ£ÏÂµÄÃ»ÓĞÊ¹ÓÃµ½µÄitem£¬È»ºóÒÀ´Î½«ÆäÖÇÄÜÖ¸ÕëµÄÒıÓÃÖÃ¿Õ
-	void DriverRenderList::finish() noexcept {
+	/// å¦‚æœç¼“å­˜å½“ä¸­å­˜åœ¨10ä¸ªitemï¼Œæœ¬å¸§åªæœ‰5ä¸ªç‰©ä½“éœ€è¦æ¸²æŸ“ï¼Œé‚£ä¹ˆå°±ä¼šä½¿ç”¨åˆ°10ä¸ªitemé‡Œé¢çš„äº”ä¸ª
+	/// ä½†æ˜¯ï¼å‰©ä¸‹çš„æ²¡æœ‰ä½¿ç”¨åˆ°çš„äº”ä¸ªï¼Œitemé‡Œé¢ï¼Œå´å­˜æœ‰objectã€materilã€geometryçš„æ™ºèƒ½æŒ‡é’ˆ,åˆ™å…¶å†…å­˜æ— æ³•è¢«é‡Šæ”¾
+	/// æ‰€ä»¥finishéœ€è¦æ£€æµ‹å‰©ä¸‹çš„æ²¡æœ‰ä½¿ç”¨åˆ°çš„itemï¼Œç„¶åä¾æ¬¡å°†å…¶æ™ºèƒ½æŒ‡é’ˆçš„å¼•ç”¨ç½®ç©º
+	auto DriverRenderList::finish() noexcept -> void
+	{
 		auto listSize = mRenderItemCache.size();
 
-		//0 1 2 ..... 9 cacheÀïÃæµÄ
-		//0 1 2 3 4 Ê¹ÓÃµ½µÄ
-		//mRenderItemIndex = 5£¬ÔòÕâ¸öÑ­»·»á¼ì²â£º
-		//5 6 7 8 9
+		/// 0 1 2 ..... 9 cacheé‡Œé¢çš„
+		/// 0 1 2 3 4 ä½¿ç”¨åˆ°çš„
+		/// mRenderItemIndex = 5ï¼Œåˆ™è¿™ä¸ªå¾ªç¯ä¼šæ£€æµ‹ï¼š
+		/// 5 6 7 8 9
 		for (uint32_t i = mRenderItemIndex; i < listSize; ++i) {
 			auto renderItem = mRenderItemCache[i];
 			if (renderItem == nullptr) {
 				break;
 			}
 
-			//Çå¿ÕËùÓĞµÄÖÇÄÜÖ¸ÕëÒıÓÃÒÔ¼°Êı¾İ
+			/// æ¸…ç©ºæ‰€æœ‰çš„æ™ºèƒ½æŒ‡é’ˆå¼•ç”¨ä»¥åŠæ•°æ®
 			renderItem->mID = 0;
 			renderItem->mObject = nullptr;
 			renderItem->mGeometry = nullptr;

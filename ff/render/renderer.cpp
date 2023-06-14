@@ -4,19 +4,22 @@
 #include "../tools/timer.h"
 #include "../log/debugLog.h"
 
-namespace ff {
-
-	static void onFrameSizeCallback(DriverWindow* dwindow, int width, int height) {
-		if (dwindow->mRenderer != nullptr) {
+namespace ff
+{
+	static void onFrameSizeCallback(DriverWindow* dwindow, int width, int height)
+	{
+		if (dwindow->mRenderer != nullptr)
+		{
 			dwindow->mRenderer->setSize(width, height);
 		}
 	}
 
-	Renderer::Renderer(const Descriptor& descriptor) noexcept {
+	Renderer::Renderer(const Descriptor& descriptor) noexcept
+	{
 		mWidth = descriptor.mWidth;
 		mHeight = descriptor.mHeight;
 
-		mViewport = { 0.0f, 0.0f, mWidth, mHeight };
+		mViewport = {0.0f, 0.0f, mWidth, mHeight};
 
 		mWindow = DriverWindow::create(this, mWidth, mHeight);
 		mWindow->setFrameSizeCallBack(onFrameSizeCallback);
@@ -39,11 +42,15 @@ namespace ff {
 		mFrustum = Frustum::create();
 	}
 
-	Renderer::~Renderer() noexcept {}
+	Renderer::~Renderer() noexcept
+	{
+	}
 
-	bool Renderer::render(Scene::Ptr scene, Camera::Ptr camera) {
+	auto Renderer::render(Scene::Ptr scene, Camera::Ptr camera) -> bool
+	{
 		/// 处理窗体消息，并且判断是否继续render
-		if (!mWindow->processEvent()) {
+		if (!mWindow->processEvent())
+		{
 			return false;
 		}
 
@@ -60,8 +67,8 @@ namespace ff {
 		mFrustum->setFromProjectionMatrix(mCurrentViewMatrix);
 
 		/// 2 提取渲染数据，构成渲染列表与状态
-		mRenderState->init();
-		mRenderList->init();
+		mRenderState->init(); /// 光与影
+		mRenderList->init();  /// 渲染数据
 
 		/// scene当中的数据都是层级架构的树状数据，从这个结构，解析为一个线性列表
 		projectObject(scene, 0, mSortObject);
@@ -72,7 +79,8 @@ namespace ff {
 		/// 经过上述projectObject的流程，任何一个我们使用到的Attribute都已经成功的被解析成为了一个VBO
 		/// 在上述流程中，每个Mesh的IndexAttribute并没有被解析为EBO
 
-		if (mSortObject) {
+		if (mSortObject)
+		{
 			mRenderList->sort();
 		}
 
@@ -82,7 +90,7 @@ namespace ff {
 		/// renderScene
 		/// 更新建设了一些与坐标系选择没有关系的uniform内容
 		mRenderState->setupLights();
-		
+
 
 		/// 3 渲染场景
 		/// shadow
@@ -96,38 +104,46 @@ namespace ff {
 		return true;
 	}
 
-	void Renderer::swap() noexcept {
+	void Renderer::swap() noexcept
+	{
 		mWindow->swap();
 	}
 
-	void Renderer::projectObject(const Object3D::Ptr& object, uint32_t groupOrder, bool sortObjects) noexcept {
+	auto Renderer::projectObject(const Object3D::Ptr& object, uint32_t groupOrder, bool sortObjects) noexcept -> void
+	{
 		/// 当前需要被解析的物体，如果是不可见物体，那么连同其子节点一起都变为不可见状态
 		if (!object->mVisible) return;
 
 		glm::vec4 toolVec(1.0f);
 
 		/// 对object进行了类型判断，并且分别做不同的处理 
-		if (object->mIsGroup) {
+		if (object->mIsGroup)
+		{
 			auto group = std::static_pointer_cast<Group>(object);
 			groupOrder = group->mGroupOrder;
 		}
-		else if (object->mIsLight) {
+		else if (object->mIsLight)
+		{
 			auto light = std::static_pointer_cast<Light>(object);
 			mRenderState->pushLight(light);
-			if (light->mCastShadow) {
+			if (light->mCastShadow)
+			{
 				mRenderState->pushShadow(light);
 			}
 		}
 		/// 如果是可渲染物体
-		else if (object->mIsRenderableObject) {
+		else if (object->mIsRenderableObject)
+		{
 			/// 骨骼
-			if (object->mIsSkinnedMesh) {
+			if (object->mIsSkinnedMesh)
+			{
 				auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
 				skinnedMesh->mSkeleton->update();
 			}
 
 			/// 如果需要在渲染列表当中对物体进行排序，则需要计算其z坐标值(深度值）
-			if (mSortObject) {
+			if (mSortObject)
+			{
 				toolVec = glm::vec4(object->getWorldPosition(), 1.0);
 				toolVec = mCurrentViewMatrix * toolVec;
 			}
@@ -135,8 +151,8 @@ namespace ff {
 			auto renderableObject = std::static_pointer_cast<RenderableObject>(object);
 
 			/// 首先对object进行一次视景体剪裁测试
-			if (mFrustum->intersectObject(renderableObject)) {
-
+			if (mFrustum->intersectObject(renderableObject))
+			{
 				/// 1 对object geometry attribute进行解析与更新
 				auto geometry = mObjects->update(renderableObject);
 
@@ -153,20 +169,22 @@ namespace ff {
 		}
 
 		auto children = object->getChildren();
-		for (auto& child : children) {
+		for (auto& child : children)
+		{
 			projectObject(child, groupOrder, sortObjects);
 		}
 	}
 
-	void Renderer::renderScene(
+	auto Renderer::renderScene(
 		const DriverRenderList::Ptr& currentRenderList,
 		const Scene::Ptr& scene,
 		const Camera::Ptr& camera
-	) noexcept {
+		) noexcept -> void
+	{
 		const auto opaqueObjects = currentRenderList->getOpaques();
 		const auto transparentObjects = currentRenderList->getTransparents();
 
-		/// 设置场景相关的状态，可以在这里继续扩展很多场景相关设置
+		/// TODO 设置场景相关的状态，可以在这里继续扩展很多场景相关设置
 		mRenderState->setupLightsView(camera);
 		/// scene viewport 
 		mState->viewport(mViewport);
@@ -174,18 +192,19 @@ namespace ff {
 		if (!opaqueObjects.empty()) renderObjects(opaqueObjects, scene, camera);
 
 		if (!transparentObjects.empty()) renderObjects(transparentObjects, scene, camera);
-
 	}
 
-	void Renderer::renderObjects(
+	auto Renderer::renderObjects(
 		const std::vector<RenderItem::Ptr>& renderItems,
 		const Scene::Ptr& scene,
 		const Camera::Ptr& camera
-	) noexcept {
+		) noexcept -> void
+	{
 		/// 对当前某一个渲染队列的渲染任务，进行一些必要的状态设置
 		const auto overrideMaterial = scene->mIsScene ? scene->mOverrideMaterial : nullptr;
 
-		for (const auto& renderItem : renderItems) {
+		for (const auto& renderItem : renderItems)
+		{
 			const auto object = renderItem->mObject;
 			const auto geometry = renderItem->mGeometry;
 			const auto material = overrideMaterial == nullptr ? renderItem->mMaterial : overrideMaterial;
@@ -194,16 +213,17 @@ namespace ff {
 		}
 	}
 
-	void Renderer::renderObject(
+	auto Renderer::renderObject(
 		const RenderableObject::Ptr& object,
 		const Scene::Ptr& scene,
 		const Camera::Ptr& camera,
 		const Geometry::Ptr& geometry,
 		const Material::Ptr& material
-	) noexcept {
+		) noexcept -> void
+	{
 		object->onBeforeRender(this, scene.get(), camera.get());
 
-		/// 需要传入Shader当中的重要uniform变量
+		/// MVP uniform
 		object->updateModelViewMatrix(camera->getWorldMatrixInverse());
 		object->updateNormalMatrix();
 
@@ -211,13 +231,14 @@ namespace ff {
 		renderBufferDirect(object, scene, camera, geometry, material);
 	}
 
-	void Renderer::renderBufferDirect(
+	auto Renderer::renderBufferDirect(
 		const RenderableObject::Ptr& object,
 		const Scene::Ptr& scene,
 		const Camera::Ptr& camera,
 		const Geometry::Ptr& geometry,
 		const Material::Ptr& material
-	) noexcept {
+		) noexcept -> void
+	{
 		auto _scene = scene;
 		if (_scene == nullptr) _scene = mDummyScene;
 
@@ -234,13 +255,14 @@ namespace ff {
 		mBindingStates->setup(geometry, index);
 
 		/// draw
-		if (index) {
+		if (index)
+		{
 			glDrawElements(toGL(material->mDrawMode), index->getCount(), toGL(index->getDataType()), 0);
 		}
-		else {
+		else
+		{
 			glDrawArrays(toGL(material->mDrawMode), 0, position->getCount());
 		}
-
 	}
 
 	/// 1 OpenGL 是一个状态机系统
@@ -252,13 +274,14 @@ namespace ff {
 	/// 7 复用状态：假设三个物体都用了同样的Program，则不需要做三次Program的绑定，只需要调用一次UseProgram，绘制三个物体
 	/// 重要任务：
 	/// 拼装所有本次绘制需要的Uniforms到一个outMap里面，然后进行统一的更新操作
-	DriverProgram::Ptr Renderer::setProgram(
+	auto Renderer::setProgram(
 		const Camera::Ptr& camera,
 		const Scene::Ptr& scene,
 		const Geometry::Ptr& geometry,
 		const Material::Ptr& material,
 		const RenderableObject::Ptr& object
-	) noexcept {
+		) noexcept -> DriverProgram::Ptr
+	{
 		auto lights = mRenderState->mLights;
 
 		/// 标志着是否需要更换一个绑定的Program
@@ -269,8 +292,8 @@ namespace ff {
 
 		/// 如果本物体第一次送入管线进行绘制，比如第一帧的第一个三角形，就必须为其生成一个DriverProgram
 		/// material的Version初始化为1， DriverMaterial的Version初始化为0
-		if (material->mVersion == dMaterial->mVersion) {
-
+		if (material->mVersion == dMaterial->mVersion)
+		{
 			/// 1 当二者Version相等，说明当前Material并不是第一次解析，则本Material一定已经拥有了一个DriverProgram
 			/// 2 本Material一定正在使用一组Shader(vs/fs)
 			/// 3 假设本Material在上一帧没有用到DiffuseMap, 在生成DriverProgram的时候，就不会#define HAS_DIFFUSE_MAP
@@ -281,65 +304,80 @@ namespace ff {
 			/// 以下的逻辑，都会对影响Shader功能的关键变量进行检查，看一看是否跟上一帧的Shader代码状态相同
 			///  
 			/// dMaterial update is in updateCommonMaterialProperties
-			
+
 			/// 二者不相等会有两种情况，其一更换了Texture，这种变化不会更改shader结构
 			/// 其二，二者其中一个是Nullptr,就得重新找一个Shader组
-			if (material->mDiffuseMap != dMaterial->mDiffuseMap) {
-				if (material->mDiffuseMap == nullptr || dMaterial->mDiffuseMap == nullptr) {
+			if (material->mDiffuseMap != dMaterial->mDiffuseMap)
+			{
+				if (material->mDiffuseMap == nullptr || dMaterial->mDiffuseMap == nullptr)
+				{
 					needsProgramChange = true;
 				}
 			}
 
-			if (material->mEnvMap != dMaterial->mEnvMap) {
-				if (material->mEnvMap == nullptr || dMaterial->mEnvMap == nullptr) {
+			if (material->mEnvMap != dMaterial->mEnvMap)
+			{
+				if (material->mEnvMap == nullptr || dMaterial->mEnvMap == nullptr)
+				{
 					needsProgramChange = true;
 				}
 			}
 
-			if (material->mNormalMap != dMaterial->mNormalMap) {
-				if (material->mNormalMap == nullptr || dMaterial->mNormalMap == nullptr) {
+			if (material->mNormalMap != dMaterial->mNormalMap)
+			{
+				if (material->mNormalMap == nullptr || dMaterial->mNormalMap == nullptr)
+				{
 					needsProgramChange = true;
 				}
 			}
 
-			if (material->mSpecularMap != dMaterial->mSpecularMap) {
-				if (material->mSpecularMap == nullptr || dMaterial->mSpecularMap == nullptr) {
+			if (material->mSpecularMap != dMaterial->mSpecularMap)
+			{
+				if (material->mSpecularMap == nullptr || dMaterial->mSpecularMap == nullptr)
+				{
 					needsProgramChange = true;
 				}
 			}
 
-			if (dMaterial->mLightsStateVersion != lights->mState.mVersion) {
+			if (dMaterial->mLightsStateVersion != lights->mState.mVersion)
+			{
 				needsProgramChange = true;
 			}
 
-			if (object->mIsSkinnedMesh != dMaterial->mSkinning) {
+			if (object->mIsSkinnedMesh != dMaterial->mSkinning)
+			{
 				dMaterial->mSkinning = object->mIsSkinnedMesh;
 				needsProgramChange = true;
 			}
 
-			if (object->mIsSkinnedMesh) {
+			if (object->mIsSkinnedMesh)
+			{
 				auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
-				if (skinnedMesh->mSkeleton->mBones.size() != dMaterial->mMaxBones) {
+				if (skinnedMesh->mSkeleton->mBones.size() != dMaterial->mMaxBones)
+				{
 					needsProgramChange = true;
 					dMaterial->mMaxBones = skinnedMesh->mSkeleton->mBones.size();
 				}
 			}
 		}
-		else {
+		else
+		{
 			needsProgramChange = true;
 			dMaterial->mVersion = material->mVersion;
 		}
 
 		/// 如果第一次解析material，则mCurrentProgram一定是nullptr
 		auto dprogram = dMaterial->mCurrentProgram;
-		if (needsProgramChange) {
+		if (needsProgramChange)
+		{
 			/// 生成，或者复用原来的Program，并且给出使用的Program
 			dprogram = getProgram(material, scene, object);
 		}
 
 		bool refreshProgram = false;
 		/// useProgram当中，如果更换了绑定的Program，就得更新Uniform
-		if (mState->useProgram(dprogram->mProgram)) {
+		if (mState->useProgram(dprogram->mProgram))
+		{
 			refreshProgram = true;
 		}
 
@@ -350,22 +388,24 @@ namespace ff {
 		/// attention, 拷贝map,本uniforms也就是我们说的outMap，类型是UniformHandleMap
 		auto uniforms = dMaterial->mUniforms;
 
-		// DriverMaterial根据我们绘制需要的material，对uniforms进行了更新处理
+		///  DriverMaterial根据我们绘制需要的material，对uniforms进行了更新处理
 		DriverMaterials::refreshMaterialUniforms(uniforms, material);
 
 		bool needsLights = materialNeedsLights(material);
 
 		auto& lightUniforms = mRenderState->mLights->mState.mLightUniformHandles;
 
-		/// Todo 相当于光照更新
+		/// TODO 相当于光照更新
 		/// 如果本material需要光照，就得把光照相关的Uniforms合并进来
-		if (needsLights) {
+		if (needsLights)
+		{
 			makeLightsNeedUpdate(lightUniforms);
 			uniforms.insert(lightUniforms.begin(), lightUniforms.end());
 		}
 
 		/// bones
-		if (object->mIsSkinnedMesh) {
+		if (object->mIsSkinnedMesh)
+		{
 			auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
 			auto skeleton = skinnedMesh->mSkeleton;
 			uniforms.insert(skeleton->mUniforms.begin(), skeleton->mUniforms.end());
@@ -399,7 +439,8 @@ namespace ff {
 		const Material::Ptr& material,
 		const Scene::Ptr& scene,
 		const RenderableObject::Ptr& object
-	) noexcept {
+		) noexcept
+	{
 		DriverProgram::Ptr program = nullptr;
 
 		auto dMaterial = mMaterials->get(material);
@@ -416,12 +457,14 @@ namespace ff {
 
 		/// 从用过的DriverPrograms里面，找找看，是否有这个类型的DriverProgram,如果找到就使用
 		auto pIter = programs.find(cacheKey);
-		if (pIter != programs.end()) {
+		if (pIter != programs.end())
+		{
 			dMaterial->mCurrentProgram = pIter->second;
 			dMaterial->mUniforms = mPrograms->getUniforms(material);
 			program = pIter->second;
 		}
-		else {
+		else
+		{
 			/// 根据Material的类型不同，取得其对应的特殊Uniform的map集合，即UniformHandleMap
 			dMaterial->mUniforms = mPrograms->getUniforms(material);
 
@@ -457,21 +500,26 @@ namespace ff {
 		dMaterial->mSpecularMap = material->mSpecularMap;
 	}
 
-	bool Renderer::materialNeedsLights(const Material::Ptr& material) noexcept {
-		if (material->mIsMeshPhongMaterial) {
+	bool Renderer::materialNeedsLights(const Material::Ptr& material) noexcept
+	{
+		if (material->mIsMeshPhongMaterial)
+		{
 			return true;
 		}
 
 		return false;
 	}
 
-	void Renderer::makeLightsNeedUpdate(UniformHandleMap& lightsUniformMap) noexcept {
-		for (auto& iter : lightsUniformMap) {
+	void Renderer::makeLightsNeedUpdate(UniformHandleMap& lightsUniformMap) noexcept
+	{
+		for (auto& iter : lightsUniformMap)
+		{
 			iter.second.mNeedsUpdate = true;
 		}
 	}
 
-	void Renderer::setSize(int width, int height) noexcept {
+	auto Renderer::setSize(int width, int height) noexcept -> void
+	{
 		mWidth = width;
 		mHeight = height;
 
@@ -481,17 +529,20 @@ namespace ff {
 		mState->viewport(mViewport);
 
 		/// pay attention: we should deal with custom-renderTarget resizing in application
-		if (mOnSizeCallback) {
+		if (mOnSizeCallback)
+		{
 			/// 真正的调用了外界注册回调的接口
 			mOnSizeCallback(width, height);
 		}
 	}
 
-	void Renderer::setRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept {
+	auto Renderer::setRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept -> void
+	{
 		mCurrentRenderTarget = renderTarget;
 
 		/// 如果RenderTarget是空，说明使用默认的RenderTarget
-		if (renderTarget == nullptr) {
+		if (renderTarget == nullptr)
+		{
 			mState->bindFrameBuffer(0);
 			return;
 		}
@@ -500,26 +551,31 @@ namespace ff {
 		auto dRenderTarget = mRenderTargets->get(renderTarget);
 
 		/// 如果当前的RenderTarget还没有被创建，则将创建任务丢给DriverTextures
-		if (!dRenderTarget->mFrameBuffer) {
+		if (!dRenderTarget->mFrameBuffer)
+		{
 			mTextures->setupRenderTarget(renderTarget);
 		}
 
 		mState->bindFrameBuffer(dRenderTarget->mFrameBuffer);
 	}
 
-	RenderTarget::Ptr Renderer::getRenderTarget() const noexcept {
+	RenderTarget::Ptr Renderer::getRenderTarget() const noexcept
+	{
 		return mCurrentRenderTarget;
 	}
 
-	void Renderer::setClearColor(float r, float g, float b, float a) noexcept {
+	void Renderer::setClearColor(float r, float g, float b, float a) noexcept
+	{
 		mState->setClearColor(r, g, b, a);
 	}
 
-	glm::vec4 Renderer::getClearColor() const noexcept {
+	glm::vec4 Renderer::getClearColor() const noexcept
+	{
 		return mState->getClearColor();
 	}
 
-	void Renderer::clear(bool color, bool depth, bool stencil) noexcept {
+	void Renderer::clear(bool color, bool depth, bool stencil) noexcept
+	{
 		GLbitfield bits = 0;
 
 		if (color) bits |= GL_COLOR_BUFFER_BIT;
@@ -529,25 +585,30 @@ namespace ff {
 		glClear(bits);
 	}
 
-	void Renderer::enableShadow(bool enable) noexcept {
+	void Renderer::enableShadow(bool enable) noexcept
+	{
 		mShadowMap->mEnabled = enable;
 	}
 
 	/// 为何不直接使用driverWindow的set函数进行回调设置呢？
 	/// 窗体大小的变化会影响咱们renderer的状态,比如视口viewport需要跟随设置变化
-	void Renderer::setFrameSizeCallBack(const OnSizeCallback& callback) noexcept {
+	auto Renderer::setFrameSizeCallBack(const OnSizeCallback& callback) noexcept -> void
+	{
 		mOnSizeCallback = callback;
 	}
 
-	void Renderer::setMouseMoveCallBack(const DriverWindow::MouseMoveCallback& callback) noexcept {
+	auto Renderer::setMouseMoveCallBack(const DriverWindow::MouseMoveCallback& callback) noexcept -> void
+	{
 		mWindow->setMouseMoveCallBack(callback);
 	}
 
-	void Renderer::setMouseActionCallback(const DriverWindow::MouseActionCallback& callback) noexcept {
+	auto Renderer::setMouseActionCallback(const DriverWindow::MouseActionCallback& callback) noexcept -> void
+	{
 		mWindow->setMouseActionCallback(callback);
 	}
 
-	void Renderer::setKeyboardActionCallBack(const DriverWindow::KeyboardActionCallback& callback) noexcept {
+	auto Renderer::setKeyboardActionCallBack(const DriverWindow::KeyboardActionCallback& callback) noexcept -> void
+	{
 		mWindow->setKeyboardActionCallBack(callback);
 	}
 }

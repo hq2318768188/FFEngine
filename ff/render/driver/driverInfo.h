@@ -1,9 +1,9 @@
-#pragma once
+ï»¿#pragma once
 #include "../../global/base.h"
 
 namespace ff {
 
-	//Õû¸öäÖÈ¾Æ÷ÔÚäÖÈ¾¹ý³ÌÖÐµÄ¸÷ÏîÖ¸±êÊý¾Ý¼ÇÂ¼
+	/// æ•´ä¸ªæ¸²æŸ“å™¨åœ¨æ¸²æŸ“è¿‡ç¨‹ä¸­çš„å„é¡¹æŒ‡æ ‡æ•°æ®è®°å½•
 	class DriverInfo {
 	public:
 
@@ -27,9 +27,9 @@ namespace ff {
 
 		~DriverInfo() noexcept;
 
-		void update(uint32_t count, uint32_t glMode, uint32_t instanceCount) noexcept;
+		auto update(uint32_t count, uint32_t glMode, uint32_t instanceCount) noexcept -> void;
 
-		void reset() noexcept;
+		auto reset() noexcept -> void;
 
 	public:
 		Memory	mMemory{};

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../../global/base.h"
 #include "../../objects/renderableObject.h"
 #include "driverGeometries.h"
@@ -6,7 +6,6 @@
 #include "driverInfo.h"
 
 namespace ff {
-
 	class DriverObjects {
 	public:
 		using Ptr = std::shared_ptr<DriverObjects>;
@@ -26,9 +25,11 @@ namespace ff {
 
 		~DriverObjects() noexcept;
 
-		Geometry::Ptr update(const RenderableObject::Ptr& object) noexcept;
+		auto update(const RenderableObject::Ptr& object) noexcept -> Geometry::Ptr;
 
 	private:
+		/// TODO  还差一个instance绘制的功能
+
 		std::unordered_map<ID, uint32_t> mUpdateMap{};
 
 		DriverInfo::Ptr mInfo{ nullptr };

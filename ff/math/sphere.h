@@ -19,8 +19,11 @@ namespace ff {
 
 		~Sphere() noexcept {}
 
-		/// 应用在跟随物体进行matrix变换的时候
-		void applyMatrix4(const glm::mat4 matrix) noexcept {
+		
+		/// \brief 应用在跟随物体进行matrix变换的时候
+		/// \param matrix 
+		auto applyMatrix4(const glm::mat4 matrix) noexcept -> void
+		{
 			mCenter = glm::vec3(matrix * glm::vec4(mCenter, 1.0));
 
 			/// 对于半径，只会收到scale缩放影响，我们只需要考虑三个Scale当中最大的哪个
@@ -32,16 +35,18 @@ namespace ff {
 			mRadius *= maxScale;
 		}
 
-		void copy(const Sphere::Ptr& other) {
-			/// 举例：
-			/// Sphere::Ptr s1 = Sphere::create(xxx);
-			/// Sphere::Ptr s2 = s1;
-			/// s2->mRadius = 10.0f;
-			/// 这样做的话，就会导致s1指向的内存，也会发生变化
-
-			/// 应该：
-			/// Sphere::Ptr s2 = Sphere::create(xxx);
-			/// s2->copy(s1);
+		/// \brief
+		/// 举例：
+		/// Sphere::Ptr s1 = Sphere::create(xxx);
+		/// Sphere::Ptr s2 = s1;
+		/// s2->mRadius = 10.0f;
+		/// 这样做的话，就会导致s1指向的内存，也会发生变化
+		/// 应该：
+		/// Sphere::Ptr s2 = Sphere::create(xxx);
+		/// s2->copy(s1);
+		/// \param other 
+		auto copy(const Sphere::Ptr& other) -> void
+		{
 			mCenter = other->mCenter;
 			mRadius = other->mRadius;
 		}

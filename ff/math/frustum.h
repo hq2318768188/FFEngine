@@ -1,4 +1,4 @@
-#pragma once 
+ï»¿#pragma once 
 #include "../global/base.h"
 #include "plane.h"
 #include "sphere.h"
@@ -20,8 +20,10 @@ namespace ff {
 			}
 		}
 
-		//https://zhuanlan.zhihu.com/p/491340245
-		void setFromProjectionMatrix(const glm::mat4& matrix) {
+		/// \brief è®¾ç½®è§†æ™¯ä½“çš„è¾¹ç•Œåˆ¤æ–­æ¡ä»¶
+		/// \param matrix 
+		auto setFromProjectionMatrix(const glm::mat4& matrix) const -> void
+		{
 			auto m = glm::value_ptr(matrix);
 
 			mPlanes[0]->setComponents(m[3] - m[0], m[7] - m[4], m[11] - m[8], m[15] - m[12]);
@@ -32,39 +34,45 @@ namespace ff {
 			mPlanes[5]->setComponents(m[3] + m[2], m[7] + m[6], m[11] + m[10], m[15] + m[14]);
 		}
 
-		bool intersectObject(const RenderableObject::Ptr& object) noexcept {
+		/// \brief OBJ3Dæ˜¯å¦åœ¨è§†æ™¯ä½“å†…
+		/// \param object OBJ3D
+		/// \return 
+		auto intersectObject(const RenderableObject::Ptr& object) const noexcept -> bool
+		{
 			auto geometry = object->getGeometry();
 
 			if (geometry->getBoundingSphere() == nullptr) {
 				geometry->computeBoundingSphere();
 			}
 
-			//ºÜ¶àÍ¬Ñ§ÈÏÎª¿ÉÒÔÖ±½ÓÓÃtoolSphere = geometry->boundingSphere
-			//ÏÂ·½»¹ĞèÒª¶Ô°üÎ§Çò½øĞĞworldMatrixµÄ±ä»»
-			//ÒòÎªÎÒÃÇÓÃµÄÊÇÖÇÄÜÖ¸Õë£¬ËùÒÔÈç¹ûÖ±½ÓÊ©¼Ó±ä»»£¬¾Í»áµ¼ÖÂgeometryÀïÃæµÄ°üÎ§Çò±»²»Í£µÄ±ä»»ÀÛ¼Ó
+
 			mToolSphere->copy(geometry->getBoundingSphere());
 			mToolSphere->applyMatrix4(object->getWorldMatrix());
 
 			return intersectSphere(mToolSphere);
 		}
 
-		bool intersectSphere(const Sphere::Ptr& sphere) noexcept {
+		/// \brief åˆ¤æ–­åŒ…å›´çƒæ˜¯å¦ä¸è§†æ™¯ä½“ç›¸äº¤ 
+		/// \param sphere 
+		/// \return 
+		auto intersectSphere(const Sphere::Ptr& sphere) const noexcept -> bool
+		{
 			auto center = sphere->mCenter;
 			auto radius = sphere->mRadius;
 
 			for (uint32_t i = 0; i < 6; ++i) {
-				//1 ¼ÆËã°üÎ§ÇòµÄÇòĞÄµ½µ±Ç°Æ½ÃæµÄ¾àÀë
+				/// 1 è®¡ç®—åŒ…å›´çƒçš„çƒå¿ƒåˆ°å½“å‰å¹³é¢çš„è·ç¦»
 				auto distance = mPlanes[i]->distanceToPoint(center);
 
-				//2 Èç¹ûÇòĞÄÔÚÆ½ÃæµÄÕıÃæ£¬ÄÇÃ´distanceÒ»¶¨ÊÇÕıÊı£¬ÏÂ·½if²»½øÈ¥
-				// Èç¹ûÇòĞÄÔÚÆ½ÃæµÄ·´Ãæ£¬ÄÇÃ´distanceÒ»¶¨ÊÇ¸ºÊı£¬¼ÙÉèÇòÓëÃæµÄ¾àÀë´óÓÚÁËradius
-				// ¼´-distance > radius Ôò distance < -radius ´ú±í×ÅÇò²»Óè±¾Æ½ÃæÏà½»ÇÒÎ»ÓÚÆ½Ãæ·´Ãæ£¬Ôò±¾ÎïÌåĞèÒª±»¼ô²Ã
+				/// 2 å¦‚æœçƒå¿ƒåœ¨å¹³é¢çš„æ­£é¢ï¼Œé‚£ä¹ˆdistanceä¸€å®šæ˜¯æ­£æ•°ï¼Œä¸‹æ–¹ifä¸è¿›å»
+				///  å¦‚æœçƒå¿ƒåœ¨å¹³é¢çš„åé¢ï¼Œé‚£ä¹ˆdistanceä¸€å®šæ˜¯è´Ÿæ•°ï¼Œå‡è®¾çƒä¸é¢çš„è·ç¦»å¤§äºäº†radius
+				///  å³-distance > radius åˆ™ distance < -radius ä»£è¡¨ç€çƒä¸äºˆæœ¬å¹³é¢ç›¸äº¤ä¸”ä½äºå¹³é¢åé¢ï¼Œåˆ™æœ¬ç‰©ä½“éœ€è¦è¢«å‰ªè£
 				if (distance < -radius) {
 					return false;
 				}
 			}
 
-			//ÊÓ¾°Ìå¼ô²ÃÍ¨¹ı£¬¿ÉÒÔ»æÖÆ
+			/// è§†æ™¯ä½“å‰ªè£é€šè¿‡ï¼Œå¯ä»¥ç»˜åˆ¶
 			return true;
 		}
 

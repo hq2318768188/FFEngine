@@ -1,4 +1,4 @@
-#include "driverWindow.h"
+ï»¿#include "driverWindow.h"
 #include "../renderer.h"
 
 namespace ff {
@@ -10,12 +10,15 @@ namespace ff {
 
 		glfwInit();
 
-		//³õÊ¼»¯ÉÏÏÂÎÄĞÅÏ¢
+		/// åˆå§‹åŒ–ä¸Šä¸‹æ–‡ä¿¡æ¯ /// æ¸²æŸ“ æ ¸å¿ƒæ¨¡å¼
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
 
-		//´´½¨´°Ìå
+		/// åˆ›å»ºçª—ä½“
 		mWindow = glfwCreateWindow(mWidth, mHeight, "FunForestEngine window", nullptr, nullptr);
 		if (!mWindow) {
 			std::cerr << "Error: failed to create window" << std::endl;
@@ -25,28 +28,28 @@ namespace ff {
 
 		glfwMakeContextCurrent(mWindow);
 
-		//ÒòÎªgladÒ»¿ªÊ¼µÄº¯ÊıÖ¸Õë¶¼ÊÇĞü¿Õ×´Ì¬£¬ĞèÒªÍ¨¹ıglfw¸úÏµÍ³Ïà¹ØµÄÌØĞÔ£¬À´¸ù¾İ
-		//osµÄ²»Í¬£¬À´ÎªÕâĞ©º¯ÊıÖ¸Õë¸³Öµ£¨×°ÔØ£©
+		/// å› ä¸ºgladä¸€å¼€å§‹çš„å‡½æ•°æŒ‡é’ˆéƒ½æ˜¯æ‚¬ç©ºçŠ¶æ€ï¼Œéœ€è¦é€šè¿‡glfwè·Ÿç³»ç»Ÿç›¸å…³çš„ç‰¹æ€§ï¼Œæ¥æ ¹æ®
+		/// osçš„ä¸åŒï¼Œæ¥ä¸ºè¿™äº›å‡½æ•°æŒ‡é’ˆèµ‹å€¼ï¼ˆè£…è½½ï¼‰
 		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 		{
 			std::cout << "Failed to initialize GLAD" << std::endl;
 			exit(0);
 		}
 
-		//½«µ±Ç°µÄDriverWindowÕâ¸öÀàµÄ¶ÔÏóµÄthisÖ¸Õë£¬×÷ÎªÁËÒ»¸öuserData£¬´«¸øÁËGLFWWindow£¨mWindow£©
-		//GLFWWindow ClassÆäÊµÀïÃæº¬ÓĞÒ»¸övoid*µÄÖ¸Õë£¬×÷ÎªÓÃ»§¿É×Ô¶¨ÒåµÄÊı¾İ(ÀàËÆÓÚEventBaseµ±ÖĞµÄUserData£©
+		/// å°†å½“å‰çš„DriverWindowè¿™ä¸ªç±»çš„å¯¹è±¡çš„thisæŒ‡é’ˆï¼Œä½œä¸ºäº†ä¸€ä¸ªuserDataï¼Œä¼ ç»™äº†GLFWWindowï¼ˆmWindowï¼‰
+		/// GLFWWindow Classå…¶å®é‡Œé¢å«æœ‰ä¸€ä¸ªvoid*çš„æŒ‡é’ˆï¼Œä½œä¸ºç”¨æˆ·å¯è‡ªå®šä¹‰çš„æ•°æ®(ç±»ä¼¼äºEventBaseå½“ä¸­çš„UserDataï¼‰
 		glfwSetWindowUserPointer(mWindow, this);
 
-		//ÉèÖÃ¸÷Àà»Øµ÷º¯Êı
+		/// è®¾ç½®å„ç±»å›è°ƒå‡½æ•°
 		glfwSetFramebufferSizeCallback(mWindow, frameSizeCallback);
 
 		glfwSetMouseButtonCallback(mWindow, mouseActionCallback);
 
 		glfwSetCursorPosCallback(mWindow, mouseMoveCallback);
 
-		//close the v-sync for screen 
-		// ´¹Ö±Í¬²½µÄ¹Ø±Õ£¬ÏÔÊ¾Æ÷ÓĞÒ»¶¨µÄË¢ĞÂÆµÂÊ£¬´ó¸ÅÂÊ±ÈäÖÈ¾ËÙ¶ÈÒªÂıºÜ¶à£¬¿ªÆô
-		// ´¹Ö±Í¬²½µÄÊ±ºò£¬äÖÈ¾ËÙ¶È»áÓëË¢ĞÂÆµÂÊÒ»ÖÂ
+		/// close the v-sync for screen 
+		/// å‚ç›´åŒæ­¥çš„å…³é—­ï¼Œæ˜¾ç¤ºå™¨æœ‰ä¸€å®šçš„åˆ·æ–°é¢‘ç‡ï¼Œå¤§æ¦‚ç‡æ¯”æ¸²æŸ“é€Ÿåº¦è¦æ…¢å¾ˆå¤šï¼Œå¼€å¯
+		/// å‚ç›´åŒæ­¥çš„æ—¶å€™ï¼Œæ¸²æŸ“é€Ÿåº¦ä¼šä¸åˆ·æ–°é¢‘ç‡ä¸€è‡´
 		//glfwSwapInterval(0);
 
 	}
@@ -56,49 +59,49 @@ namespace ff {
 		glfwTerminate();
 	}
 
-	bool DriverWindow::processEvent() noexcept {
+	auto DriverWindow::processEvent() noexcept -> bool
+	{
 
-		//´¦Àí³ÌĞòÍË³öÎÊÌâ
-		//glfwGetKey »ñÈ¡µ±Ç°´°ÌåµÄÄ³¸ö°´¼üµÄ×´Ì¬
+		/// å¤„ç†ç¨‹åºé€€å‡ºé—®é¢˜
+		/// glfwGetKey è·å–å½“å‰çª—ä½“çš„æŸä¸ªæŒ‰é”®çš„çŠ¶æ€
 		if (glfwGetKey(mWindow, GLFW_KEY_ESCAPE) == GLFW_PRESS || glfwWindowShouldClose(mWindow)) {
 			glfwSetWindowShouldClose(mWindow, true);
 			return false;
 		}
 
-		//ÔÚÃ¿Ò»Ö¡¶¼»á¶ÔÊÂ¼ş½øĞĞ¼¯ÖĞµÄÏìÓ¦
+		/// åœ¨æ¯ä¸€å¸§éƒ½ä¼šå¯¹äº‹ä»¶è¿›è¡Œé›†ä¸­çš„å“åº”
 		glfwPollEvents();
 
-		//¼¯ÖĞ´¦Àí¼üÅÌÊÂ¼ş
-
-		bool needsNotify{ false };//¼üÅÌµÄÄ³Ò»¸ö»òÕßÄ³¼¸¸ö×´Ì¬Ö»Òª·¢ÉúÁË¸Ä±ä,¶¼»áÖÃÎªtrue,¼üÅÌ×´Ì¬Èç¹ûÃ»ÓĞ±ä»¯,²»ĞèÒªÍ¨Öª
+		/// é›†ä¸­å¤„ç†é”®ç›˜äº‹ä»¶
+		bool needsNotify{ false }; /// é”®ç›˜çš„æŸä¸€ä¸ªæˆ–è€…æŸå‡ ä¸ªçŠ¶æ€åªè¦å‘ç”Ÿäº†æ”¹å˜,éƒ½ä¼šç½®ä¸ºtrue,é”®ç›˜çŠ¶æ€å¦‚æœæ²¡æœ‰å˜åŒ–,ä¸éœ€è¦é€šçŸ¥
 		auto iter = KeyboardActionMap.begin();
 		while (iter != KeyboardActionMap.end()) {
-			//¶ÔÓÚÃ¿Ò»¸öÎÒÃÇ¹ØĞÄµÄ°´¼ü,Ê×ÏÈ¼ì²éÆä×´Ì¬(°´ÏÂ.Ì§Æğ)
-			//¶ÔÓÚmKeyStateµÄÀí½â:
-			//ÔÛÃÇ¹æ¶¨µÄ°´¼ü±àºÅÎª:
-			//WKey = 1;
-			//SKey = 2;
-			//AKey = 3;
-			//DKey = 4;
-			//KeyNONE = 31;
-			//mKeyStateÊôÓÚbitset,¼´Ò»¶Ñbitµ¥Î»¼¯ºÏ:00001001100
-			//Ã¿Ò»¸öbitÎ»´ú±íÁËÏìÓ¦µÄ¼üÅÌ°´¼üµÄ°´ÏÂ(1)Ì§Æğ(0)
+			/// å¯¹äºæ¯ä¸€ä¸ªæˆ‘ä»¬å…³å¿ƒçš„æŒ‰é”®,é¦–å…ˆæ£€æŸ¥å…¶çŠ¶æ€(æŒ‰ä¸‹.æŠ¬èµ·)
+			/// å¯¹äºmKeyStateçš„ç†è§£:
+			/// å’±ä»¬è§„å®šçš„æŒ‰é”®ç¼–å·ä¸º:
+			/// WKey = 1;
+			/// SKey = 2;
+			/// AKey = 3;
+			/// DKey = 4;
+			/// KeyNONE = 31;
+			/// mKeyStateå±äºbitset,å³ä¸€å †bitå•ä½é›†åˆ:00001001100
+			/// æ¯ä¸€ä¸ªbitä½ä»£è¡¨äº†å“åº”çš„é”®ç›˜æŒ‰é”®çš„æŒ‰ä¸‹(1)æŠ¬èµ·(0)
 
-			//iter->first±íÊ¾ÁËglfwÀïÃæµÄÄ³¸ö°´¼ü
-			//iter->second±íÊ¾ÁËÎÒÃÇ¶ÔÓÚÕâ¸ö°´¼üµÄ±àºÅ
+			/// iter->firstè¡¨ç¤ºäº†glfwé‡Œé¢çš„æŸä¸ªæŒ‰é”®
+			/// iter->secondè¡¨ç¤ºäº†æˆ‘ä»¬å¯¹äºè¿™ä¸ªæŒ‰é”®çš„ç¼–å·
 			if (glfwGetKey(mWindow, iter->first) == GLFW_PRESS)
 			{
-				//²»Îª1,±íÊ¾Ö®Ç°Ã»ÓĞ¼ÇÂ¼°´ÏÂµÄ×´Ì¬
+				/// ä¸ä¸º1,è¡¨ç¤ºä¹‹å‰æ²¡æœ‰è®°å½•æŒ‰ä¸‹çš„çŠ¶æ€
 				if (!mKeyState[iter->second]) {
-					//setº¯Êı½«µ±Ç°Õâ¸öÎ»ÖÃµÄbitÉèÖÃÎª1
+					/// setå‡½æ•°å°†å½“å‰è¿™ä¸ªä½ç½®çš„bitè®¾ç½®ä¸º1
 					mKeyState.set(iter->second);
 					needsNotify = true;
 				}
 			}
 			else if (glfwGetKey(mWindow, iter->first) == GLFW_RELEASE) {
-				//Èç¹ûµ±Ç°Õâ¸ö°´¼üÊÇ°´ÏÂµÄ×´Ì¬,Ôò¸üĞÂÆä×´Ì¬
+				/// å¦‚æœå½“å‰è¿™ä¸ªæŒ‰é”®æ˜¯æŒ‰ä¸‹çš„çŠ¶æ€,åˆ™æ›´æ–°å…¶çŠ¶æ€
 				if (mKeyState[iter->second]) {
-					//resetº¯Êı½«µ±Ç°Õâ¸öÎ»ÖÃµÄbitÉèÖÃÎª0
+					/// resetå‡½æ•°å°†å½“å‰è¿™ä¸ªä½ç½®çš„bitè®¾ç½®ä¸º0
 					mKeyState.reset(iter->second);
 					needsNotify = true;
 				}
@@ -113,30 +116,36 @@ namespace ff {
 		return true;
 	}
 
-	void DriverWindow::swap() noexcept {
+	auto DriverWindow::swap() const noexcept -> void
+	{
 		glfwSwapBuffers(mWindow);
 	}
 
-	void DriverWindow::setFrameSizeCallBack(const FrameSizeCallback& callback) noexcept {
+	auto DriverWindow::setFrameSizeCallBack(const FrameSizeCallback& callback) noexcept -> void
+	{
 		mFrameSizeCallback = callback;
 	}
 
-	void DriverWindow::setMouseMoveCallBack(const MouseMoveCallback& callback) noexcept {
+	auto DriverWindow::setMouseMoveCallBack(const MouseMoveCallback& callback) noexcept -> void
+	{
 		mMouseMoveCallback = callback;
 	}
 
-	void DriverWindow::setMouseActionCallback(const MouseActionCallback& callback) noexcept {
+	auto DriverWindow::setMouseActionCallback(const MouseActionCallback& callback) noexcept -> void
+	{
 		mMouseActionCallback = callback;
 	}
 
-	void DriverWindow::setKeyboardActionCallBack(const KeyboardActionCallback& callback) noexcept {
+	auto DriverWindow::setKeyboardActionCallBack(const KeyboardActionCallback& callback) noexcept -> void
+	{
 		mKeyboardActionCallback = callback;
 	}
 
-	void DriverWindow::frameSizeCallback(GLFWwindow* window, int width, int height) noexcept {
-		//±¾º¯ÊıÊÇÒ»¸ö¾²Ì¬º¯Êı£¬ÎŞ·¨ÄÃµ½±¾DriverWindowµÄthisÖ¸Õë
-		//½«¶ÔÓ¦µÄDriverWindowÖ¸Õë£¬´ÓglfwWindowÀïÃæÄÃ»ØÀ´£¬ÄÃ»ØÀ´µÄÊÇÒ»¸övoid*
-		//ÎÒÃÇ·Ç³£Ö®È·¶¨£¬Õâ¸övoid*Ö¸Õë£¬Ò»¶¨ÊÇDriverWindowµÄÖ¸Õë
+	auto DriverWindow::frameSizeCallback(GLFWwindow* window, int width, int height) noexcept -> void
+	{
+		/// æœ¬å‡½æ•°æ˜¯ä¸€ä¸ªé™æ€å‡½æ•°ï¼Œæ— æ³•æ‹¿åˆ°æœ¬DriverWindowçš„thisæŒ‡é’ˆ
+		/// å°†å¯¹åº”çš„DriverWindowæŒ‡é’ˆï¼Œä»glfwWindowé‡Œé¢æ‹¿å›æ¥ï¼Œæ‹¿å›æ¥çš„æ˜¯ä¸€ä¸ªvoid*
+		/// æˆ‘ä»¬éå¸¸ä¹‹ç¡®å®šï¼Œè¿™ä¸ªvoid*æŒ‡é’ˆï¼Œä¸€å®šæ˜¯DriverWindowçš„æŒ‡é’ˆ
 		auto self = static_cast<DriverWindow*>(glfwGetWindowUserPointer(window));
 		self->mWidth = width;
 		self->mHeight = height;
@@ -147,8 +156,9 @@ namespace ff {
 
 	}
 
-	void DriverWindow::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos) noexcept {
-		//½âÎö³öÀ´driverWindowµÄÖ¸Õë
+	auto DriverWindow::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos) noexcept -> void
+	{
+		/// è§£æå‡ºæ¥driverWindowçš„æŒ‡é’ˆ
 		auto self = static_cast<DriverWindow*>(glfwGetWindowUserPointer(window));
 
 		if (self->mMouseMoveCallback) {
@@ -156,41 +166,42 @@ namespace ff {
 		}
 	}
 
-	void DriverWindow::mouseActionCallback(GLFWwindow* window, int button, int action, int mods) noexcept {
-		//glfw¸øµ½ÎÒÃÇÄÄ¸ö°´¼ü·¢ÉúÁË·´Ó¦(×óÓÒÖĞ)-button,·¢ÉúÁËÔõÑùµÄ²Ù×÷(µã»÷,Ì§Æğ)-action
+	auto DriverWindow::mouseActionCallback(GLFWwindow* window, int button, int action, int mods) noexcept -> void
+	{
+		/// glfwç»™åˆ°æˆ‘ä»¬å“ªä¸ªæŒ‰é”®å‘ç”Ÿäº†ååº”(å·¦å³ä¸­)-button,å‘ç”Ÿäº†æ€æ ·çš„æ“ä½œ(ç‚¹å‡»,æŠ¬èµ·)-action
 
-		//½âÎö³öÀ´driverWindowµÄÖ¸Õë
+		/// è§£æå‡ºæ¥driverWindowçš„æŒ‡é’ˆ
 		auto self = static_cast<DriverWindow*>(glfwGetWindowUserPointer(window));
 
 		MouseAction mouseAction{ MouseAction::NONE };
 
-		//Èç¹ûÓÃ×î¼òµ¥µÄ·½Ê½:
-		// 1 ¼ì²éÄÄ¸ö°´¼üÓĞÁË·´Ó¦
-		// 2 ¼ì²é°´ÏÂ»òÕßÌ§Æğ
-		// if(button == left){
-		//	 if(action == down) {
-		//	 }else if(action == up) {
-		//	 }
-		// }
-		//
+		/// å¦‚æœç”¨æœ€ç®€å•çš„æ–¹å¼:
+		///  1 æ£€æŸ¥å“ªä¸ªæŒ‰é”®æœ‰äº†ååº”
+		///  2 æ£€æŸ¥æŒ‰ä¸‹æˆ–è€…æŠ¬èµ·
+		///  if(button == left){
+		/// 	 if(action == down) {
+		/// 	 }else if(action == up) {
+		/// 	 }
+		///  }
+		/// 
 		auto iter = MouseActionMap.begin();
 		while (iter != MouseActionMap.end()) {
-			//iter->first ´ú±íÁËÄÄ¸ö°´¼ü·¢Éú·´Ó¦
-			//iter->secondÓµÓĞÁ½¸öÊı¾İ,µÚÒ»¸öÊÇdown µÚ¶ş¸öÊÇup
+			/// iter->first ä»£è¡¨äº†å“ªä¸ªæŒ‰é”®å‘ç”Ÿååº”
+			/// iter->secondæ‹¥æœ‰ä¸¤ä¸ªæ•°æ®,ç¬¬ä¸€ä¸ªæ˜¯down ç¬¬äºŒä¸ªæ˜¯up
 
-			//Ê×ÏÈÅĞ¶ÏÊó±êµÄ²Ù×÷×´Ì¬,down up?
+			/// é¦–å…ˆåˆ¤æ–­é¼ æ ‡çš„æ“ä½œçŠ¶æ€,down up?
 			if (action == GLFW_PRESS) {
 
-				//ÄÄÒ»¸ö°´¼üdownÁË?
+				/// å“ªä¸€ä¸ªæŒ‰é”®downäº†?
 				if (button == iter->first) {
-					//´ÓtupleÀïÃæ,ÄÃµ½µÚ0¸öÔªËØ
+					/// ä»tupleé‡Œé¢,æ‹¿åˆ°ç¬¬0ä¸ªå…ƒç´ 
 					mouseAction = std::get<DOWN>(iter->second);
 					break;
 				}
 			}
 			else if (action == GLFW_RELEASE) {
 				if (button == iter->first) {
-					//´ÓtupleÀïÃæ,ÄÃµ½µÚ1¸öÔªËØ
+					/// ä»tupleé‡Œé¢,æ‹¿åˆ°ç¬¬1ä¸ªå…ƒç´ 
 					mouseAction = std::get<UP>(iter->second);
 					break;
 				}

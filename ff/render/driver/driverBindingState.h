@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../../global/base.h"
 #include "../../global/constant.h"
 #include "../../core/geometry.h"
@@ -26,21 +26,21 @@ namespace ff {
 	private:
 		GLuint	mVAO{ 0 };
 
-		//¸úcacheĞ£ÑéÓĞ¹Ø
-		//´æ´¢ÁËattributeµÄÃû×Ö×Ö·û´®×÷Îªkey£¬attribute¶ÔÏóµÄid×öÎªvalue
+		/// è·Ÿcacheæ ¡éªŒæœ‰å…³
+		/// å­˜å‚¨äº†attributeçš„åå­—å­—ç¬¦ä¸²ä½œä¸ºkeyï¼Œattributeå¯¹è±¡çš„idåšä¸ºvalue
 		std::unordered_map<std::string, ID> mAttributes{};
 
-		//¼ÇÂ¼ÁË¶ÔÓ¦µÄgeometryµÄindexAttributeµÄid
+		/// è®°å½•äº†å¯¹åº”çš„geometryçš„indexAttributeçš„id
 		ID mIndex{ 0 };
 
-		//¼ÇÂ¼ÁË×Ü¹²ÓĞ¶àÉÙ¸öAttribute
+		/// è®°å½•äº†æ€»å…±æœ‰å¤šå°‘ä¸ªAttribute
 		uint32_t mAttributesNum{ 0 };
 	};
 
-	//Ò»¸öVAOÓëÒ»¸öGeometryÒ»Ò»¶ÔÓ¦
+	/// ä¸€ä¸ªVAOä¸ä¸€ä¸ªGeometryä¸€ä¸€å¯¹åº”
 	class DriverBindingStates {
 	public:
-		//key:geometryµÄIDºÅ  value£ºBindingStateÕâÀïÃæÔÌº¬×ÅÒ»¸öVAO
+		/// key:geometryçš„IDå·  valueï¼šBindingStateè¿™é‡Œé¢è•´å«ç€ä¸€ä¸ªVAO
 		using GeometryKeyMap = std::unordered_map<ID, DriverBindingState::Ptr>;
 
 		using Ptr = std::shared_ptr<DriverBindingStates>;
@@ -52,25 +52,24 @@ namespace ff {
 
 		~DriverBindingStates();
 
-		DriverBindingState::Ptr getBindingState(const Geometry::Ptr& geometry) noexcept;
+		auto getBindingState(const Geometry::Ptr& geometry) noexcept -> DriverBindingState::Ptr;
 
-		void setup(
+		auto setup(
 			const Geometry::Ptr& geometry,
-			const Attributei::Ptr& index) ;
+			const Attributei::Ptr& index) -> void ;
 
-		DriverBindingState::Ptr createBindingState(GLuint vao) noexcept;
+		static auto createBindingState(GLuint vao) noexcept -> DriverBindingState::Ptr;
 
-		bool needsUpdate(const Geometry::Ptr& geometry, const Attributei::Ptr& index) noexcept;
+		auto needsUpdate(const Geometry::Ptr& geometry, const Attributei::Ptr& index) const noexcept -> bool;
 
-		void saveCache(const Geometry::Ptr& geometry, const Attributei::Ptr& index) noexcept;
+		auto saveCache(const Geometry::Ptr& geometry, const Attributei::Ptr& index) const noexcept -> void;
 
-		void setupVertexAttributes(const Geometry::Ptr& geometry) noexcept;
+		auto setupVertexAttributes(const Geometry::Ptr& geometry) const noexcept -> void;
 
-		GLuint createVAO() noexcept;
+		static auto createVao() noexcept -> GLuint;
+		static void bindVao(GLuint vao) noexcept;
 
-		void bindVAO(GLuint vao) noexcept;
-
-		void releaseStatesOfGeometry(ID geometryID) noexcept;
+		auto releaseStatesOfGeometry(ID geometryID) noexcept -> void;
 
 	private:
 		DriverAttributes::Ptr	mAttributes{ nullptr };

@@ -1,4 +1,4 @@
-#include "driverInfo.h"
+﻿#include "driverInfo.h"
 
 namespace ff {
 
@@ -6,7 +6,8 @@ namespace ff {
 
 	DriverInfo::~DriverInfo() noexcept {}
 
-	void DriverInfo::update(uint32_t count, uint32_t glMode, uint32_t instanceCount) noexcept {
+	auto DriverInfo::update(uint32_t count, uint32_t glMode, uint32_t instanceCount) noexcept -> void
+	{
 		mRender.mCalls++;
 
 		switch (glMode) {
@@ -18,7 +19,8 @@ namespace ff {
 		}
 	}
 
-	void DriverInfo::reset() noexcept {
+	auto DriverInfo::reset() noexcept -> void
+	{
 		mRender.mFrame++;
 		mRender.mCalls = 0;
 		mRender.mTriangels = 0;

@@ -1,4 +1,4 @@
-#include "renderableObject.h"
+﻿#include "renderableObject.h"
 
 namespace ff {
 
@@ -11,7 +11,8 @@ namespace ff {
 
 	RenderableObject::~RenderableObject() noexcept {}
 
-	void RenderableObject::onBeforeRender(Renderer* renderer, Scene* scene, Camera* camera) {
+	auto RenderableObject::onBeforeRender(Renderer* renderer, Scene* scene, Camera* camera) const -> void
+	{
 		if (mOnBeforeRenderCallback) {
 			mOnBeforeRenderCallback(renderer, scene, camera);
 		}
