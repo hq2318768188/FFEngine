@@ -34,7 +34,7 @@ namespace ff {
 		auto getType() const noexcept -> std::string { return mType; }
 		auto getID() const noexcept -> ID { return mID; }
 
-		/// 表示再backend里面，是否需要更新材质参数
+		/// 表示再backeng里面，是否需要更新材质参数
 		bool		mNeedsUpdate{ true };
 
 		/// version 用于首次解析

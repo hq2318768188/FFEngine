@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../../global/base.h"
 #include "../../material/material.h"
 #include "../renderTarget.h"
@@ -6,11 +6,11 @@
 
 namespace ff {
 
-	//ÅäÖÃäÖÈ¾¹ÜÏß
-	//1 Éî¶È¼ì²âÅäÖÃ
-	//2 ÑÕÉ«»ìºÏÅäÖÃ
-	//3 ¹âÕ¤»¯ÅäÖÃ
-	//4 ÆäËûÏà¹ØÅäÖÃ
+	//é…ç½®æ¸²æŸ“ç®¡çº¿
+	//1 æ·±åº¦æ£€æµ‹é…ç½®
+	//2 é¢œè‰²æ··åˆé…ç½®
+	//3 å…‰æ …åŒ–é…ç½®
+	//4 å…¶ä»–ç›¸å…³é…ç½®
 	class DriverState {
 	public:
 		struct RasterState {
@@ -49,9 +49,14 @@ namespace ff {
 
 		void viewport(const glm::vec4& viewport) noexcept;
 
-		bool useProgram(GLuint program) noexcept;
+		/// \brief æ£€æŸ¥ä¸Šä¸€ä¸ªç‰©ä½“æ¸²æŸ“ä½¿ç”¨çš„Programæ˜¯å¦è·Ÿå½“å‰çš„ä¸€æ ·, ä¸ä¸€æ ·åˆ·æ–°
+		/// \param program 
+		/// \return 
+		auto useProgram(GLuint program) noexcept -> bool;
 
-		void setMaterial(const Material::Ptr& material) noexcept;
+		/// \brief è®¾ç½®æè´¨
+		/// \param material 
+		auto setMaterial(const Material::Ptr& material) noexcept -> void;
 
 		void bindFrameBuffer(const GLuint& frameBuffer) noexcept;
 

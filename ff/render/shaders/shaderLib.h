@@ -1,4 +1,4 @@
-#include "shaderLib/meshBasicShader.h"
+ï»¿#include "shaderLib/meshBasicShader.h"
 #include "shaderLib/cubeShader.h"
 #include "shaderLib/meshPhongShader.h"
 #include "shaderLib/depthShader.h"
@@ -8,18 +8,18 @@
 namespace ff {
 
 	struct Shader {
-		//µ±Ç°Õâ¸öShader£¬ÌØÊâµÄ±ØĞëÒªµÄUniformMap
+		/// å½“å‰è¿™ä¸ªShaderï¼Œç‰¹æ®Šçš„å¿…é¡»è¦çš„UniformMap
 		UniformHandleMap mUniformMap{};
 		std::string mVertex;
 		std::string mFragment;
 	};
 
-	//key-materialtypeName  value ->shader struct object
+	/// key-materialtypeName  value ->shader struct object
 	static const std::unordered_map<std::string, Shader> ShaderLib = {
 		{
 			MaterialName::MeshBasicMaterial ,
 
-			//³õÊ¼»¯ÁĞ±í·½Ê½£¬Éú³ÉÁËÒ»¸öshader¶ÔÏó
+			/// åˆå§‹åŒ–åˆ—è¡¨æ–¹å¼ï¼Œç”Ÿæˆäº†ä¸€ä¸ªshaderå¯¹è±¡
 			{
 				merge({
 					UniformsLib.at("common")

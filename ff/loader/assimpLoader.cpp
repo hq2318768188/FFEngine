@@ -147,7 +147,7 @@ namespace ff {
 
 			/// TODO: we may need more material model
 			/// 由于我们只实现了MeshPhongmaterial这种模型通用的材质，所以一律写成PhongMaterial
-			switch (shadingMode) {
+			switch (shadingMode) {9
 			case aiShadingMode::aiShadingMode_Phong:
 				material = MeshPhongMaterial::create();
 				break;
@@ -159,10 +159,15 @@ namespace ff {
 			/// 开始读取每个Material的贴图数据
 			material->mDiffuseMap = processTexture(aiTextureType_DIFFUSE, scene, aimaterial, rootPath);
 
+			/// 法线贴图
 			material->mNormalMap = processTexture(aiTextureType_NORMALS, scene, aimaterial, rootPath);
-					
+
+			/// 镜面贴图
 			material->mSpecularMap = processTexture(aiTextureType_SPECULAR, scene, aimaterial, rootPath);
-			
+
+
+			/// TODO 高度贴图 SSAO细节技术
+
 			materials.push_back(material);
 		}
 	}

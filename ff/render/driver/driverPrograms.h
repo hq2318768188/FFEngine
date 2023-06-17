@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../../global/base.h"
 #include "../../objects/renderableObject.h"
 #include "../../material/material.h"
@@ -18,19 +18,19 @@ namespace ff {
 			using Ptr = std::shared_ptr<Parameters>;
 			static Ptr create() { return std::make_shared<Parameters>(); }
 
-			std::string		mShaderID;//material µÄTypename
-			std::string		mVertex;//vsµÄ´úÂë
-			std::string		mFragment;//fsµÄ´úÂë
+			std::string		mShaderID;							/// material çš„Typename
+			std::string		mVertex;							/// vsçš„ä»£ç 
+			std::string		mFragment;							/// fsçš„ä»£ç 
 
-			bool			mInstancing{ false };//ÊÇ·ñÆôÓÃÊµÀı»æÖÆ,Todo
-			bool			mHasNormal{ false };//±¾´Î»æÖÆµÄÄ£ĞÍÊÇ·ñÓĞ·¨Ïß
-			bool			mHasUV{ false };//±¾´Î»æÖÆµÄÄ£ĞÍÊÇ·ñÓĞuv
-			bool			mHasColor{ false };//±¾´Î»æÖÆµÄÄ£ĞÍÊÇ·ñÓĞ¶¥µãÑÕÉ«
-			bool			mHasDiffuseMap{ false };//±¾´Î»æÖÆµÄÄ£ĞÍËùÊ¹ÓÃµÄ²ÄÖÊÊÇ·ñÓĞdiffuseMap
-			bool			mHasEnvCubeMap{ false };//±¾´Î»æÖÆµÄÄ£ĞÍËùÊ¹ÓÃµÄ²ÄÖÊÊÇ·ñÓĞ»·¾³ÌùÍ¼
-			bool			mHasSpecularMap{ false };//±¾´Î»æÖÆµÄÄ£ĞÍËùÊ¹ÓÃµÄ²ÄÖÊÊÇ·ñÓĞ¾µÃæ·´ÉäÌùÍ¼
+			bool			mInstancing{ false };				/// æ˜¯å¦å¯ç”¨å®ä¾‹ç»˜åˆ¶,TODO
+			bool			mHasNormal{ false };				/// æœ¬æ¬¡ç»˜åˆ¶çš„æ¨¡å‹æ˜¯å¦æœ‰æ³•çº¿
+			bool			mHasUV{ false };					/// æœ¬æ¬¡ç»˜åˆ¶çš„æ¨¡å‹æ˜¯å¦æœ‰uv
+			bool			mHasColor{ false };					/// æœ¬æ¬¡ç»˜åˆ¶çš„æ¨¡å‹æ˜¯å¦æœ‰é¡¶ç‚¹é¢œè‰²
+			bool			mHasDiffuseMap{ false };			/// æœ¬æ¬¡ç»˜åˆ¶çš„æ¨¡å‹æ‰€ä½¿ç”¨çš„æè´¨æ˜¯å¦æœ‰diffuseMap
+			bool			mHasEnvCubeMap{ false };			/// æœ¬æ¬¡ç»˜åˆ¶çš„æ¨¡å‹æ‰€ä½¿ç”¨çš„æè´¨æ˜¯å¦æœ‰ç¯å¢ƒè´´å›¾
+			bool			mHasSpecularMap{ false };			/// æœ¬æ¬¡ç»˜åˆ¶çš„æ¨¡å‹æ‰€ä½¿ç”¨çš„æè´¨æ˜¯å¦æœ‰é•œé¢åå°„è´´å›¾
 
-			bool			mShadowMapEnabled{ false };//ÊÇ·ñÆôÓÃÒõÓ°
+			bool			mShadowMapEnabled{ false };			/// æ˜¯å¦å¯ç”¨é˜´å½±
 			uint32_t		mDirectionalLightCount{ 0 };
 			uint32_t		mNumDirectionalLightShadows{ 0 };
 
@@ -61,20 +61,20 @@ namespace ff {
 		void uploadUniforms(UniformHandleMap& uniformGroup, const DriverTextures::Ptr& textures);
 
 	private:
-		void replaceAttributeLocations(std::string& shader) noexcept;
-		void replaceLightNumbers(std::string& shader, const Parameters::Ptr& parameters) noexcept;
+		auto replaceAttributeLocations(std::string& shader) const noexcept -> void;
+		auto replaceLightNumbers(std::string& shader, const Parameters::Ptr& parameters) const noexcept -> void;
 
-		std::string getExtensionString() noexcept;
+		auto getExtensionString() noexcept -> std::string;
 
 	private:
-		uint32_t	mID{ 0 };//driverProgram ×Ô¼ºµÄidºÅ
-		HashType	mCacheKey{ 0 };//ÓÉparameters²ÎÊıºÏ¼¯¼ÆËã³öÀ´µÄhashÖµ
-		uint32_t	mRefCount{ 0 };//¿ØÖÆÍâ½çÓĞ¶àÉÙÒıÓÃ±¾ProgramµÄrenderItem
+		uint32_t	mID{ 0 };			/// driverProgram è‡ªå·±çš„idå·
+		HashType	mCacheKey{ 0 };		/// ç”±parameterså‚æ•°åˆé›†è®¡ç®—å‡ºæ¥çš„hashå€¼
+		uint32_t	mRefCount{ 0 };		/// æ§åˆ¶å¤–ç•Œæœ‰å¤šå°‘å¼•ç”¨æœ¬Programçš„renderItem
 		DriverUniforms::Ptr mUniforms = nullptr;
 	};
 
-	//1 ¶ÔÓÚDriverProgramµÄ¹ÜÀí,´æ´¢³ÉÁËÒ»¸ömap£¬keyÊÇprogramµÄ¹şÏ£Öµ£¬value¾ÍÊÇDriverProgramµÄÖÇÄÜÖ¸Õë
-	//2 ¶ÔÍâ±©Â¶¸¨ÖúÂß¼­½øĞĞµÄ½Ó¿Ú
+	/// 1 å¯¹äºDriverProgramçš„ç®¡ç†,å­˜å‚¨æˆäº†ä¸€ä¸ªmapï¼Œkeyæ˜¯programçš„å“ˆå¸Œå€¼ï¼Œvalueå°±æ˜¯DriverProgramçš„æ™ºèƒ½æŒ‡é’ˆ
+	/// 2 å¯¹å¤–æš´éœ²è¾…åŠ©é€»è¾‘è¿›è¡Œçš„æ¥å£
 	class DriverPrograms {
 	public:
 		using Ptr = std::shared_ptr<DriverPrograms>;
@@ -86,24 +86,38 @@ namespace ff {
 
 		~DriverPrograms() noexcept;
 
-		DriverProgram::Ptr acquireProgram(const DriverProgram::Parameters::Ptr& parameters, HashType cacheKey) noexcept;
+		auto acquireProgram(const DriverProgram::Parameters::Ptr& parameters,
+		                    HashType cacheKey) noexcept -> DriverProgram::Ptr;
 
-		UniformHandleMap getUniforms(const Material::Ptr& material) noexcept;
+		/// \brief				æ ¹æ®ä¼ å…¥Materialç±»å‹çš„ä¸åŒï¼Œè¿”å›å…¶å¿…é¡»çš„UniformHandleMap
+		/// \param material 
+		/// \return 
+		auto getUniforms(const Material::Ptr& material) noexcept -> UniformHandleMap;
 
-		//´«Èëµ±Ç°äÖÈ¾ÎïÌåµÄ²ÄÖÊ¡¢object3D¡¢¹âÔ´ĞÅÏ¢¡¢ÒõÓ°ĞÅÏ¢£¬´ÓÕâĞ©¶«Î÷ÀïÃæ
-		//ÌáÈ¡´´½¨shaderËù±ØÒªµÄĞÅÏ¢£¬×é³ÉÒ»¸öparameters·µ»Ø
-		DriverProgram::Parameters::Ptr getParameters(
+		
+		/// \brief				æå–åˆ›å»ºshaderæ‰€å¿…è¦çš„ä¿¡æ¯ï¼Œç»„æˆä¸€ä¸ªparametersè¿”å›
+		/// \param material		å½“å‰æ¸²æŸ“ç‰©ä½“çš„æè´¨
+		/// \param object		å½“å‰æ¸²æŸ“ç‰©ä½“çš„object3D
+		/// \param lights		å½“å‰æ¸²æŸ“ç‰©ä½“çš„å…‰æºä¿¡æ¯
+		/// \param shadowMap	å½“å‰æ¸²æŸ“ç‰©ä½“çš„é˜´å½±ä¿¡æ¯
+		/// \return 
+		auto getParameters(
 			const Material::Ptr& material,
-			const Object3D::Ptr& object, 
+			const Object3D::Ptr& object,
 			const DriverLights::Ptr& lights,
-			const DriverShadowMap::Ptr& shadowMap) noexcept;
+			const DriverShadowMap::Ptr& shadowMap) const noexcept -> DriverProgram::Parameters::Ptr;
 
-		HashType getProgramCacheKey(const DriverProgram::Parameters::Ptr& parameters) noexcept;
+		/// \brief				å°†parametersåšæˆå­—ç¬¦ä¸²ï¼Œç„¶åè¿›è¡Œå“ˆå¸Œè¿ç®—ï¼Œå¾—åˆ°æœ€ç»ˆçš„å“ˆå¸Œç»“æœ
+		/// \param parameters 
+		/// \return 
+		auto getProgramCacheKey(const DriverProgram::Parameters::Ptr& parameters) noexcept -> HashType;
 
-		void release(const DriverProgram::Ptr& program) noexcept;
+		/// \brief				å¤–ç•ŒæŸä¸ªrenderItemé‡Šæ”¾äº†å¯¹æœ¬Driverprogramçš„ä½¿ç”¨
+		/// \param program 
+		auto release(const DriverProgram::Ptr& program) noexcept -> void;
 
 	private:
-		//key-paramters×ö³ÉµÄ¹şÏ£Öµ£¬value-ÓÃ±¾parametersÉú³ÉµÄdriverProgram
+		/// key-paramtersåšæˆçš„å“ˆå¸Œå€¼ï¼Œvalue-ç”¨æœ¬parametersç”Ÿæˆçš„driverProgram
 		std::unordered_map<HashType, DriverProgram::Ptr> mPrograms{};
 	};
 }

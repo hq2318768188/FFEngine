@@ -1,9 +1,9 @@
-#pragma once
+ï»¿#pragma once
 #include "../../../global/base.h"
 
 namespace ff {
 
-	//½«ÊäÈëµÄAttribute£¬³Ğ½Óµ½Ò»¸ö±äÁ¿µ±ÖĞ£¬·½±ãÏÂÃæÒ»ÌõÁ÷Ë®Ïß¶ÔĞÂ±äÁ¿½øĞĞ¼Ó¹¤
+	/// å°†è¾“å…¥çš„Attributeï¼Œæ‰¿æ¥åˆ°ä¸€ä¸ªå˜é‡å½“ä¸­ï¼Œæ–¹ä¾¿ä¸‹é¢ä¸€æ¡æµæ°´çº¿å¯¹æ–°å˜é‡è¿›è¡ŒåŠ å·¥
 	static const std::string beginNormal =
 		"#ifdef HAS_NORMAL\n"\
 		"	vec3 objectNormal = vec3(normal);\n"\

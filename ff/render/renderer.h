@@ -46,12 +46,13 @@ namespace ff {
 		~Renderer() noexcept;
 
 	    /// \brief 渲染刷新
-		/// \param scene 
-		/// \param camera 
+		/// \param scene 场景
+		/// \param camera 摄像机
 		/// \return 
 		auto render(Scene::Ptr scene, Camera::Ptr camera) -> bool;
 
-		void swap() noexcept;
+	    /// \brief 双缓冲与垂直同步
+		auto swap() noexcept -> void;
 
 		auto setSize(int width, int height) noexcept -> void;
 
@@ -63,13 +64,20 @@ namespace ff {
 
 		auto setMouseActionCallback(const DriverWindow::MouseActionCallback& callback) noexcept -> void;
 
-		void setKeyboardActionCallBack(const DriverWindow::KeyboardActionCallback& callback) noexcept;
+		auto setKeyboardActionCallBack(const DriverWindow::KeyboardActionCallback& callback) noexcept -> void;
 
 		RenderTarget::Ptr getRenderTarget() const noexcept;
 
-		void setClearColor(float r, float g, float b, float a) noexcept;
+	    /// \brief 设置刷新背景色
+		/// \param r 
+		/// \param g 
+		/// \param b 
+		/// \param a 
+		auto setClearColor(float r, float g, float b, float a) noexcept -> void;
 
-		glm::vec4 getClearColor() const noexcept;
+	    /// \brief 获得当前的刷新背景色
+		/// \return 
+		auto getClearColor() const noexcept -> glm::vec4;
 
 		void enableShadow(bool enable) noexcept;
 
@@ -125,8 +133,9 @@ namespace ff {
 			const Geometry::Ptr& geometry,
 			const Material::Ptr& material) noexcept -> void;
 
-	    /// \brief 
-		/// \param object 
+	    /// \brief 在单个渲染单元层面上
+	    ///	第四层级，最底层的所有的跟OpenGL的状态机最密集的一层
+	    /// \param object 
 		/// \param scene 
 		/// \param camera 
 		/// \param geometry 
@@ -138,7 +147,7 @@ namespace ff {
 			const Geometry::Ptr& geometry,
 			const Material::Ptr& material) noexcept -> void;
 
-	    /// \brief 
+	    /// \brief 设置本Material的Program
 		/// \param camera 
 		/// \param scene 
 		/// \param geometry 
@@ -152,16 +161,27 @@ namespace ff {
 			const Material::Ptr& material,
 			const RenderableObject::Ptr& object) noexcept -> DriverProgram::Ptr;
 
-		DriverProgram::Ptr getProgram(
+	    /// \brief 得到与本Material对应的Program
+		/// \param material 
+		/// \param scene 
+		/// \param object 
+		/// \return 
+		auto getProgram(
 			const Material::Ptr& material,
 			const Scene::Ptr& scene,
-			const RenderableObject::Ptr& object) noexcept;
+			const RenderableObject::Ptr& object) noexcept -> DriverProgram::Ptr;
 
-		void updateCommonMaterialProperties(
-			const Material::Ptr& material, 
-			const DriverProgram::Parameters::Ptr& parameters) noexcept;
+	    /// \brief	更新了本Material跟其对应的DriverMaterial的关键变量
+		/// \param material 
+		/// \param parameters 
+		auto updateCommonMaterialProperties(
+			const Material::Ptr& material,
+			const DriverProgram::Parameters::Ptr& parameters) noexcept -> void;
 
-		bool materialNeedsLights(const Material::Ptr& material) noexcept;
+	    /// \brief 当前Material是否需要光照
+		/// \param material 
+		/// \return 
+		auto materialNeedsLights(const Material::Ptr& material) noexcept -> bool;
 
 		void makeLightsNeedUpdate(UniformHandleMap& lightsUniformMap) noexcept;
 

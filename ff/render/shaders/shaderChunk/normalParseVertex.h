@@ -1,10 +1,10 @@
-#pragma once
+ï»¿#pragma once
 #include "../../../global/base.h"
 
 namespace ff {
 
 	static const std::string normalParseVertex =
-		//ÒòÎªÊäÈëµÄÄ£ĞÍ¶¥µã²»Ò»¶¨ÓĞ·¨Ïß
+		/// å› ä¸ºè¾“å…¥çš„æ¨¡å‹é¡¶ç‚¹ä¸ä¸€å®šæœ‰æ³•çº¿
 		"#ifdef HAS_NORMAL\n"\
 		"	layout(location = NORMAL_LOCATION) in vec3 normal;\n"\
 		"	out vec3 fragNormal;\n"\

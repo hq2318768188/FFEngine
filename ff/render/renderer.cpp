@@ -104,7 +104,7 @@ namespace ff
 		return true;
 	}
 
-	void Renderer::swap() noexcept
+	auto Renderer::swap()  noexcept -> void
 	{
 		mWindow->swap();
 	}
@@ -245,6 +245,7 @@ namespace ff
 		auto index = geometry->getIndex();
 		auto position = geometry->getAttribute("position");
 
+		/// 真正的设置shader的函数
 		auto program = setProgram(camera, _scene, geometry, material, object);
 
 		mState->setMaterial(material);
@@ -287,7 +288,7 @@ namespace ff
 		/// 标志着是否需要更换一个绑定的Program
 		bool needsProgramChange = false;
 
-		/// 从Backend里面，获取到当前Material的DriverMaterial
+		/// 从backeng里面，获取到当前Material的DriverMaterial
 		auto dMaterial = mMaterials->get(material);
 
 		/// 如果本物体第一次送入管线进行绘制，比如第一帧的第一个三角形，就必须为其生成一个DriverProgram
@@ -435,11 +436,11 @@ namespace ff
 		return dprogram;
 	}
 
-	DriverProgram::Ptr Renderer::getProgram(
+	auto Renderer::getProgram(
 		const Material::Ptr& material,
 		const Scene::Ptr& scene,
 		const RenderableObject::Ptr& object
-		) noexcept
+		) noexcept -> DriverProgram::Ptr
 	{
 		DriverProgram::Ptr program = nullptr;
 
@@ -487,9 +488,9 @@ namespace ff
 	}
 
 	/// 统一了本Material跟其对应的DriverMaterial的关键变量，从而在下一帧的时候，不会needsProgramChange
-	void Renderer::updateCommonMaterialProperties(
+	auto Renderer::updateCommonMaterialProperties(
 		const Material::Ptr& material,
-		const DriverProgram::Parameters::Ptr& parameters) noexcept
+		const DriverProgram::Parameters::Ptr& parameters) noexcept -> void
 	{
 		auto dMaterial = mMaterials->get(material);
 
@@ -500,7 +501,7 @@ namespace ff
 		dMaterial->mSpecularMap = material->mSpecularMap;
 	}
 
-	bool Renderer::materialNeedsLights(const Material::Ptr& material) noexcept
+	auto Renderer::materialNeedsLights(const Material::Ptr& material) noexcept -> bool
 	{
 		if (material->mIsMeshPhongMaterial)
 		{
@@ -564,12 +565,12 @@ namespace ff
 		return mCurrentRenderTarget;
 	}
 
-	void Renderer::setClearColor(float r, float g, float b, float a) noexcept
+	auto Renderer::setClearColor(float r, float g, float b, float a) noexcept -> void
 	{
 		mState->setClearColor(r, g, b, a);
 	}
 
-	glm::vec4 Renderer::getClearColor() const noexcept
+	auto Renderer::getClearColor() const noexcept -> glm::vec4
 	{
 		return mState->getClearColor();
 	}

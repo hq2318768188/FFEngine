@@ -1,4 +1,4 @@
-#include "driverMaterials.h"
+ï»¿#include "driverMaterials.h"
 #include "../../textures/texture.h"
 
 namespace ff {
@@ -16,7 +16,8 @@ namespace ff {
 		EventDispatcher::getInstance()->removeEventListener("materialDispose", this, &DriverMaterials::onMaterialDispose);
 	}
 
-	DriverMaterial::Ptr DriverMaterials::get(const Material::Ptr& material) noexcept {
+	auto DriverMaterials::get(const Material::Ptr& material) noexcept -> DriverMaterial::Ptr
+	{
 		auto iter = mMaterials.find(material->getID());
 
 		if (iter == mMaterials.end()) {
@@ -26,10 +27,11 @@ namespace ff {
 		return iter->second;
 	}
 
-	void DriverMaterials::onMaterialDispose(const EventBase::Ptr& event) {
+	auto DriverMaterials::onMaterialDispose(const EventBase::Ptr& event) -> void
+	{
 		auto material = (Material*)event->mTarget;
 
-		//±ÈÈçÎÒÃÇÉú³ÉÁËÒ»¸ömaterialµ«ÊÇ²¢Ã»ÓÐÊ¹ÓÃ£¬È»ºó¾ÍÎö¹¹ÁË
+		/// æ¯”å¦‚æˆ‘ä»¬ç”Ÿæˆäº†ä¸€ä¸ªmaterialä½†æ˜¯å¹¶æ²¡æœ‰ä½¿ç”¨ï¼Œç„¶åŽå°±æžæž„äº†
 		auto iter = mMaterials.find(material->getID());
 		if (iter == mMaterials.end()) {
 			return;
@@ -37,13 +39,13 @@ namespace ff {
 
 		auto dMaterial = iter->second;
 
-		//ÄÃµ½µ±Ç°materialÔø¾­Ê¹ÓÃ¹ýµÄËùÓÐDriverPrograms, ²¢ÇÒ·ÅÆúµô¶ÔËûÃÇµÄÒýÓÃ¼ÆÊý
+		/// æ‹¿åˆ°å½“å‰materialæ›¾ç»ä½¿ç”¨è¿‡çš„æ‰€æœ‰DriverPrograms, å¹¶ä¸”æ”¾å¼ƒæŽ‰å¯¹ä»–ä»¬çš„å¼•ç”¨è®¡æ•°
 		auto programs = dMaterial->mPrograms;
 		for (const auto& pIter : programs) {
 			auto program = pIter.second;
 
-			//programÊÇDriverProgram
-			//mProgramsÊÇDriverPrograms
+			/// programæ˜¯DriverProgram
+			/// mProgramsæ˜¯DriverPrograms
 			mPrograms->release(program);
 		}
 

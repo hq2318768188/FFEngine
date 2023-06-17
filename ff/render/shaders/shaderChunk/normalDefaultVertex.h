@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "../../../global/base.h"
 
 namespace ff {
@@ -8,7 +8,7 @@ namespace ff {
 		"	vec3 transformedNormal = normalMatrix * objectNormal;\n"\
 		"\n"\
 		"	#ifdef USE_TANGENT\n"\
-		//because tangent is the base vector 
+		/// because tangent is the base vector 
 		"		vec3 transformedTangent = (modelViewMatrix * vec4(objectTangent, 0.0)).xyz;\n"\
 		"		vec3 transformedBitangent = (modelViewMatrix * vec4(objectBitangent, 0.0)).xyz;\n"\
 		"	#endif\n"\

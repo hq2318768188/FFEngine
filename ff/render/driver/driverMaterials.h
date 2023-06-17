@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../../global/base.h"
 #include "../../global/constant.h"
 #include "../../material/material.h"
@@ -13,8 +13,8 @@
 
 namespace ff {
 
-	//1 ¼ÇÂ¼ÁË¶ÔÓ¦µÄÇ°¶ËµÄMaterialµÄ²ÎÊı
-	//2 ¼ÇÂ¼ÁË¶ÔÓ¦µÄÇ°¶ËµÄmaterial£¬´ÓÒ»¿ªÊ¼µ½µ±Ç°£¬Ê¹ÓÃ¹ıµÄËùÓĞµÄDriverProgram
+	/// 1 è®°å½•äº†å¯¹åº”çš„å‰ç«¯çš„Materialçš„å‚æ•°
+	/// 2 è®°å½•äº†å¯¹åº”çš„å‰ç«¯çš„materialï¼Œä»ä¸€å¼€å§‹åˆ°å½“å‰ï¼Œä½¿ç”¨è¿‡çš„æ‰€æœ‰çš„DriverProgram
 	class DriverMaterial {
 	public:
 		using Ptr = std::shared_ptr<DriverMaterial>;
@@ -40,12 +40,11 @@ namespace ff {
 		bool					mSkinning{ false };
 		uint32_t				mMaxBones{ 0 };
 
-		//¼ÇÂ¼ÁËÇ°¶Ë¶ÔÓ¦µÄmaterialËùÊ¹ÓÃ¹ıµÄdriverPrograms
-		//Ë¼¿¼£º
-		// Èç¹ûÎÒÃÇ²»¼ÇÂ¼ËùÓĞÔø¾­Ê¹ÓÃ¹ıµÄDriverProgram£¬Ö»¼ÇÂ¼µ±Ç°ÕıÔÚÊ¹ÓÃµÄProgram
-		// µ±Ò»¸ömaterialÆæÊıÖ¡ÓÃDiffuseMap£¬ Å¼ÊıÖ¡ÓÃ¶¥µãColor£¬¾Í»áµ¼ÖÂDriverProgram£¬Îö¹¹£¬ÖØ½¨£¬Îö¹¹£¬ÖØ½¨¡£¡£¡£
-		//
-		std::unordered_map<HashType, DriverProgram::Ptr> mPrograms{};//Îö¹¹µÄÊ±ºòÁ¬´øÓÃ¹ıµÄ¶¼--ref
+		///  è®°å½•äº†å‰ç«¯å¯¹åº”çš„materialæ‰€ä½¿ç”¨è¿‡çš„driverPrograms
+		///  å¦‚æœæˆ‘ä»¬ä¸è®°å½•æ‰€æœ‰æ›¾ç»ä½¿ç”¨è¿‡çš„DriverProgramï¼Œåªè®°å½•å½“å‰æ­£åœ¨ä½¿ç”¨çš„Program
+		///  å½“ä¸€ä¸ªmaterialå¥‡æ•°å¸§ç”¨DiffuseMapï¼Œ å¶æ•°å¸§ç”¨é¡¶ç‚¹Colorï¼Œå°±ä¼šå¯¼è‡´DriverProgramï¼Œææ„ï¼Œé‡å»ºï¼Œææ„ï¼Œé‡å»ºã€‚ã€‚ã€‚
+		/// 
+		std::unordered_map<HashType, DriverProgram::Ptr> mPrograms{}; ///ææ„çš„æ—¶å€™è¿å¸¦ç”¨è¿‡çš„éƒ½--ref
 
 		UniformHandleMap		mUniforms{};
 	};
@@ -59,24 +58,29 @@ namespace ff {
 
 		~DriverMaterials() noexcept;
 
-		//´«ÈëÇ°¶ËµÄmaterial£¬ ·µ»Øºó¶Ë¶ÔÓ¦µÄDriverMaterial
-		DriverMaterial::Ptr get(const Material::Ptr& material) noexcept;
+		
+		/// \brief ä¼ å…¥å‰ç«¯çš„materialï¼Œ è¿”å›åç«¯å¯¹åº”çš„DriverMaterial
+		/// \param material 
+		/// \return 
+		auto get(const Material::Ptr& material) noexcept -> DriverMaterial::Ptr;
 
-		void onMaterialDispose(const EventBase::Ptr& event);
+		auto onMaterialDispose(const EventBase::Ptr& event) -> void;
 
-		//ÓÃÀ´¸üĞÂuniform±äÁ¿
-		static void refreshMaterialUniforms(UniformHandleMap& uniformHandleMap, const Material::Ptr& material);
+		/// ç”¨æ¥æ›´æ–°uniformå˜é‡
+		static auto refreshMaterialUniforms(UniformHandleMap& uniformHandleMap, const Material::Ptr& material) -> void;
 
-		static void refreshMaterialPhong(UniformHandleMap& uniformHandleMap, const MeshPhongMaterial::Ptr& material);
+		static auto refreshMaterialPhong(UniformHandleMap& uniformHandleMap,
+		                                 const MeshPhongMaterial::Ptr& material) -> void;
 
-		static void refreshMaterialBasic(UniformHandleMap& uniformHandleMap, const MeshBasicMaterial::Ptr& material);
+		static auto refreshMaterialBasic(UniformHandleMap& uniformHandleMap,
+		                                 const MeshBasicMaterial::Ptr& material) -> void;
 
-		static void refreshMaterialCube(UniformHandleMap& uniformHandleMap, const CubeMaterial::Ptr& material);
+		static auto refreshMaterialCube(UniformHandleMap& uniformHandleMap, const CubeMaterial::Ptr& material) -> void;
 
 	private:
 		DriverPrograms::Ptr mPrograms{ nullptr };
 
-		//key-material id, value-driverMaterial
+		/// key-material id, value-driverMaterial
 		std::unordered_map<ID, DriverMaterial::Ptr> mMaterials{};
 	};
 }

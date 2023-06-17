@@ -1,4 +1,4 @@
-#include "driverPrograms.h"
+ï»¿#include "driverPrograms.h"
 #include "../../tools/identity.h"
 #include "../shaders/shaderLib.h"
 #include "../../material/depthMaterial.h"
@@ -7,18 +7,18 @@
 
 namespace ff {
 
-	//1 ĞèÒª¶ÔºÜ¶à¹¦ÄÜ½øĞĞ#defineµÄ²Ù×÷£¬´Ó¶ø¾ö¶¨´ò¿ªÄÄĞ©´úÂë¶Î
-	//2 Õ¼Î»×Ö·û´®µÄÌæ»»,±ÈÈçPOSITION_LOCATIONÕ¼Î»×Ö·û´®Ìæ»»Îª0
+	/// 1 éœ€è¦å¯¹å¾ˆå¤šåŠŸèƒ½è¿›è¡Œ#defineçš„æ“ä½œï¼Œä»è€Œå†³å®šæ‰“å¼€å“ªäº›ä»£ç æ®µ
+	/// 2 å ä½å­—ç¬¦ä¸²çš„æ›¿æ¢,æ¯”å¦‚POSITION_LOCATIONå ä½å­—ç¬¦ä¸²æ›¿æ¢ä¸º0
 	DriverProgram::DriverProgram(const Parameters::Ptr& parameters) noexcept {
 		mID = Identity::generateID();
 
-		//1 shader°æ±¾×Ö·û´®
+		/// 1 shaderç‰ˆæœ¬å­—ç¬¦ä¸²
 		std::string versionString = "#version 330 core\n";
 
-		//2 shaderÀ©Õ¹×Ö·û´® 
+		/// 2 shaderæ‰©å±•å­—ç¬¦ä¸² 
 		std::string extensionString = getExtensionString();
 
-		//3 prefix×Ö·û´®£¬defineµÄ¸÷Àà²Ù×÷¶¼»á¼ÓÈëµ½prefixµ±ÖĞ£¬´Ó¶ø¾ö¶¨ºóĞø´úÂëµ±ÖĞÄÄĞ©¹¦ÄÜ¿ÉÒÔ±»´ò¿ª
+		/// 3 prefixå­—ç¬¦ä¸²ï¼Œdefineçš„å„ç±»æ“ä½œéƒ½ä¼šåŠ å…¥åˆ°prefixå½“ä¸­ï¼Œä»è€Œå†³å®šåç»­ä»£ç å½“ä¸­å“ªäº›åŠŸèƒ½å¯ä»¥è¢«æ‰“å¼€
 		std::string prefixVertex;
 		std::string prefixFragment;
 
@@ -44,17 +44,23 @@ namespace ff {
 		prefixFragment.append(parameters->mUseNormalMap ? "#define USE_NORMALMAP\n" : "");
 		prefixFragment.append(parameters->mUseTangent ? "#define USE_TANGENT\n" : "");
 
-		//4 ´ÓparametersÀïÃæÈ¡³öÀ´vs/fs»ù´¡¹¦ÄÜ´úÂë
+		/// 4 ä»parametersé‡Œé¢å–å‡ºæ¥vs/fsåŸºç¡€åŠŸèƒ½ä»£ç 
 		auto vertexString = parameters->mVertex;
 		auto fragmentString = parameters->mFragment;
+
+		// std::cout << vertexString << std::endl;
 
 		replaceAttributeLocations(vertexString);
 		replaceAttributeLocations(fragmentString);
 
+
+		// std::cout << "###########################################" << std::endl;
+		// std::cout << vertexString << std::endl;
+
 		replaceLightNumbers(vertexString, parameters);
 		replaceLightNumbers(fragmentString, parameters);
 
-		//°æ±¾£¬À©Õ¹£¬Ç°×ºprefix£¨define¸÷ÖÖ¹¦ÄÜµÄ¿ªÆô£©+ ±¾Ìåshader
+		/// ç‰ˆæœ¬ï¼Œæ‰©å±•ï¼Œå‰ç¼€prefixï¼ˆdefineå„ç§åŠŸèƒ½çš„å¼€å¯ï¼‰+ æœ¬ä½“shader
 		vertexString = versionString + extensionString + prefixVertex + vertexString;
 		fragmentString = versionString + extensionString + prefixFragment + fragmentString;
 
@@ -67,7 +73,7 @@ namespace ff {
 		std::cout << std::endl;
 		std::cout << std::endl;
 
-		//shaderµÄ±àÒëÓëÁ´½Ó
+		/// shaderçš„ç¼–è¯‘ä¸é“¾æ¥
 		uint32_t vertexID = 0, fragID = 0;
 		char infoLog[512];
 		int  successFlag = 0;
@@ -76,7 +82,7 @@ namespace ff {
 		glShaderSource(vertexID, 1, &vertex, NULL);
 		glCompileShader(vertexID);
 
-		//»ñÈ¡´íÎóĞÅÏ¢
+		/// è·å–é”™è¯¯ä¿¡æ¯
 		glGetShaderiv(vertexID, GL_COMPILE_STATUS, &successFlag);
 		if (!successFlag)
 		{
@@ -95,7 +101,7 @@ namespace ff {
 			std::cout << infoLog << std::endl;
 		}
 
-		//Á´½Ó
+		/// é“¾æ¥
 		mProgram = glCreateProgram();
 		glAttachShader(mProgram, vertexID);
 		glAttachShader(mProgram, fragID);
@@ -119,11 +125,12 @@ namespace ff {
 		glDeleteProgram(mProgram);
 	}
 
-	void DriverProgram::replaceAttributeLocations(std::string& shader) noexcept {
-		//1 Í¨¹ıÕıÔò±í´ïÊ½£¬Æ¥ÅäÏàÓ¦µÄÕ¼Î»·û£¬±ÈÈç¿ÉÒÔÆ¥Åä  POSITION_LOCATION
-		//2 Æ¥Åä³É¹¦Ö®ºó£¬replace¹¦ÄÜÀ´½«POSITION_LOCATION×Ö·û´®Ìæ»»Îª¡°0¡±
+	auto DriverProgram::replaceAttributeLocations(std::string& shader) const noexcept -> void
+	{
+		/// 1 é€šè¿‡æ­£åˆ™è¡¨è¾¾å¼ï¼ŒåŒ¹é…ç›¸åº”çš„å ä½ç¬¦ï¼Œæ¯”å¦‚å¯ä»¥åŒ¹é…  POSITION_LOCATION
+		/// 2 åŒ¹é…æˆåŠŸä¹‹åï¼ŒreplaceåŠŸèƒ½æ¥å°†POSITION_LOCATIONå­—ç¬¦ä¸²æ›¿æ¢ä¸ºâ€œ0â€
 		
-		//pattern-replace
+		/// pattern-replace
 		std::unordered_map<std::string, std::string> replaceMap = {
 			{"POSITION_LOCATION", std::to_string(LOCATION_MAP.at("position"))},
 			{"NORMAL_LOCATION", std::to_string(LOCATION_MAP.at("normal"))},
@@ -136,19 +143,21 @@ namespace ff {
 		};
 
 		for (const auto& iter : replaceMap) {
-			//iter.first = Õ¼Î»·û×Ö·û´®
-			//iter.second = locationÊı×ÖµÄ×Ö·û´®
+			/// iter.first = å ä½ç¬¦å­—ç¬¦ä¸²
+			/// iter.second = locationæ•°å­—çš„å­—ç¬¦ä¸²
 
-			//Ê¹ÓÃc++µÄÕıÔò±í´ïÊ½½øĞĞÌæ»»£¬Ö±½ÓÊ¹ÓÃÕ¼Î»·ûµÄ×Ö·û´®³õÊ¼»¯ÁËregex
+			/// ä½¿ç”¨c++çš„æ­£åˆ™è¡¨è¾¾å¼è¿›è¡Œæ›¿æ¢ï¼Œç›´æ¥ä½¿ç”¨å ä½ç¬¦çš„å­—ç¬¦ä¸²åˆå§‹åŒ–äº†regex
 			std::regex pattern(iter.first);
 
-			//É¨ÃèÕû¸öshader×Ö·û´®£¬Ö»Òª·¢ÏÖ·ûºÏpatternµÄ×Ö·û´®£¬¾ÍÒªÌæ»»Îªiter.second
+			/// æ‰«ææ•´ä¸ªshaderå­—ç¬¦ä¸²ï¼Œåªè¦å‘ç°ç¬¦åˆpatternçš„å­—ç¬¦ä¸²ï¼Œå°±è¦æ›¿æ¢ä¸ºiter.second
 			shader = std::regex_replace(shader, pattern, iter.second);
 		}
 	}
 
-	void DriverProgram::replaceLightNumbers(std::string& shader, const Parameters::Ptr& parameters) noexcept {
-		//pattern-replace
+	auto DriverProgram::replaceLightNumbers(std::string& shader,
+	                                        const Parameters::Ptr& parameters) const noexcept -> void
+	{
+		/// pattern-replace
 		std::unordered_map<std::string, std::string> replaceMap = {
 			{"NUM_DIR_LIGHTS", std::to_string(parameters->mDirectionalLightCount)},
 			{"NUM_DIR_LIGHT_SHADOWS", std::to_string(parameters->mNumDirectionalLightShadows)},
@@ -160,7 +169,8 @@ namespace ff {
 		}
 	}
 
-	std::string DriverProgram::getExtensionString() noexcept {
+	auto DriverProgram::getExtensionString() noexcept -> std::string
+	{
 		std::string extensionString = "";
 		extensionString.append("#extension GL_ARB_separate_shader_objects : enable\n");
 
@@ -171,14 +181,16 @@ namespace ff {
 		mUniforms->upload(uniformMap, textures);
 	}
 
-//--------driver programs----------------------------
+/// -----------------------------------driver programs---------------------------- ///
 	DriverPrograms::DriverPrograms() noexcept {}
 
 	DriverPrograms::~DriverPrograms() noexcept {}
 
-	DriverProgram::Ptr DriverPrograms::acquireProgram(const DriverProgram::Parameters::Ptr& parameters, HashType cacheKey) noexcept {
-		//ËäÈ»ÔÚµ±Ç°Material¶ÔÓ¦µÄDriverMaterialµ±ÖĞ£¬²¢Ã»ÓĞÕÒµ½Ôø¾­Ê¹ÓÃ¹ıµÄ·ûºÏ±¾ParamtersµÄDriverProgram
-		//µ«ÊÇ´ÓÈ«¾Ö½Ç¶È£¬ÆäËûMaterial¿ÉÄÜÔø¾­Ê¹ÓÃ¹ı·ûºÏ±¾ParametersµÄDriverProgram
+	auto DriverPrograms::acquireProgram(const DriverProgram::Parameters::Ptr& parameters,
+	                                    HashType cacheKey) noexcept -> DriverProgram::Ptr
+	{
+		/// è™½ç„¶åœ¨å½“å‰Materialå¯¹åº”çš„DriverMaterialå½“ä¸­ï¼Œå¹¶æ²¡æœ‰æ‰¾åˆ°æ›¾ç»ä½¿ç”¨è¿‡çš„ç¬¦åˆæœ¬Paramtersçš„DriverProgram
+		/// ä½†æ˜¯ä»å…¨å±€è§’åº¦ï¼Œå…¶ä»–Materialå¯èƒ½æ›¾ç»ä½¿ç”¨è¿‡ç¬¦åˆæœ¬Parametersçš„DriverProgram
 		auto iter = mPrograms.find(cacheKey);
 
 		if (iter != mPrograms.end()) {
@@ -188,31 +200,33 @@ namespace ff {
 		auto program = DriverProgram::create(parameters);
 		program->mCacheKey = cacheKey;
 		mPrograms.insert(std::make_pair(cacheKey, program));
-		//Ò»µ©µ÷ÓÃ±¾º¯Êı£¬ÔòÍâ²¿¿Ï¶¨ÓĞÒ»¸örenderItemĞèÒªÒıÓÃ±¾program
-		//¿ÉÄÜÓĞ¶à¸ömaterial¶¼Ôø¾­Ê¹ÓÃ¹ıµ±Ç°Õâ¸öDriverProgram,¼ÙÉèµ±Ç°´æ»îÁ½¸öÎïÌå£¬Á½¸ö²»Í¬µÄmaterials¡£¶øÇÒ¼ÙÉè
-		//ÕâÁ½¸ömaterials¶¼Ê¹ÓÃÁË±¾DriverProgram£¬ÄÇÃ´RefCount¾ÍÊÇ2
+		/// ä¸€æ—¦è°ƒç”¨æœ¬å‡½æ•°ï¼Œåˆ™å¤–éƒ¨è‚¯å®šæœ‰ä¸€ä¸ªrenderIteméœ€è¦å¼•ç”¨æœ¬program
+		/// å¯èƒ½æœ‰å¤šä¸ªmaterialéƒ½æ›¾ç»ä½¿ç”¨è¿‡å½“å‰è¿™ä¸ªDriverProgram,å‡è®¾å½“å‰å­˜æ´»ä¸¤ä¸ªç‰©ä½“ï¼Œä¸¤ä¸ªä¸åŒçš„materialsã€‚è€Œä¸”å‡è®¾
+		/// è¿™ä¸¤ä¸ªmaterialséƒ½ä½¿ç”¨äº†æœ¬DriverProgramï¼Œé‚£ä¹ˆRefCountå°±æ˜¯2
 		program->mRefCount++;
 
 		return program;
 	}
 
-	//±¾º¯Êı±»µ÷ÓÃ£¬ÒâÎ¶×ÅÍâ½çÄ³¸örenderItemÊÍ·ÅÁË¶Ô±¾DriverprogramµÄÊ¹ÓÃ
-	void DriverPrograms::release(const DriverProgram::Ptr& program) noexcept {
+	/// æœ¬å‡½æ•°è¢«è°ƒç”¨ï¼Œæ„å‘³ç€å¤–ç•ŒæŸä¸ªrenderItemé‡Šæ”¾äº†å¯¹æœ¬Driverprogramçš„ä½¿ç”¨
+	auto DriverPrograms::release(const DriverProgram::Ptr& program) noexcept -> void
+	{
 		if (--program->mRefCount == 0) {
 			mPrograms.erase(program->mCacheKey);
 		}
 	}
 
-	DriverProgram::Parameters::Ptr DriverPrograms::getParameters(
+	auto DriverPrograms::getParameters(
 		const Material::Ptr& material,
 		const Object3D::Ptr& object,
 		const DriverLights::Ptr& lights,
 		const DriverShadowMap::Ptr& shadowMap
-	) noexcept {
+		) const noexcept -> DriverProgram::Parameters::Ptr
+	{
 		auto renderObject = std::static_pointer_cast<RenderableObject>(object);
 		auto geometry = renderObject->getGeometry();
 
-		//ĞÂ½¨Ò»¸öparameters
+		/// æ–°å»ºä¸€ä¸ªparameters
 		auto parameters = DriverProgram::Parameters::create();
 
 		auto shaderID = material->getType();
@@ -222,8 +236,8 @@ namespace ff {
 			return nullptr;
 		}
 
+		/// shaderIter->second å³ shader struct object
 		parameters->mShaderID = material->getType();
-		//shaderIter->second ¼´ shader struct object
 		parameters->mVertex = shaderIter->second.mVertex;
 		parameters->mFragment = shaderIter->second.mFragment;
 
@@ -279,8 +293,9 @@ namespace ff {
 		return parameters;
 	}
 
-	//¸ù¾İ´«ÈëMaterialÀàĞÍµÄ²»Í¬£¬·µ»ØÆä±ØĞëµÄUniformHandleMap
-	UniformHandleMap DriverPrograms::getUniforms(const Material::Ptr& material) noexcept {
+	
+	auto DriverPrograms::getUniforms(const Material::Ptr& material) noexcept -> UniformHandleMap
+	{
 		UniformHandleMap uniforms{};
 
 		auto shaderID = material->getType();
@@ -293,7 +308,7 @@ namespace ff {
 		return uniforms;
 	}
 
-	//½«parameters×ö³É×Ö·û´®£¬È»ºó½øĞĞ¹şÏ£ÔËËã£¬µÃµ½×îÖÕµÄ¹şÏ£½á¹û
+	
 	HashType DriverPrograms::getProgramCacheKey(const DriverProgram::Parameters::Ptr& parameters) noexcept {
 		std::hash<std::string> hasher;
 

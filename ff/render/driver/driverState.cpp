@@ -1,4 +1,4 @@
-#include "driverState.h"
+ï»¿#include "driverState.h"
 #include "../../wrapper/glWrapper.hpp"
 
 namespace ff {
@@ -22,9 +22,10 @@ namespace ff {
 		}
 	}
 
-	bool DriverState::useProgram(GLuint program) noexcept {
-		//¼ì²éÉÏÒ»¸öÎïÌåäÖÈ¾Ê¹ÓÃµÄProgramÊÇ·ñ¸úµ±Ç°µÄÒ»Ñù
-		//Ö»ÓĞ²»Ò»ÑùµÄÊ±ºò£¬²Å»áÖØĞÂ°ó¶¨
+	auto DriverState::useProgram(GLuint program) noexcept -> bool
+	{
+		/// æ£€æŸ¥ä¸Šä¸€ä¸ªç‰©ä½“æ¸²æŸ“ä½¿ç”¨çš„Programæ˜¯å¦è·Ÿå½“å‰çš„ä¸€æ ·
+		/// åªæœ‰ä¸ä¸€æ ·çš„æ—¶å€™ï¼Œæ‰ä¼šé‡æ–°ç»‘å®š
 		if (mCurrentProgram != program) {
 			glUseProgram(program);
 			mCurrentProgram = program;
@@ -35,10 +36,11 @@ namespace ff {
 		return false;
 	}
 
-	void DriverState::setMaterial(const Material::Ptr& material) noexcept {
-		//¶ÔÓÚË«ÃæäÖÈ¾£¬ÓĞÁ½ÖÖ·½°¸
-		// 1 ÔÚ»æÖÆ±³ÃæµÄÊ±ºò£¬½øĞĞ·¨ÏßµÄ·´×ª
-		// 2 ÔÚ»æÖÆ±³ÃæµÄÊ±ºò£¬²»½øĞĞ·´×ª·¨Ïß(ÎÒ·½²ÉÓÃ£©
+	auto DriverState::setMaterial(const Material::Ptr& material) noexcept -> void
+	{
+		/// å¯¹äºåŒé¢æ¸²æŸ“ï¼Œæœ‰ä¸¤ç§æ–¹æ¡ˆ
+		///  1 åœ¨ç»˜åˆ¶èƒŒé¢çš„æ—¶å€™ï¼Œè¿›è¡Œæ³•çº¿çš„åè½¬
+		///  2 åœ¨ç»˜åˆ¶èƒŒé¢çš„æ—¶å€™ï¼Œä¸è¿›è¡Œåè½¬æ³•çº¿(æˆ‘æ–¹é‡‡ç”¨ï¼‰
 		if (mCurrentRaster.mSide != material->mSide) {
 			if (material->mSide == Side::DoubleSide) {
 				gl::disable(GL_CULL_FACE);
@@ -80,7 +82,7 @@ namespace ff {
 		BlendingFactor		blendDstAlpha,
 		BlendingEquation	blendEquationAlpha
 	) noexcept {
-		//µ±Ç°×´Ì¬ÓëmaterialÒªÇó×´Ì¬²»Ò»ÖÂ£¬ÇÒ²»ÊÇÓÃ»§×Ô¶¨ÒåµÄblendingType
+		//å½“å‰çŠ¶æ€ä¸materialè¦æ±‚çŠ¶æ€ä¸ä¸€è‡´ï¼Œä¸”ä¸æ˜¯ç”¨æˆ·è‡ªå®šä¹‰çš„blendingType
 		if (mCurrentBlending.mBlendingType != blendingType && mCurrentBlending.mBlendingType != BlendingType::CustomBlending) {
 			mCurrentBlending.mBlendingType = blendingType;
 
@@ -90,7 +92,7 @@ namespace ff {
 			} 
 
 			if (mCurrentBlending.mBlendingType == BlendingType::DefaultBlending) {
-				//¸ù¾İ´«ÈëµÄ²ÎÊı£¬ÉèÖÃblendingµÄËùÓĞ×´Ì¬
+				//æ ¹æ®ä¼ å…¥çš„å‚æ•°ï¼Œè®¾ç½®blendingçš„æ‰€æœ‰çŠ¶æ€
 				setBlendingInternal(
 					true,
 					BlendingFactor::SrcAlpha,
@@ -142,7 +144,7 @@ namespace ff {
 			return;
 		}
 
-		//µ«·²·¢ÏÖÓĞÒ»¸ö²»ÏàµÈµÄ±äÁ¿£¬¾ÍÖØĞÂ¼ÇÂ¼£¬²¢ÇÒµ÷ÓÃapi½øĞĞ×´Ì¬¸ü¸Ä
+		//ä½†å‡¡å‘ç°æœ‰ä¸€ä¸ªä¸ç›¸ç­‰çš„å˜é‡ï¼Œå°±é‡æ–°è®°å½•ï¼Œå¹¶ä¸”è°ƒç”¨apiè¿›è¡ŒçŠ¶æ€æ›´æ”¹
 		if (
 			mCurrentBlending.mBlendSrc != blendSrc ||
 			mCurrentBlending.mBlendDst != blendDst ||
@@ -179,7 +181,7 @@ namespace ff {
 			return;
 		}
 
-		//depthTest¾ö¶¨ÁËµ±Ç°ÎïÌåµÄ»æÖÆ£¬ÊÇ·ñ²ÎÓëÉî¶È¼ì²â
+		//depthTestå†³å®šäº†å½“å‰ç‰©ä½“çš„ç»˜åˆ¶ï¼Œæ˜¯å¦å‚ä¸æ·±åº¦æ£€æµ‹
 		if (mCurrentDepth.mDepthTest != depthTest) {
 			mCurrentDepth.mDepthTest = depthTest;
 			if (!mCurrentDepth.mDepthTest) {
@@ -190,7 +192,7 @@ namespace ff {
 			}
 		}
 
-		//depthWrite¾ö¶¨ÁËµ±Ç°ÎïÌåÈç¹ûÍ¨¹ıÁËÉî¶È¼ì²â£¬ÊÇ·ñÓÃµ±Ç°ÎïÌåµÄfragmentµÄÉî¶È¸üĞÂdepthBuffer
+		//depthWriteå†³å®šäº†å½“å‰ç‰©ä½“å¦‚æœé€šè¿‡äº†æ·±åº¦æ£€æµ‹ï¼Œæ˜¯å¦ç”¨å½“å‰ç‰©ä½“çš„fragmentçš„æ·±åº¦æ›´æ–°depthBuffer
 		if (mCurrentDepth.mDepthWrite != depthWrite) {
 			mCurrentDepth.mDepthWrite = depthWrite;
 
