@@ -1,4 +1,4 @@
-#include "driverUniforms.h"
+ï»¿#include "driverUniforms.h"
 #include "../../log/debugLog.h"
 #include "../../wrapper/glWrapper.hpp"
 
@@ -28,12 +28,12 @@ namespace ff {
 		upload(static_cast<TYPE*>(v.data()));\
 	}
 
-	void SingleUniform::setValue(
+	auto SingleUniform::setValue(
 		const std::any& value,
 		const DriverTextures::Ptr& textures,
-		const std::shared_ptr<DriverUniforms>& driverUniforms)
+		const std::shared_ptr<DriverUniforms>& driverUniforms) -> void
 	{
-		// ¸ù¾İ²»Í¬µÄuniform±äÁ¿ÀàĞÍ£¬×ö²»Í¬µÄ´¦Àí
+		///  æ ¹æ®ä¸åŒçš„uniformå˜é‡ç±»å‹ï¼Œåšä¸åŒçš„å¤„ç†
 		switch (mType) {
 		case GL_FLOAT:
 			UPLOAD(float, value)
@@ -91,10 +91,10 @@ namespace ff {
 		}
 	}
 
-	void SingleUniform::uploadTexture(
+	auto SingleUniform::uploadTexture(
 		const std::shared_ptr<DriverUniforms>& driverUniforms,
 		const DriverTextures::Ptr& textures,
-		const std::any& value)
+		const std::any& value) -> void
 	{
 
 		Texture::Ptr texture = nullptr;
@@ -105,31 +105,31 @@ namespace ff {
 			texture = std::any_cast<CubeTexture::Ptr>(value);
 		}
 
-		//µ±Ç°µÄSingleUniformÒ»¶¨ÊÇÒ»¸ösampler2DµÄunifrom
-		//ÔÚsingleUniform³õÊ¼»¯´´½¨µÄÊ±ºò£¬¾ÍÒÑ¾­ÄÃµ½ÁË×Ô¼ºµÄlocation
-		//´ÓDriverUniformsÀïÃæ£¬ÊÔÍ¼»ñÈ¡±¾uniformËù¶ÔÓ¦µÄtextureUnit
+		/// å½“å‰çš„SingleUniformä¸€å®šæ˜¯ä¸€ä¸ªsampler2Dçš„unifrom
+		/// åœ¨singleUniformåˆå§‹åŒ–åˆ›å»ºçš„æ—¶å€™ï¼Œå°±å·²ç»æ‹¿åˆ°äº†è‡ªå·±çš„location
+		/// ä»DriverUniformsé‡Œé¢ï¼Œè¯•å›¾è·å–æœ¬uniformæ‰€å¯¹åº”çš„textureUnit
 		auto textureSlot = driverUniforms->getTextureSlot(mLocation);
 		
-		//Èç¹û»¹Ã»ÓĞ¸øµ±Ç°µÄtexture Uniform·ÖÅätextureUnit£¬ÄÇÃ´¾ÍµÃÖØĞÂ·ÖÅäÒ»¸ö
+		/// å¦‚æœè¿˜æ²¡æœ‰ç»™å½“å‰çš„texture Uniformåˆ†é…textureUnitï¼Œé‚£ä¹ˆå°±å¾—é‡æ–°åˆ†é…ä¸€ä¸ª
 		if (textureSlot < 0) {
 			textureSlot = driverUniforms->allocateTextureUnits(1)[0];
 
-			//·ÖÅäÖ®ºó£¬ĞèÒªÔÚdriverUniformsÀïÃæ¼ÇÂ¼ÏÂÀ´
+			/// åˆ†é…ä¹‹åï¼Œéœ€è¦åœ¨driverUniformsé‡Œé¢è®°å½•ä¸‹æ¥
 			driverUniforms->setTextureSlot(mLocation, textureSlot);
 		}
 
-		//½«ĞÂ»ñµÃµÄ»òÕßÒÑ¾­·ÖÅäÍê±ÏµÄtextureUnit£¬Óëµ±Ç°texture¶ÔÓ¦µÄDriverTextureÖĞµÄmHanlde½øĞĞ°ó¶¨
+		/// å°†æ–°è·å¾—çš„æˆ–è€…å·²ç»åˆ†é…å®Œæ¯•çš„textureUnitï¼Œä¸å½“å‰textureå¯¹åº”çš„DriverTextureä¸­çš„mHanldeè¿›è¡Œç»‘å®š
 		textures->bindTexture(texture, textureSlot);
 
-		//½«shaderµ±ÖĞµÄsamplerÓëtextureUnit½øĞĞ°ó¶¨
-		//´«Êä¸øsamplerµÄÊÇÒ»¸öÕûÊı£¬ÈçÏÂ¶ÔÓ¦
-		// GL_TEXTURE0 ¾Í´«Êä0
-		// GL_TEXTURE1 ¾Í´«Êä1
-		// GL_TEXTURE2 ¾Í´«Êä2
-		// 
-		// textureSlotÊÇÖîÈçGL_TEXTURE2ÕâÖÖ16½øÖÆÊı×Ö
-		// Ö»ĞèÒªÓÃtextureSlot - GL_TEXTURE0¾Í¿ÉÒÔµÃµ½±àºÅÊı×Ö
-		//
+		/// å°†shaderå½“ä¸­çš„samplerä¸textureUnitè¿›è¡Œç»‘å®š
+		/// ä¼ è¾“ç»™samplerçš„æ˜¯ä¸€ä¸ªæ•´æ•°ï¼Œå¦‚ä¸‹å¯¹åº”
+		///  GL_TEXTURE0 å°±ä¼ è¾“0
+		///  GL_TEXTURE1 å°±ä¼ è¾“1
+		/// GL_TEXTURE2 å°±ä¼ è¾“2
+		/// 
+		/// textureSlotæ˜¯è¯¸å¦‚GL_TEXTURE2è¿™ç§16è¿›åˆ¶æ•°å­—
+		/// åªéœ€è¦ç”¨textureSlot - GL_TEXTURE0å°±å¯ä»¥å¾—åˆ°ç¼–å·æ•°å­—
+		///
 		GLint textureIndex = textureSlot - GL_TEXTURE0;
 		gl::uniform1i(mLocation, textureIndex);
 	}
@@ -143,10 +143,10 @@ namespace ff {
 
 	PureArrayUniform::~PureArrayUniform() noexcept {}
 
-	void PureArrayUniform::setValue(
+	auto PureArrayUniform::setValue(
 		const std::any& value,
 		const DriverTextures::Ptr& textures,
-		const std::shared_ptr<DriverUniforms>& driverUniforms)
+		const std::shared_ptr<DriverUniforms>& driverUniforms) -> void
 	{
 		switch (mType) {
 		case GL_FLOAT:
@@ -208,24 +208,24 @@ namespace ff {
 		const std::any& value)
 	{
 
-		//PureArrayUniform ¶ÔÓ¦µÄÍâ²¿Êı¾İ£¬Ò»¶¨¶¼±»×°ÔØÁËvectorÀïÃæ
+		//PureArrayUniform å¯¹åº”çš„å¤–éƒ¨æ•°æ®ï¼Œä¸€å®šéƒ½è¢«è£…è½½äº†vectoré‡Œé¢
 		auto textureArray = std::any_cast<std::vector<Texture::Ptr>>(value);
 
-		//¼ÙÉè±¾Êı×é³¤¶ÈÎªn£¬ÄÇÃ´¾ÍĞèÒªÎªn¸ötextures·ÖÅätextureUnits
+		//å‡è®¾æœ¬æ•°ç»„é•¿åº¦ä¸ºnï¼Œé‚£ä¹ˆå°±éœ€è¦ä¸ºnä¸ªtexturesåˆ†é…textureUnits
 		std::vector<GLint> textureSlots = driverUniforms->getTextureArraySlot(mLocation);
 
-		//Èç¹ûÊı×é³¤¶ÈÎª0£¬ËµÃ÷Ô­ÏÈ²¢Ã»ÓĞ·ÖÅä¹ı
+		//å¦‚æœæ•°ç»„é•¿åº¦ä¸º0ï¼Œè¯´æ˜åŸå…ˆå¹¶æ²¡æœ‰åˆ†é…è¿‡
 		if (textureSlots.size() == 0) {
-			//ÓÉÓÚÊÇPureArrayUniform£¬ËùÒÔÒ»¶¨ÊÇÈçÏÂĞÎÊ½£º
+			//ç”±äºæ˜¯PureArrayUniformï¼Œæ‰€ä»¥ä¸€å®šæ˜¯å¦‚ä¸‹å½¢å¼ï¼š
 			// uniform sampler2D texs[10];
-			// mSize¾ÍÊÇ10
+			// mSizeå°±æ˜¯10
 			//
 			textureSlots = driverUniforms->allocateTextureUnits(mSize);
 			driverUniforms->setTextureArraySlot(mLocation, textureSlots);
 		}
 
-		//½«»ñµÃµÄn¸ötextureUnits£¬·Ö±ğÓëtextureÊı×éµ±ÖĞµÄÃ¿Ò»¸ötexture½øĞĞ°ó¶¨
-		// ¾ÙÀı£º
+		//å°†è·å¾—çš„nä¸ªtextureUnitsï¼Œåˆ†åˆ«ä¸textureæ•°ç»„å½“ä¸­çš„æ¯ä¸€ä¸ªtextureè¿›è¡Œç»‘å®š
+		// ä¸¾ä¾‹ï¼š
 		// textureArray[0]-GL_TEXTURE4
 		// textureArray[1]-GL_TEXTURE5
 		// textureArray[2]-GL_TEXTURE6
@@ -235,14 +235,14 @@ namespace ff {
 		}
 
 
-		//°ó¶¨shaderµ±ÖĞµÄsampler2DÊı×é£¬ÓëtextureUnitsÖ®¼äµÄ¹ØÏµ
+		//ç»‘å®šshaderå½“ä¸­çš„sampler2Dæ•°ç»„ï¼Œä¸textureUnitsä¹‹é—´çš„å…³ç³»
 
 		std::vector<GLint> textureIndices;
 		for (int i = 0; i < textureSlots.size(); ++i) {
 			textureIndices.push_back(textureSlots[i] - GL_TEXTURE0);
 		}
 
-		//±ÈÈç£º
+		//æ¯”å¦‚ï¼š
 		// uniform sampler2D texs[3];
 		// texs[0]-4
 		// texs[1]-5
@@ -257,62 +257,62 @@ namespace ff {
 
 	StructuredUniform::~StructuredUniform() noexcept {}
 
-	void StructuredUniform::setValue(
+	auto StructuredUniform::setValue(
 		const std::any& value,
 		const DriverTextures::Ptr& textures,
-		const std::shared_ptr<DriverUniforms>& driverUniforms)
+		const std::shared_ptr<DriverUniforms>& driverUniforms) -> void
 	{
-		//´«½øÀ´µÄvalueËäÈ»ÊÇ¸öany£¬µ«ÊÇÎÒÃÇÕâ¸ösetvalueÊÇStructuredUniformµÄsetValueº¯Êı£¬ËùÒÔ
-		//Õâ¸öanyÒ»¶¨ÊÇÒ»¸öUniformUnitMap-map<string, any>
+		/// ä¼ è¿›æ¥çš„valueè™½ç„¶æ˜¯ä¸ªanyï¼Œä½†æ˜¯æˆ‘ä»¬è¿™ä¸ªsetvalueæ˜¯StructuredUniformçš„setValueå‡½æ•°ï¼Œæ‰€ä»¥
+		/// è¿™ä¸ªanyä¸€å®šæ˜¯ä¸€ä¸ªUniformUnitMap-map<string, any>
 		auto v = std::any_cast<UniformUnitMap>(value);
 
-		//±éÀúµÄÊÇÒÑ¾­½âÎö³öÀ´µÄuniformMap
+		/// éå†çš„æ˜¯å·²ç»è§£æå‡ºæ¥çš„uniformMap
 		for (const auto& iter : mUniformMap) {
 			auto name = iter.first;
 			auto uniform = iter.second;
 
-			//single pureArray structured ÈıÖÖuniform¶¼¸÷×ÔÊµÏÖÁË¸÷×ÔµÄsetValue
-			//Èç¹ûÊÇsingle£¬mValue¿ÉÄÜÊÇ¸ömatrixÒ²¿ÉÄÜÊÇ¸öfloatµÈµÈ
-			//Èç¹ûÊÇpureArray£¬mValue±ØĞëÊÇÒ»¸övector<T>
-			//Èç¹ûÊÇstructured,mValue±ØĞëÊÇÒ»¸öUniformUnitMap
+			/// single pureArray structured ä¸‰ç§uniforméƒ½å„è‡ªå®ç°äº†å„è‡ªçš„setValue
+			/// å¦‚æœæ˜¯singleï¼ŒmValueå¯èƒ½æ˜¯ä¸ªmatrixä¹Ÿå¯èƒ½æ˜¯ä¸ªfloatç­‰ç­‰
+			/// å¦‚æœæ˜¯pureArrayï¼ŒmValueå¿…é¡»æ˜¯ä¸€ä¸ªvector<T>
+			/// å¦‚æœæ˜¯structured,mValueå¿…é¡»æ˜¯ä¸€ä¸ªUniformUnitMap
 			uniform->setValue(v[name], textures, driverUniforms);
 		}
 	}
 
-	//ÊÕµ½ÁËÍâ½ç¸øÓëµÄprogram£¬½âÎöÆäÖĞµÄactiveUniforms£¬ÄÃ³öÏà¹ØĞÅÏ¢
-	//Ã¿ÄÃ³öÀ´Ò»¸öĞÅÏ¢£¬¶¼Òª½øĞĞÕıÔò±í´ïÊ½Æ¥Åä£¬´Ó¶ø¶ÔÓ¦Éú³ÉÈıÖÖuniformsµ±ÖĞµÄÒ»ÖÖ
-	//ÔÚÕâ¸ö¹ı³Ìµ±ÖĞ£¬ĞÎ³ÉÁËUniformsµÄ²ã¼¶¼Ü¹¹
+	/// æ”¶åˆ°äº†å¤–ç•Œç»™ä¸çš„programï¼Œè§£æå…¶ä¸­çš„activeUniformsï¼Œæ‹¿å‡ºç›¸å…³ä¿¡æ¯
+	/// æ¯æ‹¿å‡ºæ¥ä¸€ä¸ªä¿¡æ¯ï¼Œéƒ½è¦è¿›è¡Œæ­£åˆ™è¡¨è¾¾å¼åŒ¹é…ï¼Œä»è€Œå¯¹åº”ç”Ÿæˆä¸‰ç§uniformså½“ä¸­çš„ä¸€ç§
+	/// åœ¨è¿™ä¸ªè¿‡ç¨‹å½“ä¸­ï¼Œå½¢æˆäº†Uniformsçš„å±‚çº§æ¶æ„
 	DriverUniforms::DriverUniforms(const GLint& program) noexcept : UniformContainer() {
-		//»ñµÃµ±Ç°programÖĞÒÑ¾­¼¤»îµÄuniformsµÄÊıÁ¿
+		/// è·å¾—å½“å‰programä¸­å·²ç»æ¿€æ´»çš„uniformsçš„æ•°é‡
 		GLint count = 0;
 		glGetProgramiv(program, GL_ACTIVE_UNIFORMS, &count);
 
 		UniformContainer* container = this;
 
-		// ¹ØÓÚÃ¿Ò»¸öUniformµÄ²ÎÊıÉùÃ÷
-		GLint location = 0;//ÓÃÀ´´«ÊäuniformµÄlocation
-		GLsizei bufferSize = 256;//¸øµ½opengl½Ó¿ÚµÄnamebufferµÄ´óĞ¡
-		GLsizei length;//±¾uniformµÄÃû×ÖÕæÊµ³¤¶È
-		GLint size;//Èç¹û±¾uniformÊÇÒ»¸öPureArray£¬ÄÇÃ´¾Í·µ»ØÊı×é³¤¶È
-		GLenum type;//±¾uniform»òÕß±¾UniformÊı×éÔªËØµÄÀàĞÍ,structuredUniformÊÇÕ¹¿ªºóÀàĞÍ£¬±ÈÈçt.f;
-		GLchar name[256];//±¾uniformµÄÃû×Ö
+		/// å…³äºæ¯ä¸€ä¸ªUniformçš„å‚æ•°å£°æ˜
+		GLint location = 0;				/// ç”¨æ¥ä¼ è¾“uniformçš„location
+		GLsizei bufferSize = 256;		/// ç»™åˆ°openglæ¥å£çš„namebufferçš„å¤§å°
+		GLsizei length;					/// æœ¬uniformçš„åå­—çœŸå®é•¿åº¦
+		GLint size;						/// å¦‚æœæœ¬uniformæ˜¯ä¸€ä¸ªPureArrayï¼Œé‚£ä¹ˆå°±è¿”å›æ•°ç»„é•¿åº¦
+		GLenum type;					/// æœ¬uniformæˆ–è€…æœ¬Uniformæ•°ç»„å…ƒç´ çš„ç±»å‹,structuredUniformæ˜¯å±•å¼€åç±»å‹ï¼Œæ¯”å¦‚t.f;
+		GLchar name[256];				/// æœ¬uniformçš„åå­—
 
 		for (uint32_t i = 0; i < count; ++i) {
 			glGetActiveUniform(program, i, bufferSize, &length, &size, &type, name);
 			location = glGetUniformLocation(program, name);
 
-			//ÕıÔò±í´ïÊ½½âÎö
-			// (\\w+) Æ¥Åä1-¶à¸ö×Ö·û(×ÖÄ¸Êı×ÖÏÂ»®Ïß£©
-			// (\\])?  []ÔÚÕıÔò±í´ïÊ½µ±ÖĞ£¬¶ÀÌØ¹¦ÄÜ£¬±ÈÈç[a-z]¡£±íÊ¾Æ¥ÅäÒ»¸ö],?±í´ïÁËÇ°·½µÄ±í´ïÊ½¿ÉÒÔÆ¥ÅäÒ²¿ÉÒÔÆ¥Åä²»µ½
-			// (\\[|\\.)? Æ¥ÅäÒ»¸ö[»òÕßÆ¥ÅäÒ»¸ö.£¬Æ¥Åä²»µ½Ò²Ã»¹ØÏµ
-			//
+			/// æ­£åˆ™è¡¨è¾¾å¼è§£æ
+			/// (\\w+) åŒ¹é…1-å¤šä¸ªå­—ç¬¦(å­—æ¯æ•°å­—ä¸‹åˆ’çº¿ï¼‰
+			/// (\\])?  []åœ¨æ­£åˆ™è¡¨è¾¾å¼å½“ä¸­ï¼Œç‹¬ç‰¹åŠŸèƒ½ï¼Œæ¯”å¦‚[a-z]ã€‚è¡¨ç¤ºåŒ¹é…ä¸€ä¸ª],?è¡¨è¾¾äº†å‰æ–¹çš„è¡¨è¾¾å¼å¯ä»¥åŒ¹é…ä¹Ÿå¯ä»¥åŒ¹é…ä¸åˆ°
+			/// (\\[|\\.)? åŒ¹é…ä¸€ä¸ª[æˆ–è€…åŒ¹é…ä¸€ä¸ª.ï¼ŒåŒ¹é…ä¸åˆ°ä¹Ÿæ²¡å…³ç³»
+			/// 
 			std::string pattern = "(\\w+)(\\])?(\\[|\\.)?";
 			std::regex reg(pattern);
 
-			//result[0] Æ¥ÅäÉÏÊö¹æÔòµÄ×Ö´®
-			// result[1] Æ¥Åä(\\w+)¹æÔòµÄ×Ö´®
-			//result[2] Æ¥Åä(\\])¹æÔòµÄ×Ö´®
-			//result[3] Æ¥Åä(\\[|\\.)¹æÔòµÄ×Ö´®
+			/// result[0] åŒ¹é…ä¸Šè¿°è§„åˆ™çš„å­—ä¸²
+			/// result[1] åŒ¹é…(\\w+)è§„åˆ™çš„å­—ä¸²
+			/// result[2] åŒ¹é…(\\])è§„åˆ™çš„å­—ä¸²
+			/// result[3] åŒ¹é…(\\[|\\.)è§„åˆ™çš„å­—ä¸²
 			std::smatch result;
 
 			std::string text = name;
@@ -321,15 +321,15 @@ namespace ff {
 			bool		idIsIndex{ false };
 			size_t		matchEnd{ 0 };
 
-			//don not forget!!
+			/// don not forget!!
 			container = this;
 
-			//if it is an pureArray, then openGL gets xxx[0],so matchEnd is xxx[
+			/// if it is an pureArray, then openGL gets xxx[0],so matchEnd is xxx[
 
-			//1 ¶ÔÃ¿¸öUniformµÄÃû×Ö½øĞĞÑ­»·Æ¥Åä¡£
-			//2 Ã¿Ò»´ÎÆ¥ÅäµÃµ½resultÖ®ºó,¶¼»á½øĞĞÅĞ¶Ï£¬¾ö¶¨µ±Ç°UniformµÄÀàĞÍ
-			//3 Èç¹ûÊÇStructuredUniform£¬ÄÇÃ´¾Í½øĞĞ²ã¼¶¼Ü¹¹µÄ½¨Éè
-			//
+			/// 1 å¯¹æ¯ä¸ªUniformçš„åå­—è¿›è¡Œå¾ªç¯åŒ¹é…ã€‚
+			/// 2 æ¯ä¸€æ¬¡åŒ¹é…å¾—åˆ°resultä¹‹å,éƒ½ä¼šè¿›è¡Œåˆ¤æ–­ï¼Œå†³å®šå½“å‰Uniformçš„ç±»å‹
+			/// 3 å¦‚æœæ˜¯StructuredUniformï¼Œé‚£ä¹ˆå°±è¿›è¡Œå±‚çº§æ¶æ„çš„å»ºè®¾
+			/// 
 			while (true) {
 				if (std::regex_search(text, result, reg)) {
 					id = result[1].str();
@@ -339,7 +339,7 @@ namespace ff {
 					if (subscript.empty() || (subscript == "[" && matchEnd + 2 == text.length())) {
 						UniformBase::Ptr uniformObject = nullptr;
 
-						//Éú³ÉSingleUniform»òÕßPureArrayUniform
+						/// ç”ŸæˆSingleUniformæˆ–è€…PureArrayUniform
 						if (subscript.empty()) {
 							uniformObject = SingleUniform::create(id, location, type);
 						}
@@ -347,17 +347,17 @@ namespace ff {
 							uniformObject = PureArrayUniform::create(id, location, type, size);
 						}
 
-						//½«Éú³ÉµÄUniformObject¼ÓÈëµ½µ±Ç°µÄContainer
+						/// å°†ç”Ÿæˆçš„UniformObjectåŠ å…¥åˆ°å½“å‰çš„Container
 						addUniform(container, uniformObject);
 
-						//ºÜÖØÒª£¡£¡
+						/// å¾ˆé‡è¦ï¼ï¼
 						break;
 					}
 					else {
 						StructuredUniform::Ptr next = nullptr;
 
-						//ÔÚµ±Ç°µÄContainerÀïÃæ£¬ÊÇ·ñÒÑ¾­º¬ÓĞÁËÃû×ÖÎª±¾idµÄStructuredUniform
-						//Èç¹ûÓĞ£¬½ÓÏÂÀ´µÄUniformsÃÇ£¬¶¼»á×°µ½±¾StructuredUniformÖ®ÏÂ
+						//åœ¨å½“å‰çš„Containeré‡Œé¢ï¼Œæ˜¯å¦å·²ç»å«æœ‰äº†åå­—ä¸ºæœ¬idçš„StructuredUniform
+						//å¦‚æœæœ‰ï¼Œæ¥ä¸‹æ¥çš„Uniformsä»¬ï¼Œéƒ½ä¼šè£…åˆ°æœ¬StructuredUniformä¹‹ä¸‹
 						auto uniformMap = container->mUniformMap;
 						auto iter = uniformMap.find(id);
 
@@ -385,36 +385,40 @@ namespace ff {
 
 	DriverUniforms::~DriverUniforms() noexcept {}
 
-	void DriverUniforms::upload(UniformHandleMap& uniformHandleMap, const DriverTextures::Ptr& textures) {
-		//±éÀúµÄ±ê×¼ÊÇDriverUniformsÄÚ²¿ÒÑ¾­½âÎöºÃµÄUniforms¼Ü¹¹ÃÇ
+	auto DriverUniforms::upload(UniformHandleMap& uniformHandleMap, const DriverTextures::Ptr& textures) -> void
+	{
+		/// éå†çš„æ ‡å‡†æ˜¯DriverUniformså†…éƒ¨å·²ç»è§£æå¥½çš„Uniformsæ¶æ„ä»¬
 		for (auto& iter : mUniformMap) {
 			auto name = iter.first;
-			auto uniform = iter.second;//UniformBase£¬¿ÉÄÜÊÇÈıÖÖÀàĞÍÖ®Ò»
+			auto uniform = iter.second;/// UniformBaseï¼Œå¯èƒ½æ˜¯ä¸‰ç§ç±»å‹ä¹‹ä¸€
 
-			//È¡³öÀ´UniformHandle
+			/// å–å‡ºæ¥UniformHandle
 			auto& uniformHandle = uniformHandleMap[name];
 
 			if (uniformHandle.mNeedsUpdate) {
 				uniformHandle.mNeedsUpdate = false;
 
-				//single pureArray structured ÈıÖÖuniform¶¼¸÷×ÔÊµÏÖÁË¸÷×ÔµÄsetValue
-				//Èç¹ûÊÇsingle£¬mValue¿ÉÄÜÊÇ¸ömatrixÒ²¿ÉÄÜÊÇ¸öfloatµÈµÈ
-				//Èç¹ûÊÇpureArray£¬mValue±ØĞëÊÇÒ»¸övector<T>
-				//Èç¹ûÊÇstructured,mValue±ØĞëÊÇÒ»¸öUniformUnitMap
+				/// single pureArray structured ä¸‰ç§uniforméƒ½å„è‡ªå®ç°äº†å„è‡ªçš„setValue
+				/// å¦‚æœæ˜¯singleï¼ŒmValueå¯èƒ½æ˜¯ä¸ªmatrixä¹Ÿå¯èƒ½æ˜¯ä¸ªfloatç­‰ç­‰
+				/// å¦‚æœæ˜¯pureArrayï¼ŒmValueå¿…é¡»æ˜¯ä¸€ä¸ªvector<T>
+				/// å¦‚æœæ˜¯structured,mValueå¿…é¡»æ˜¯ä¸€ä¸ªUniformUnitMap
 				uniform->setValue(uniformHandle.mValue, textures, shared_from_this());
 			}
 		}
 	}
 
-	void DriverUniforms::addUniform(UniformContainer* container, const UniformBase::Ptr& uniformObject) {
+	auto DriverUniforms::addUniform(UniformContainer* container, const UniformBase::Ptr& uniformObject) -> void
+	{
 		container->mUniformMap.insert(std::make_pair(uniformObject->mID, uniformObject));
 	}
 
-	void DriverUniforms::setTextureSlot(const GLint& location, GLuint slot) noexcept {
+	auto DriverUniforms::setTextureSlot(const GLint& location, GLuint slot) noexcept -> void
+	{
 		mTextureSlots.insert(std::make_pair(location, slot));
 	}
 
-	GLint DriverUniforms::getTextureSlot(const GLint& location) noexcept {
+	auto DriverUniforms::getTextureSlot(const GLint& location) noexcept -> GLint
+	{
 		auto iter = mTextureSlots.find(location);
 		if (iter != mTextureSlots.end()) {
 			return iter->second;
@@ -427,7 +431,8 @@ namespace ff {
 		mTextureArraySlots.insert(std::make_pair(location, slots));
 	}
 
-	std::vector<GLint> DriverUniforms::getTextureArraySlot(const GLint& location) noexcept {
+	auto DriverUniforms::getTextureArraySlot(const GLint& location) noexcept -> std::vector<GLint>
+	{
 		std::vector<GLint> slots;
 		auto iter = mTextureArraySlots.find(location);
 		if (iter != mTextureArraySlots.end()) {
@@ -437,12 +442,13 @@ namespace ff {
 		return slots;
 	}
 
-	std::vector<GLint> DriverUniforms::allocateTextureUnits(const int& n) {
+	auto DriverUniforms::allocateTextureUnits(const int& n) -> std::vector<GLint>
+	{
 		std::vector<GLint> units;
 		for (int i = 0; i < n; ++i) {
-			//GL_TEXTURE1 = GL_TEXTURE0 + 1
-			//GL_TEXTURE2 = GL_TEXTURE0 + 2
-			//...........
+			/// GL_TEXTURE1 = GL_TEXTURE0 + 1
+			/// GL_TEXTURE2 = GL_TEXTURE0 + 2
+			/// ...........
 			GLenum slot = GL_TEXTURE0 + mCurrentTextureSlots;
 			if (slot >= MAX_TEXTURE) {
 				throw std::runtime_error("DriverTextures->allocateTextureUnit: too much textures");

@@ -1,4 +1,4 @@
-#pragma once 
+ï»¿#pragma once 
 #include "../../global/base.h"
 #include "../../global/constant.h"
 #include "../../textures/texture.h"
@@ -6,74 +6,74 @@
 
 namespace ff {
 
-	//ÎÒÃÇĞèÒªÔÚ»æÖÆÒ»¸öÎïÌåµÄÊ±ºò£¬¼´×öÒ»´ÎDrawCallµÄÊ±ºò£¬¾Í±ØĞë¸üĞÂÊ¹ÓÃµÄShaderËù±ØÒªµÄUniforms£¬
-	//½«ËùĞèÒª¸üĞÂµÄËùÓĞµÄUniformsµÄÊı¾İ£¬·ÅÔÚÁËÍ³Ò»µÄMapµ±ÖĞ
-	//±¾MapµÄkey¾ÍÊÇĞèÒª¸üĞÂµÄUniformµÄÃû×Ö£¨¸úShaderÀïÃæµÄÄÇ¸öUniformµÄÃû×ÖÒ»Ò»¶ÔÓ¦£©£¬¶ÔÓÚPureArrayÓëSingle
-	//¶ÔÓÚStructuredUniforms£¬ÊÇ°´ÕÕ²ã¼¶µÄ¼Ü¹¹À´Ñ¡ÔñÃû³Æ
-	//¾ÙÀı£º(Î±´úÂë£©
-	// ±ÈÈç³ıÁË»ù´¡¾ØÕóÖ®Íâ£¬ÔÚshaderµ±ÖĞ£¬»¹´æÔÚÈçÏÂ½á¹¹Ìå£º
-	// struct Test {
-	//	float a;
-	//  float b;
-	// };
-	// 
-	// uniform Test t;
-	// 
-	// std::unordered_map<std::string, UniformHandle> outMap;
-	// outMap["modelViewMatrix"] = UniformHandle(mValue = object->getModelViewMatrix())
-	// outMap["normalMatrix"] = UniformHandle(mValue = object->getNormalMatrix())
-	// 
-	// std::unordered_map<std::string, std::any> contents;
-	// contents["a"] = 0.0;
-	// contents["b"] = 0.5;
-	// 
-	// UniformHandle::Ptr tHandle = UniformHandle{};
-	// tHandle.mValue = contents;
-	// 
-	// outMap["t"] = tHandle;
-	// 
-	// ×îÖÕÕâ¸öoutMap¾Í¿ÉÒÔ´«ÈëDriverUniformsµÄuploadÀïÃæ£¬½øĞĞ¸üĞÂ
-	// 
-	// ÔÙ¸´ÔÓÒ»µã£º
-	// struct Test {
-	//	float a;
-	//  float b;
-	//	float ffs[10];
-	// };
-	// 
-	// uniform Test t[2];
-	// std::vector<float> myFFS0 = {1, 2 .... 10};
-	// std::vector<float> myFFS1 = {10, 20 .... 100};
-	//
-	// µÚÒ»¸ötµÄÊı¾İ£¬¼´t[0]
-	// std::unordered_map<std::string, std::any> contents0;
-	// contents0["a"] = 0.0;
-	// contents0["b"] = 0.5;
-	// contents0["ffs"] = myFFS0;
-	// 
-	// std::unordered_map<std::string, std::any> contents1;
-	// contents1["a"] = 0.3;
-	// contents1["b"] = 0.6; 
-	// contents1["ffs"] = myFFS1;
-	// 
-	// std::unordered_map<std::string, std::any> contents;
-	// contents["0"] = contents0;
-	// contents["1"] = contents1;
-	// 
-	// UniformHandle::Ptr tHandle = UniformHandle{};
-	// tHandle.mValue = contents;
-	// 
-	// outMap["t"] = tHandle;
-	//
-	// Èç¹ûÊÇPure Array UniformÈçºÎ¸üĞÂ
-	// 
-	// uniform float ffs[10];
-	// 
-	// ffs[0]
-	// 
-	// std::vector<float> myFFS = {1, 2 .... 10};
-	// outMap["ffs"].mValue = myFFS;
-	//
+	/// æˆ‘ä»¬éœ€è¦åœ¨ç»˜åˆ¶ä¸€ä¸ªç‰©ä½“çš„æ—¶å€™ï¼Œå³åšä¸€æ¬¡DrawCallçš„æ—¶å€™ï¼Œå°±å¿…é¡»æ›´æ–°ä½¿ç”¨çš„Shaderæ‰€å¿…è¦çš„Uniformsï¼Œ
+	/// å°†æ‰€éœ€è¦æ›´æ–°çš„æ‰€æœ‰çš„Uniformsçš„æ•°æ®ï¼Œæ”¾åœ¨äº†ç»Ÿä¸€çš„Mapå½“ä¸­
+	/// æœ¬Mapçš„keyå°±æ˜¯éœ€è¦æ›´æ–°çš„Uniformçš„åå­—ï¼ˆè·ŸShaderé‡Œé¢çš„é‚£ä¸ªUniformçš„åå­—ä¸€ä¸€å¯¹åº”ï¼‰ï¼Œå¯¹äºPureArrayä¸Single
+	/// å¯¹äºStructuredUniformsï¼Œæ˜¯æŒ‰ç…§å±‚çº§çš„æ¶æ„æ¥é€‰æ‹©åç§°
+	/// ä¸¾ä¾‹ï¼š(ä¼ªä»£ç ï¼‰
+	///  æ¯”å¦‚é™¤äº†åŸºç¡€çŸ©é˜µä¹‹å¤–ï¼Œåœ¨shaderå½“ä¸­ï¼Œè¿˜å­˜åœ¨å¦‚ä¸‹ç»“æ„ä½“ï¼š
+	///  struct Test {
+	/// 	float a;
+	///   float b;
+	///  };
+	///  
+	///  uniform Test t;
+	///  
+	///  std::unordered_map<std::string, UniformHandle> outMap;
+	///  outMap["modelViewMatrix"] = UniformHandle(mValue = object->getModelViewMatrix())
+	///  outMap["normalMatrix"] = UniformHandle(mValue = object->getNormalMatrix())
+	///  
+	///  std::unordered_map<std::string, std::any> contents;
+	///  contents["a"] = 0.0;
+	///  contents["b"] = 0.5;
+	///  
+	///  UniformHandle::Ptr tHandle = UniformHandle{};
+	///  tHandle.mValue = contents;
+	///  
+	///  outMap["t"] = tHandle;
+	///  
+	///  æœ€ç»ˆè¿™ä¸ªoutMapå°±å¯ä»¥ä¼ å…¥DriverUniformsçš„uploadé‡Œé¢ï¼Œè¿›è¡Œæ›´æ–°
+	///  
+	///  å†å¤æ‚ä¸€ç‚¹ï¼š
+	/// struct Test {
+	///	   float a;
+	///    float b;
+	///    float ffs[10];
+	///  };
+	///  
+	/// uniform Test t[2];
+	/// std::vector<float> myFFS0 = {1, 2 .... 10};
+	/// std::vector<float> myFFS1 = {10, 20 .... 100};
+	///
+	/// ç¬¬ä¸€ä¸ªtçš„æ•°æ®ï¼Œå³t[0]
+	/// std::unordered_map<std::string, std::any> contents0;
+	/// contents0["a"] = 0.0;
+	/// contents0["b"] = 0.5;
+	/// contents0["ffs"] = myFFS0;
+	/// 
+	/// std::unordered_map<std::string, std::any> contents1;
+	/// contents1["a"] = 0.3;
+	/// contents1["b"] = 0.6; 
+	/// contents1["ffs"] = myFFS1;
+	/// 
+	/// std::unordered_map<std::string, std::any> contents;
+	/// contents["0"] = contents0;
+	/// contents["1"] = contents1;
+	/// 
+	/// UniformHandle::Ptr tHandle = UniformHandle{};
+	/// tHandle.mValue = contents;
+	/// 
+	/// outMap["t"] = tHandle;
+	///
+	/// å¦‚æœæ˜¯Pure Array Uniformå¦‚ä½•æ›´æ–°
+	/// 
+	/// uniform float ffs[10];
+	/// 
+	/// ffs[0]
+	/// 
+	/// std::vector<float> myFFS = {1, 2 .... 10};
+	/// outMap["ffs"].mValue = myFFS;
+	///
 
 	class UniformHandle {
 	public:
@@ -81,7 +81,7 @@ namespace ff {
 
 		~UniformHandle() noexcept {}
 
-		std::any	mValue;//¿ÉÒÔÊÇÈÎºÎÀàĞÍµÄÖµ£¬±ÈÈçfloat matrix map
+		std::any	mValue;					///å¯ä»¥æ˜¯ä»»ä½•ç±»å‹çš„å€¼ï¼Œæ¯”å¦‚float matrix map
 		bool		mNeedsUpdate{ false };
 	};
 
@@ -89,7 +89,7 @@ namespace ff {
 
 	using UniformHandleMap = std::unordered_map<std::string, UniformHandle>;
 
-	//¸úShaderChunkºÜÏñµÄUniformChunk
+	/// è·ŸShaderChunkå¾ˆåƒçš„UniformChunk
 	static const std::unordered_map<std::string, UniformHandleMap> UniformsLib =
 	{
 		{
@@ -116,8 +116,11 @@ namespace ff {
 
 	};
 
-	//------------tools-------------------------------
-	static UniformHandleMap merge(const std::vector<UniformHandleMap>& uniformGroups) {
+	/// ------------tools-------------------------------
+
+
+	static auto merge(const std::vector<UniformHandleMap>& uniformGroups) -> UniformHandleMap
+	{
 		UniformHandleMap mergedGroup;
 
 		for (const auto& group : uniformGroups) {
@@ -132,55 +135,76 @@ namespace ff {
 		return std::move(mergedGroup);
 	}
 
-	//Èç¹û£¬ÎÒÃÇÔÚshaderµ±ÖĞĞ´µÄ½á¹¹ÊÇ£º
-	// struct Test {
-	//	float a;
-	//  float b;
-	//	float ffs[10];
-	// };
-	// 
-	// uniform Test t[2];
-	// 
-	// ±ÈÈç¹âÕÕµÄ½á¹¹Ìå£¬Ò²¿ÉÒÔ×ö³ÉÒ»¸öÊı×é
-	// struct Light {
-	// xxxx
-	// }£»
-	// 
-	// uniform Light lights[100];
-	// ËùÒÔÔÚÍâ²¿¹¹½¨outMapµÄÊ±ºò£¬²»¿ÉÄÜÒ»¸ö¸öµÄÈ¥×ö¸³Öµ£¬È»ºóÒ»¸ö¸öÉèÖÃµ½contents£¬ËùÒÔ
-	// ĞèÒªÓÃÒ»¸öÑ­»·£¬°ÑËùÓĞµÄ100¸ölight½á¹¹Ìå£¬¶¼Ìî³äµ½contentsÕâ¸öMapÀïÃæ
-	// 
-	// ÔÚÍâ²¿¹¹½¨OutmapµÄÊ±ºò£¬¾ÍµÃ£º
-	// ¡£¡£¡£¡£¸÷ÖÖ²Ù×÷¡£¡£¡£¡£
-	// std::unordered_map<std::string, std::any> contents;
-	// contents["0"] = contents0;
-	// contents["1"] = contents1;
-	//
-	//º¯ÊıµÄ×ÖÃæº¬Òå£º ÏòarrayÕâ¸ömapµ±ÖĞ£¬Ìí¼ÓÒ»¸ökeyÎªindexµÄ uniformUnitMap
-	//·µ»ØĞÂÌí¼ÓµÄUniformUnitMap¶ÔÏóÖ¸Õë
-	static UniformUnitMap* setArrayStructuredUniform(const uint32_t& index, UniformUnitMap* array) noexcept {
+
+	/// \brief 
+	/// å¦‚æœï¼Œæˆ‘ä»¬åœ¨shaderå½“ä¸­å†™çš„ç»“æ„æ˜¯ï¼š
+	/// struct Test {
+	///	  float a;
+	///   float b;
+	///	  float ffs[10];
+	/// };
+	/// 
+	/// uniform Test t[2];
+	/// 
+	/// æ¯”å¦‚å…‰ç…§çš„ç»“æ„ä½“ï¼Œä¹Ÿå¯ä»¥åšæˆä¸€ä¸ªæ•°ç»„
+	/// struct Light {
+	/// xxxx
+	/// }ï¼›
+	/// 
+	/// uniform Light lights[100];
+	/// æ‰€ä»¥åœ¨å¤–éƒ¨æ„å»ºoutMapçš„æ—¶å€™ï¼Œä¸å¯èƒ½ä¸€ä¸ªä¸ªçš„å»åšèµ‹å€¼ï¼Œç„¶åä¸€ä¸ªä¸ªè®¾ç½®åˆ°contentsï¼Œæ‰€ä»¥
+	/// éœ€è¦ç”¨ä¸€ä¸ªå¾ªç¯ï¼ŒæŠŠæ‰€æœ‰çš„100ä¸ªlightç»“æ„ä½“ï¼Œéƒ½å¡«å……åˆ°contentsè¿™ä¸ªMapé‡Œé¢
+	/// 
+	/// åœ¨å¤–éƒ¨æ„å»ºOutmapçš„æ—¶å€™ï¼Œå°±å¾—ï¼š
+	/// ã€‚ã€‚ã€‚ã€‚å„ç§æ“ä½œã€‚ã€‚ã€‚ã€‚
+	/// std::unordered_map<std::string, std::any> contents;
+	/// contents["0"] = contents0;
+	/// contents["1"] = contents1;
+	///
+	/// å‡½æ•°çš„å­—é¢å«ä¹‰ï¼š å‘arrayè¿™ä¸ªmapå½“ä¸­ï¼Œæ·»åŠ ä¸€ä¸ªkeyä¸ºindexçš„ uniformUnitMap
+	/// è¿”å›æ–°æ·»åŠ çš„UniformUnitMapå¯¹è±¡æŒ‡é’ˆ
+	///
+	/// \param index 
+	/// \param array 
+	/// \return 
+	static auto setArrayStructuredUniform(const uint32_t& index, UniformUnitMap* array) noexcept -> UniformUnitMap*
+	{
 		auto indexString = std::to_string(index);
 		(*array)[indexString] = UniformUnitMap();
 
-		//½«¸Õ¸ÕÉú³ÉµÄUniformUnitMap¶ÔÏó£¬×ª»»³ÉUniformUnitMap*£¬cast³ÉÖ¸ÕëÊÇÓÉ&À´¾ö¶¨µÄ
+		/// å°†åˆšåˆšç”Ÿæˆçš„UniformUnitMapå¯¹è±¡ï¼Œè½¬æ¢æˆUniformUnitMap*ï¼ŒcastæˆæŒ‡é’ˆæ˜¯ç”±&æ¥å†³å®šçš„
 		return std::any_cast<UniformUnitMap>(&(*array)[indexString]);
 	}
 
-	//´ÓarrayÕâ¸ömapµ±ÖĞ£¬È¡µÃkeyÎªindexµÄuniformUnitMapµÄÖ¸Õë
-	static UniformUnitMap* getArrayStructuredUniform(const uint32_t& index, UniformUnitMap* array) noexcept {
+	
+	/// \brief ä»arrayè¿™ä¸ªmapå½“ä¸­ï¼Œå–å¾—keyä¸ºindexçš„uniformUnitMapçš„æŒ‡é’ˆ
+	/// \param index 
+	/// \param array 
+	/// \return 
+	static auto getArrayStructuredUniform(const uint32_t& index, UniformUnitMap* array) noexcept -> UniformUnitMap*
+	{
 		auto indexString = std::to_string(index);
 		return std::any_cast<UniformUnitMap>(&(*array)[indexString]);
 	}
 
-	//¹¤¾ßº¯Êı£¬ÏòarrayÀïÃæ½øĞĞÇåÀí
+	
+	/// \brief æ¸…ç†array
+	/// \tparam T 
+	/// \param array 
 	template<typename T>
-	static void clearPureArrayUniform(std::vector<T>* array) {
+	static auto clearPureArrayUniform(std::vector<T>* array) -> void
+	{
 		array->clear();
 	}
 
-	//¹¤¾ßº¯Êı£¬½«value pushµ½array
+	
+	/// \brief	å°†value pushåˆ°array
+	/// \tparam T 
+	/// \param value 
+	/// \param array 
 	template<typename T>
-	static void pushPureArrayUniform(T value, std::vector<T>* array) {
+	static auto pushPureArrayUniform(T value, std::vector<T>* array) -> void
+	{
 		array->push_back(value);
 	}
 

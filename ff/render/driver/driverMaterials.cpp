@@ -52,7 +52,9 @@ namespace ff {
 		mMaterials.erase(iter);
 	}
 
-	void DriverMaterials::refreshMaterialUniforms(UniformHandleMap& uniformHandleMap, const Material::Ptr& material) {
+	auto DriverMaterials::refreshMaterialUniforms(UniformHandleMap& uniformHandleMap,
+	                                              const Material::Ptr& material) -> void
+	{
 		uniformHandleMap["opacity"].mValue = material->mOpacity;
 		uniformHandleMap["opacity"].mNeedsUpdate = true;
 
@@ -72,7 +74,9 @@ namespace ff {
 		}
 	}
 
-	void DriverMaterials::refreshMaterialPhong(UniformHandleMap& uniformHandleMap, const MeshPhongMaterial::Ptr& material) {
+	auto DriverMaterials::refreshMaterialPhong(UniformHandleMap& uniformHandleMap,
+	                                           const MeshPhongMaterial::Ptr& material) -> void
+	{
 		uniformHandleMap["shininess"].mValue = material->mShininess;
 		uniformHandleMap["shininess"].mNeedsUpdate = true;
 
@@ -92,14 +96,18 @@ namespace ff {
 		}
 	}
 
-	void DriverMaterials::refreshMaterialBasic(UniformHandleMap& uniformHandleMap, const MeshBasicMaterial::Ptr& material) {
+	auto DriverMaterials::refreshMaterialBasic(UniformHandleMap& uniformHandleMap,
+	                                           const MeshBasicMaterial::Ptr& material) -> void
+	{
 		if ((material->mDiffuseMap && material->mDiffuseMap->mNeedsUpdate) || material->mNeedsUpdate) {
 			uniformHandleMap["diffuseMap"].mValue = material->mDiffuseMap;
 			uniformHandleMap["diffuseMap"].mNeedsUpdate = true;
 		}
 	}
 
-	void DriverMaterials::refreshMaterialCube(UniformHandleMap& uniformHandleMap, const CubeMaterial::Ptr& material) {
+	auto DriverMaterials::refreshMaterialCube(UniformHandleMap& uniformHandleMap,
+	                                          const CubeMaterial::Ptr& material) -> void
+	{
 		if ((material->mEnvMap && material->mEnvMap->mNeedsUpdate) || material->mNeedsUpdate) {
 			uniformHandleMap["envMap"].mValue = material->mEnvMap;
 			uniformHandleMap["envMap"].mNeedsUpdate = true;

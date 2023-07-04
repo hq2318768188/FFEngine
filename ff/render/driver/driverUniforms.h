@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 #include "../../global/base.h"
 #include "../../global/constant.h"
 #include "driverTextures.h"
@@ -8,7 +8,7 @@ namespace ff {
 
 	class DriverUniforms;
 
-	//Ò»ÇĞuniformÀàĞÍµÄ¸ùÀà
+	/// ä¸€åˆ‡uniformç±»å‹çš„æ ¹ç±»
 	class UniformBase {
 	public:
 		using Ptr = std::shared_ptr<UniformBase>;
@@ -17,18 +17,22 @@ namespace ff {
 
 		~UniformBase() noexcept;
 
-		//uniformµÄÃû×Ö
+		/// \brief uniformçš„åå­—
 		std::string mID;
 
-		//Íê³É¸üĞÂuniformÕâ¼şÊÂ¶ù
-		virtual void setValue(
+		
+		/// \brief æ›´æ–°uniform
+		/// \param value 
+		/// \param textures 
+		/// \param driverUniforms 
+		virtual auto setValue(
 			const std::any& value,
 			const DriverTextures::Ptr& textures,
-			const std::shared_ptr<DriverUniforms>& driverUniforms) {}
+			const std::shared_ptr<DriverUniforms>& driverUniforms) -> void {}
 	};
 
-	//1 ´æ´¢location typeÀàĞÍ
-	//2 Ìá¹©setValueµÄ½Ó¿Ú£¬²¢ÇÒÔÚÆäÄÚ²¿£¬¸ù¾İ²»Í¬ÀàĞÍµÄuniformµ÷ÓÃ²»Í¬µÄupload
+	/// 1 å­˜å‚¨location typeç±»å‹
+	/// 2 æä¾›setValueçš„æ¥å£ï¼Œå¹¶ä¸”åœ¨å…¶å†…éƒ¨ï¼Œæ ¹æ®ä¸åŒç±»å‹çš„uniformè°ƒç”¨ä¸åŒçš„upload
 
 	class SingleUniform : public UniformBase {
 	public:
@@ -47,69 +51,73 @@ namespace ff {
 
 	public:
 
-		void setValue(
+		auto setValue(
 			const std::any& value,
 			const DriverTextures::Ptr& textures,
-			const std::shared_ptr<DriverUniforms>& driverUniforms) override;
+			const std::shared_ptr<DriverUniforms>& driverUniforms) -> void override;
 
-		void uploadTexture(
+		auto uploadTexture(
 			const std::shared_ptr<DriverUniforms>& driverUniforms,
 			const DriverTextures::Ptr& textures,
-			const std::any& value);
+			const std::any& value) -> void;
 
-		//½«TÀàĞÍµÄ±äÁ¿value£¬´«Êäµ½locationËù´ú±íµÄuniformÀïÃæ
+		
+		/// \brief å°†Tç±»å‹çš„å˜é‡valueï¼Œä¼ è¾“åˆ°locationæ‰€ä»£è¡¨çš„uniformé‡Œé¢
+		/// \tparam T 
+		/// \param value 
 		template<typename T>
-		void upload(const T& value) {}
+		auto upload(const T& value) -> void {}
 
-		//Ä£°åÆ«ÌØ»¯
+		/// æ¨¡æ¿åç‰¹åŒ–
+		
 		template<>
-		void upload<float>(const float& value);
-
-		template<>
-		void upload<glm::vec2>(const glm::vec2& value);
+		auto upload<float>(const float& value) -> void;
 
 		template<>
-		void upload<glm::vec3>(const glm::vec3& value);
+		auto upload<glm::vec2>(const glm::vec2& value) -> void;
 
 		template<>
-		void upload<glm::vec4>(const glm::vec4& value);
+		auto upload<glm::vec3>(const glm::vec3& value) -> void;
 
 		template<>
-		void upload<int>(const int& value);
+		auto upload<glm::vec4>(const glm::vec4& value) -> void;
 
 		template<>
-		void upload<glm::ivec2>(const glm::ivec2& value);
+		auto upload<int>(const int& value) -> void;
 
 		template<>
-		void upload<glm::ivec3>(const glm::ivec3& value);
+		auto upload<glm::ivec2>(const glm::ivec2& value) -> void;
 
 		template<>
-		void upload<glm::ivec4>(const glm::ivec4& value);
+		auto upload<glm::ivec3>(const glm::ivec3& value) -> void;
 
 		template<>
-		void upload<bool>(const bool& value);
+		auto upload<glm::ivec4>(const glm::ivec4& value) -> void;
 
 		template<>
-		void upload<glm::bvec2>(const glm::bvec2& value);
+		auto upload<bool>(const bool& value) -> void;
 
 		template<>
-		void upload<glm::bvec3>(const glm::bvec3& value);
+		auto upload<glm::bvec2>(const glm::bvec2& value) -> void;
 
 		template<>
-		void upload<glm::bvec4>(const glm::bvec4& value);
+		auto upload<glm::bvec3>(const glm::bvec3& value) -> void;
 
 		template<>
-		void upload<glm::mat2>(const glm::mat2& value);
+		auto upload<glm::bvec4>(const glm::bvec4& value) -> void;
 
 		template<>
-		void upload<glm::mat3>(const glm::mat3& value);
+		auto upload<glm::mat2>(const glm::mat2& value) -> void;
 
 		template<>
-		void upload<glm::mat4>(const glm::mat4& value);
+		auto upload<glm::mat3>(const glm::mat3& value) -> void;
+
+		template<>
+		auto upload<glm::mat4>(const glm::mat4& value) -> void;
 
 	};
 
-	//´¿´âµÄÊı×éÀàĞÍµÄUniform
+	/// çº¯ç²¹çš„æ•°ç»„ç±»å‹çš„Uniform
 	class PureArrayUniform : public UniformBase {
 	public:
 		using Ptr = std::shared_ptr<PureArrayUniform>;
@@ -127,10 +135,10 @@ namespace ff {
 		GLint		mSize{ 0 };
 
 	public:
-		void setValue(
+		auto setValue(
 			const std::any& value,
 			const DriverTextures::Ptr& textures,
-			const std::shared_ptr<DriverUniforms>& driverUniforms) override;
+			const std::shared_ptr<DriverUniforms>& driverUniforms) -> void override;
 
 		void uploadTexture2DArray(
 			const std::shared_ptr<DriverUniforms>& driverUniforms,
@@ -138,44 +146,48 @@ namespace ff {
 			const std::any& value);
 
 		template<typename T>
-		void upload(const T* value) {}
+		auto upload(const T* value) -> void;
 
 		template<>
-		void upload<float>(const float* value);
+		auto upload<float>(const float* value) -> void;
 
 		template<>
-		void upload<glm::vec2>(const glm::vec2* value);
+		auto upload<glm::vec2>(const glm::vec2* value) -> void;
 
 		template<>
-		void upload<glm::vec3>(const glm::vec3* value);
+		auto upload<glm::vec3>(const glm::vec3* value) -> void;
 
 		template<>
-		void upload<glm::vec4>(const glm::vec4* value);
+		auto upload<glm::vec4>(const glm::vec4* value) -> void;
 
 		template<>
-		void upload<int>(const int* value);
+		auto upload<int>(const int* value) -> void;
 
 		template<>
-		void upload<glm::ivec2>(const glm::ivec2* value);
+		auto upload<glm::ivec2>(const glm::ivec2* value) -> void;
 
 		template<>
-		void upload<glm::ivec3>(const glm::ivec3* value);
+		auto upload<glm::ivec3>(const glm::ivec3* value) -> void;
 
 		template<>
-		void upload<glm::ivec4>(const glm::ivec4* value);
+		auto upload<glm::ivec4>(const glm::ivec4* value) -> void;
 
-		//no bool bvec2 bvec3 bvec4 we use int instead
-
-		template<>
-		void upload<glm::mat2>(const glm::mat2* value);
+		/// no bool bvec2 bvec3 bvec4 we use int instead
 
 		template<>
-		void upload<glm::mat3>(const glm::mat3* value);
+		auto upload<glm::mat2>(const glm::mat2* value) -> void;
 
 		template<>
-		void upload<glm::mat4>(const glm::mat4* value);
+		auto upload<glm::mat3>(const glm::mat3* value) -> void;
+
+		template<>
+		auto upload<glm::mat4>(const glm::mat4* value) -> void;
 
 	};
+
+	template <typename T>
+	auto PureArrayUniform::upload(const T* value) -> void
+	{}
 
 	class UniformContainer {
 	public:
@@ -196,10 +208,10 @@ namespace ff {
 
 		~StructuredUniform() noexcept;
 
-		void setValue(
+		auto setValue(
 			const std::any& value,
 			const DriverTextures::Ptr& textures,
-			const std::shared_ptr<DriverUniforms>& driverUniforms) override;
+			const std::shared_ptr<DriverUniforms>& driverUniforms) -> void override;
 	};
 
 	class DriverUniforms :public UniformContainer, public std::enable_shared_from_this<DriverUniforms> {
@@ -211,178 +223,209 @@ namespace ff {
 
 		~DriverUniforms() noexcept;
 
-		void upload(UniformHandleMap& uniformHandleMap, const DriverTextures::Ptr& textures);
+		auto upload(UniformHandleMap& uniformHandleMap, const DriverTextures::Ptr& textures) -> void;
 
-		void addUniform(UniformContainer* container, const UniformBase::Ptr& uniformObject);
+		auto addUniform(UniformContainer* container, const UniformBase::Ptr& uniformObject) -> void;
 
-		//texture slots
-		void setTextureSlot(const GLint& location, GLuint slot) noexcept;
+		
+		/// \brief texture slots
+		/// \param location 
+		/// \param slot 
+		auto setTextureSlot(const GLint& location, GLuint slot) noexcept -> void;
 
-		GLint getTextureSlot(const GLint& location) noexcept;
+		auto getTextureSlot(const GLint& location) noexcept -> GLint;
 
 
-		//¸úTexture ArrayÏà¹Ø uniform sampler2D texs[10];
-		void setTextureArraySlot(const GLint& location, std::vector<GLint> slot) noexcept;
+		/// \brief è·ŸTexture Arrayç›¸å…³ uniform sampler2D texs[10]
+		/// \param location 
+		/// \param slot 
+		auto setTextureArraySlot(const GLint& location, std::vector<GLint> slot) noexcept -> void;
 
-		std::vector<GLint> getTextureArraySlot(const GLint& location) noexcept;
+		auto getTextureArraySlot(const GLint& location) noexcept -> std::vector<GLint>;
 
-		//·µ»Øn¸ö¿ÉÒÔÊ¹ÓÃµÄtextureUnits
-		std::vector<GLint> allocateTextureUnits(const int& n);
+		/// \brief è¿”å›nä¸ªå¯ä»¥ä½¿ç”¨çš„textureUnitss
+		/// \param n 
+		/// \return 
+		auto allocateTextureUnits(const int& n) -> std::vector<GLint>;
 
 	private:
-		//key:Ä³Ò»¸öuniform sampler2D tex;±äÁ¿µÄlocation
-		//value£ºGL_TEXTUREXXXX
+		/// key:æŸä¸€ä¸ªuniform sampler2D tex;å˜é‡çš„location
+		/// svalueï¼šGL_TEXTUREXXXX
 		std::unordered_map<GLint, GLuint> mTextureSlots{};
 
-		//uniform sampler2D texs[10];
-		//name: texs[0] 
-		//size:10
-		//ĞèÒª¸øtexs·ÖÅäÊ®¸öslot£¨units£©
-		//Ã¿¸öpurearrayuniformÖ»ÓĞÒ»¸ölocation
-		//key£ºPureArrayUniformÕâÖÖÀàĞÍµÄtextureÊı×éµÄlocation 
-		//value£ºÊı×é£¬ÎªÕâ¸ötextureÊı×éµ±ÖĞµÄËùÓĞtextures°´Ğò·ÖÅäµÄtextureUnits
+		/// uniform sampler2D texs[10];
+		/// name: texs[0] 
+		/// size:10
+		/// éœ€è¦ç»™texsåˆ†é…åä¸ªslotï¼ˆunitsï¼‰
+		/// æ¯ä¸ªpurearrayuniformåªæœ‰ä¸€ä¸ªlocation
+		/// keyï¼šPureArrayUniformè¿™ç§ç±»å‹çš„textureæ•°ç»„çš„location 
+		/// valueï¼šæ•°ç»„ï¼Œä¸ºè¿™ä¸ªtextureæ•°ç»„å½“ä¸­çš„æ‰€æœ‰texturesæŒ‰åºåˆ†é…çš„textureUnits
 		std::unordered_map<GLint, std::vector<GLint>> mTextureArraySlots{};
 
-		//ÓÃÓÚ¼ÇÂ¼µ±Ç°ÒÑ¾­·ÖÅäµ½ÁËÄÄÒ»¸öTextureUnit
+		/// ç”¨äºè®°å½•å½“å‰å·²ç»åˆ†é…åˆ°äº†å“ªä¸€ä¸ªTextureUnit
 		GLint	mCurrentTextureSlots{ 0 };
 	};
 
 	template<>
-	void SingleUniform::upload<float>(const float& value) {
+	inline auto SingleUniform::upload<float>(const float& value) -> void
+	{
 		glUniform1f(mLocation, value);
 	}
 
 	template<>
-	void SingleUniform::upload<glm::vec2>(const glm::vec2& value) {
-		//Èç¹ûÒª´Óglm£º£ºvec2Õâ¸öÀàĞÍµÄ±äÁ¿£¬ÄÃ³öÀ´ÆäÊı¾İÖ¸Õë£¬¾ÍµÃÊ¹ÓÃglm::value_ptr
-		//ÕâÊÇÎªÁËÕ¹Ê¾¶àÖÖ¶àÑùµÄ×ö·¨
-	//	glUniform2f(mLocation, value.x, value.y);
+	inline auto SingleUniform::upload<glm::vec2>(const glm::vec2& value) -> void
+	{
+		/// å¦‚æœè¦ä»glmï¼šï¼švec2è¿™ä¸ªç±»å‹çš„å˜é‡ï¼Œæ‹¿å‡ºæ¥å…¶æ•°æ®æŒ‡é’ˆï¼Œå°±å¾—ä½¿ç”¨glm::value_ptr
+		/// è¿™æ˜¯ä¸ºäº†å±•ç¤ºå¤šç§å¤šæ ·çš„åšæ³•
+		///	glUniform2f(mLocation, value.x, value.y);
 		glUniform2fv(mLocation, 1, glm::value_ptr(value));
 	}
 
 	template<>
-	void SingleUniform::upload<glm::vec3>(const glm::vec3& value) {
+	inline auto SingleUniform::upload<glm::vec3>(const glm::vec3& value) -> void
+	{
 		glUniform3fv(mLocation, 1, glm::value_ptr(value));
 	}
 
 	template<>
-	void SingleUniform::upload<glm::vec4>(const glm::vec4& value) {
+	inline auto SingleUniform::upload<glm::vec4>(const glm::vec4& value) -> void
+	{
 		glUniform4fv(mLocation, 1, glm::value_ptr(value));
 	}
 
 	template<>
-	void SingleUniform::upload<int>(const int& value) {
+	inline void SingleUniform::upload<int>(const int& value) {
 		glUniform1i(mLocation, value);
 	}
 
 	template<>
-	void SingleUniform::upload<glm::ivec2>(const glm::ivec2& value) {
+	inline auto SingleUniform::upload<glm::ivec2>(const glm::ivec2& value) -> void
+	{
 		glUniform2i(mLocation, value.x, value.y);
 	}
 
 	template<>
-	void SingleUniform::upload<glm::ivec3>(const glm::ivec3& value) {
+	inline auto SingleUniform::upload<glm::ivec3>(const glm::ivec3& value) -> void
+	{
 		glUniform3i(mLocation, value.x, value.y, value.z);
 	}
 
 	template<>
-	void SingleUniform::upload<glm::ivec4>(const glm::ivec4& value) {
+	inline auto SingleUniform::upload<glm::ivec4>(const glm::ivec4& value) -> void
+	{
 		glUniform4i(mLocation, value.x, value.y, value.z, value.w);
 	}
 
 	template<>
-	void SingleUniform::upload<bool>(const bool& value) {
+	inline auto SingleUniform::upload<bool>(const bool& value) -> void
+	{
 		int v = value;
 		glUniform1i(mLocation, v);
 	}
 
 	template<>
-	void SingleUniform::upload<glm::bvec2>(const glm::bvec2& value) {
+	inline auto SingleUniform::upload<glm::bvec2>(const glm::bvec2& value) -> void
+	{
 		glm::ivec2 v = value;
 		glUniform2i(mLocation, v.x, v.y);
 	}
 
 	template<>
-	void SingleUniform::upload<glm::bvec3>(const glm::bvec3& value) {
+	inline auto SingleUniform::upload<glm::bvec3>(const glm::bvec3& value) -> void
+	{
 		glm::ivec3 v = value;
 		glUniform3i(mLocation, v.x, v.y, v.z);
 	}
 
 	template<>
-	void SingleUniform::upload<glm::bvec4>(const glm::bvec4& value) {
+	inline auto SingleUniform::upload<glm::bvec4>(const glm::bvec4& value) -> void
+	{
 		glm::ivec4 v = value;
 		glUniform4i(mLocation, v.x, v.y, v.z, v.w);
 	}
 
 	template<>
-	void SingleUniform::upload<glm::mat2>(const glm::mat2& value) {
+	inline auto SingleUniform::upload<glm::mat2>(const glm::mat2& value) -> void
+	{
 		glUniformMatrix2fv(mLocation, 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 	template<>
-	void SingleUniform::upload<glm::mat3>(const glm::mat3& value) {
+	inline auto SingleUniform::upload<glm::mat3>(const glm::mat3& value) -> void
+	{
 		glUniformMatrix3fv(mLocation, 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 	template<>
-	void SingleUniform::upload<glm::mat4>(const glm::mat4& value) {
+	inline auto SingleUniform::upload<glm::mat4>(const glm::mat4& value) -> void
+	{
 		glUniformMatrix4fv(mLocation, 1, GL_FALSE, glm::value_ptr(value));
 	}
 
 	template<>
-	void PureArrayUniform::upload<float>(const float* value) {
+	inline auto PureArrayUniform::upload<float>(const float* value) -> void
+	{
 		glUniform1fv(mLocation, mSize, value);
 	}
 
 	template<>
-	void PureArrayUniform::upload<glm::vec2>(const glm::vec2* value) {
-		//ĞèÒªÄÃµ½Êı×é¿ªÍ·µÄÖ¸Õë£¬ÄÃµ½Êı×éµÄµÚÒ»¸öÔªËØ value¡¾0¡¿£¬È»ºóÈ¡ÆäÊı¾İµØÖ·
-		//Êı×éÒ»´®¶ùÊı¾İµÄ¿ªÍ·£¬ÓëµÚÒ»¸öÔªËØµÄ¿ªÍ·ÏàÍ¬
+	inline auto PureArrayUniform::upload<glm::vec2>(const glm::vec2* value) -> void
+	{
+		/// éœ€è¦æ‹¿åˆ°æ•°ç»„å¼€å¤´çš„æŒ‡é’ˆï¼Œæ‹¿åˆ°æ•°ç»„çš„ç¬¬ä¸€ä¸ªå…ƒç´  valueã€0ã€‘ï¼Œç„¶åå–å…¶æ•°æ®åœ°å€
 		glUniform2fv(mLocation, mSize, glm::value_ptr(value[0]));
 	}
 
 	template<>
-	void PureArrayUniform::upload<glm::vec3>(const glm::vec3* value) {
+	inline auto PureArrayUniform::upload<glm::vec3>(const glm::vec3* value) -> void
+	{
 		glUniform3fv(mLocation, mSize, glm::value_ptr(value[0]));
 	}
 
 	template<>
-	void PureArrayUniform::upload<glm::vec4>(const glm::vec4* value) {
+	inline auto PureArrayUniform::upload<glm::vec4>(const glm::vec4* value) -> void
+	{
 		glUniform4fv(mLocation, mSize, glm::value_ptr(value[0]));
 	}
 
 	template<>
-	void PureArrayUniform::upload<int>(const int* value) {
+	inline auto PureArrayUniform::upload<int>(const int* value) -> void
+	{
 		glUniform1iv(mLocation, mSize, value);
 	}
 
 	template<>
-	void PureArrayUniform::upload<glm::ivec2>(const glm::ivec2* value) {
+	inline auto PureArrayUniform::upload<glm::ivec2>(const glm::ivec2* value) -> void
+	{
 		glUniform2iv(mLocation, mSize, glm::value_ptr(value[0]));
 	}
 
 	template<>
-	void PureArrayUniform::upload<glm::ivec3>(const glm::ivec3* value) {
+	inline auto PureArrayUniform::upload<glm::ivec3>(const glm::ivec3* value) -> void
+	{
 		glUniform3iv(mLocation, mSize, glm::value_ptr(value[0]));
 	}
 
 	template<>
-	void PureArrayUniform::upload<glm::ivec4>(const glm::ivec4* value) {
+	inline auto PureArrayUniform::upload<glm::ivec4>(const glm::ivec4* value) -> void
+	{
 		glUniform4iv(mLocation, mSize, glm::value_ptr(value[0]));
 	}
 
 	template<>
-	void PureArrayUniform::upload<glm::mat2>(const glm::mat2* value) {
+	inline auto PureArrayUniform::upload<glm::mat2>(const glm::mat2* value) -> void
+	{
 		glUniformMatrix2fv(mLocation, mSize, GL_FALSE, glm::value_ptr(value[0]));
 	}
 
 	template<>
-	void PureArrayUniform::upload<glm::mat3>(const glm::mat3* value) {
+	inline auto PureArrayUniform::upload<glm::mat3>(const glm::mat3* value) -> void
+	{
 		glUniformMatrix3fv(mLocation, mSize, GL_FALSE, glm::value_ptr(value[0]));
 	}
 
 	template<>
-	void PureArrayUniform::upload<glm::mat4>(const glm::mat4* value) {
+	inline auto PureArrayUniform::upload<glm::mat4>(const glm::mat4* value) -> void
+	{
 		glUniformMatrix4fv(mLocation, mSize, GL_FALSE, glm::value_ptr(value[0]));
 	}
 

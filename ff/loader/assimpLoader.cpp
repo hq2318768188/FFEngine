@@ -147,7 +147,7 @@ namespace ff {
 
 			/// TODO: we may need more material model
 			/// 由于我们只实现了MeshPhongmaterial这种模型通用的材质，所以一律写成PhongMaterial
-			switch (shadingMode) {9
+			switch (shadingMode) {
 			case aiShadingMode::aiShadingMode_Phong:
 				material = MeshPhongMaterial::create();
 				break;

@@ -177,7 +177,8 @@ namespace ff {
 		return extensionString;
 	}
 
-	void DriverProgram::uploadUniforms(UniformHandleMap& uniformMap, const DriverTextures::Ptr& textures) {
+	auto DriverProgram::uploadUniforms(UniformHandleMap& uniformMap, const DriverTextures::Ptr& textures) -> void
+	{
 		mUniforms->upload(uniformMap, textures);
 	}
 
