@@ -104,7 +104,7 @@ namespace ff
 		return true;
 	}
 
-	auto Renderer::swap()  noexcept -> void
+	auto Renderer::swap() noexcept -> void
 	{
 		mWindow->swap();
 	}

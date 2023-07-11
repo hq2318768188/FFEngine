@@ -330,20 +330,25 @@ namespace ff {
 			/// 2 每一次匹配得到result之后,都会进行判断，决定当前Uniform的类型
 			/// 3 如果是StructuredUniform，那么就进行层级架构的建设
 			/// 
-			while (true) {
-				if (std::regex_search(text, result, reg)) {
+			while (true) 
+			{
+				if (std::regex_search(text, result, reg)) 
+				{
 					id = result[1].str();
 					subscript = result[3].str();
 					matchEnd = result.position(0) + result.length(0);
 
-					if (subscript.empty() || (subscript == "[" && matchEnd + 2 == text.length())) {
+					if (subscript.empty() || (subscript == "[" && matchEnd + 2 == text.length())) 
+					{
 						UniformBase::Ptr uniformObject = nullptr;
 
 						/// 生成SingleUniform或者PureArrayUniform
-						if (subscript.empty()) {
+						if (subscript.empty()) 
+						{
 							uniformObject = SingleUniform::create(id, location, type);
 						}
-						else {
+						else 
+						{
 							uniformObject = PureArrayUniform::create(id, location, type, size);
 						}
 
@@ -353,19 +358,22 @@ namespace ff {
 						/// 很重要！！
 						break;
 					}
-					else {
+					else 
+					{
 						StructuredUniform::Ptr next = nullptr;
 
-						//在当前的Container里面，是否已经含有了名字为本id的StructuredUniform
-						//如果有，接下来的Uniforms们，都会装到本StructuredUniform之下
+						/// 在当前的Container里面，是否已经含有了名字为本id的StructuredUniform
+						/// 如果有，接下来的Uniforms们，都会装到本StructuredUniform之下
 						auto uniformMap = container->mUniformMap;
 						auto iter = uniformMap.find(id);
 
-						if (iter == uniformMap.end()) {
+						if (iter == uniformMap.end()) 
+						{
 							next = StructuredUniform::create(id);
 							addUniform(container, next);
 						}
-						else {
+						else 
+						{
 							next = std::dynamic_pointer_cast<StructuredUniform>(iter->second);
 						}
 
@@ -374,7 +382,8 @@ namespace ff {
 
 					text = result.suffix().str();
 				}
-				else {
+				else 
+				{
 					break;
 				}
 			}

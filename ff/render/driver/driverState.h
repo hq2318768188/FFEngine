@@ -6,11 +6,11 @@
 
 namespace ff {
 
-	//配置渲染管线
-	//1 深度检测配置
-	//2 颜色混合配置
-	//3 光栅化配置
-	//4 其他相关配置
+	/// 配置渲染管线
+	/// 1 深度检测配置
+	/// 2 颜色混合配置
+	/// 3 光栅化配置
+	/// 4 其他相关配置
 	class DriverState {
 	public:
 		struct RasterState {
@@ -47,7 +47,7 @@ namespace ff {
 
 		~DriverState() noexcept;
 
-		void viewport(const glm::vec4& viewport) noexcept;
+		auto viewport(const glm::vec4& viewport) noexcept -> void;
 
 		/// \brief 检查上一个物体渲染使用的Program是否跟当前的一样, 不一样刷新
 		/// \param program 
@@ -58,40 +58,40 @@ namespace ff {
 		/// \param material 
 		auto setMaterial(const Material::Ptr& material) noexcept -> void;
 
-		void bindFrameBuffer(const GLuint& frameBuffer) noexcept;
+		auto bindFrameBuffer(const GLuint& frameBuffer) noexcept -> void;
 
-		void setClearColor(float r, float g, float b, float a) noexcept;
+		auto setClearColor(float r, float g, float b, float a) noexcept -> void;
 
-		void setBlending(
-			BlendingType		blendingType,
-			bool				transparent = false,
-			BlendingFactor		blendSrc = BlendingFactor::SrcAlpha,
-			BlendingFactor		blendDst = BlendingFactor::OneMinusSrcAlpha,
-			BlendingEquation	blendEquation = BlendingEquation::AddEquation,
-			BlendingFactor		blendSrcAlpha = BlendingFactor::SrcAlpha,
-			BlendingFactor		blendDstAlpha = BlendingFactor::OneMinusSrcAlpha,
-			BlendingEquation	blendEquationAlpha = BlendingEquation::AddEquation
-		) noexcept;
+		auto setBlending(
+			BlendingType blendingType,
+			bool transparent = false,
+			BlendingFactor blendSrc = BlendingFactor::SrcAlpha,
+			BlendingFactor blendDst = BlendingFactor::OneMinusSrcAlpha,
+			BlendingEquation blendEquation = BlendingEquation::AddEquation,
+			BlendingFactor blendSrcAlpha = BlendingFactor::SrcAlpha,
+			BlendingFactor blendDstAlpha = BlendingFactor::OneMinusSrcAlpha,
+			BlendingEquation blendEquationAlpha = BlendingEquation::AddEquation
+			) noexcept -> void;
 		
-		void setDepth(
-			bool			depthTest,
-			bool			depthWrite,
+		auto setDepth(
+			bool depthTest,
+			bool depthWrite,
 			CompareFunction depthFunction,
-			double			depthClearColor
-		) noexcept;
+			double depthClearColor
+			) noexcept -> void;
 
-		glm::vec4 getClearColor() const noexcept;
+		auto getClearColor() const noexcept -> glm::vec4;
 
 	private:
-		void setBlendingInternal(
-			bool				transparent,
-			BlendingFactor		blendSrc,
-			BlendingFactor		blendDst,
-			BlendingEquation	blendEquation,
-			BlendingFactor		blendSrcAlpha,
-			BlendingFactor		blendDstAlpha,
-			BlendingEquation	blendEquationAlpha
-		) noexcept;
+		auto setBlendingInternal(
+			bool transparent,
+			BlendingFactor blendSrc,
+			BlendingFactor blendDst,
+			BlendingEquation blendEquation,
+			BlendingFactor blendSrcAlpha,
+			BlendingFactor blendDstAlpha,
+			BlendingEquation blendEquationAlpha
+			) noexcept -> void;
 
 	private:
 		RasterState		mCurrentRaster;
