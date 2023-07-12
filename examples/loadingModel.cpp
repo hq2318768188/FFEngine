@@ -83,10 +83,11 @@ Scene::Ptr makeScene() {
 	scene->addChild(directionalLight);
 	scene->addChild(ambientLight);
 
-	auto model = AssimpLoader::load("assets/models/tian/tian.fbx");
+	//auto model = AssimpLoader::load("assets/models/tian/tian.fbx");
+	auto model = AssimpLoader::load(R"(C:\Users\dell\Desktop\testTexured\test.obj)");
 	model->mObject->setPosition(0.0, 0.0, 0.0);
 	model->mObject->rotateX(-90.0);
-	model->mObject->setScale(0.01, 0.01, 0.01);
+	model->mObject->setScale(0.0000001, 0.0000001, 0.0000001);
 	scene->addChild(model->mObject);
 
 	return scene;
@@ -100,11 +101,11 @@ int main() {
 		rDc.mWidth = 1200;
 		rDc.mHeight = 800;
 
-		camera = PerspectiveCamera::create(0.1, 10000, static_cast<float>(rDc.mWidth) / static_cast<float>(rDc.mHeight), 45.0f);
-		camera->setPosition(3, 4, 15);
+		camera = PerspectiveCamera::create(0.1, 10000, static_cast<float>(rDc.mWidth) / static_cast<float>(rDc.mHeight), 60.0f);
+		camera->setPosition(3, 4, 5);
 
 		cameraControl = GameCameraControl::create(camera);
-		cameraControl->setSpeed(0.2f);
+		cameraControl->setSpeed(7.2f);
 
 		/// 生成renderer
 		Renderer::Ptr renderer = Renderer::create(rDc);
