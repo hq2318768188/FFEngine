@@ -10,37 +10,42 @@ namespace ff {
 		dispose();
 	}
 
-	void DriverTexture::dispose() noexcept { 
+	auto DriverTexture::dispose() noexcept -> void 
+	{ 
 		if (mHandle) {
 			glDeleteTextures(GL_TEXTURE_2D, &mHandle);
 			mHandle = 0;
 		}
 	}
 
-	DriverTextures::DriverTextures(const DriverInfo::Ptr& info, const DriverRenderTargets::Ptr& renderTargets) noexcept {
+	DriverTextures::DriverTextures(const DriverInfo::Ptr& info, const DriverRenderTargets::Ptr& renderTargets) noexcept 
+	{
 		mInfo = info;
 		mRenderTargets = renderTargets;
 
 		EventDispatcher::getInstance()->addEventListener("textureDispose", this, &DriverTextures::onTextureDestroy);
 	}
 
-	DriverTextures::~DriverTextures() noexcept {
+	DriverTextures::~DriverTextures() noexcept 
+	{
 		EventDispatcher::getInstance()->removeEventListener("textureDispose", this, &DriverTextures::onTextureDestroy);
 	}
 
-	void DriverTextures::update(const Texture::Ptr& texture) noexcept {
+	auto DriverTextures::update(const Texture::Ptr& texture) noexcept -> void
+	{
 		auto dTexture = get(texture);
 
 		/// mNeedsUpdate在texture初次创建的时候，会是true
 		/// 在使用者更改了texture相关的东西之后，可以手动将其置为true，就会触发更改
-		if (texture->mNeedsUpdate) {
+		if (texture->mNeedsUpdate) 
+		{
 			texture->mNeedsUpdate = false;
 			setupDriverTexture(texture);
 		}
-
 	}
 
-	DriverTexture::Ptr DriverTextures::setupDriverTexture(const Texture::Ptr& texture) noexcept {
+	auto DriverTextures::setupDriverTexture(const Texture::Ptr& texture) noexcept -> DriverTexture::Ptr 
+	{
 		DriverTexture::Ptr dtexture = get(texture);
 		texture->mNeedsUpdate = false;
 
@@ -49,31 +54,34 @@ namespace ff {
 		}
 		glBindTexture(toGL(texture->mTextureType), dtexture->mHandle);
 
-		//设置纹理参数
+		/// 设置纹理参数
 		glTexParameteri(toGL(texture->mTextureType), GL_TEXTURE_MIN_FILTER, toGL(texture->mMinFilter));
 		glTexParameteri(toGL(texture->mTextureType), GL_TEXTURE_MAG_FILTER, toGL(texture->mMagFilter));
 		glTexParameteri(toGL(texture->mTextureType), GL_TEXTURE_WRAP_S, toGL(texture->mWrapS));
 		glTexParameteri(toGL(texture->mTextureType), GL_TEXTURE_WRAP_T, toGL(texture->mWrapT));
 		glTexParameteri(toGL(texture->mTextureType), GL_TEXTURE_WRAP_R, toGL(texture->mWrapR));
 
-		if (texture->mTextureType == TextureType::Texture2D) {
-			//必须是贴图专用的texture而不是渲染目标，才可能有图片数据
+		if (texture->mTextureType == TextureType::Texture2D) 
+		{
+			/// 必须是贴图专用的texture而不是渲染目标，才可能有图片数据
 			const byte* data = (texture->getUsage() == TextureUsage::SamplerTexture) ? texture->mSource->mData.data() : nullptr;
 
-			//1 开辟内存空间
-			//2 传输图片数据
+			/// 1 开辟内存空间
+			/// 2 传输图片数据
 			glTexImage2D(GL_TEXTURE_2D, 0, toGL(texture->mInternalFormat), texture->mWidth, texture->mHeight, 0, toGL(texture->mFormat), toGL(texture->mDataType), data);
 			glGenerateMipmap(GL_TEXTURE_2D);
 		}
-		else {
+		else 
+		{
 
-			//为当前的cubeMap的texture做六次内存开辟以及数据更新
-			for (uint32_t i = 0; i < CubeTexture::CUBE_TEXTURE_COUNT; ++i) {
+			/// 为当前的cubeMap的texture做六次内存开辟以及数据更新
+			for (uint32_t i = 0; i < CubeTexture::CUBE_TEXTURE_COUNT; ++i) 
+			{
 				auto cubeTexture = std::static_pointer_cast<CubeTexture>(texture);
 				const byte* data = (texture->getUsage() == TextureUsage::SamplerTexture) ? cubeTexture->mSources[i]->mData.data() : nullptr;
 
-				//开辟内存及更新数据的顺序：右左上下前后
-				//要给哪一个面开辟内存更新数据，就输入哪一个面的target
+				/// 开辟内存及更新数据的顺序：右左上下前后
+				/// 要给哪一个面开辟内存更新数据，就输入哪一个面的target
 				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, toGL(texture->mInternalFormat), texture->mWidth, texture->mHeight, 0, toGL(texture->mFormat), toGL(texture->mDataType), data);
 			}
 		}
@@ -148,16 +156,19 @@ namespace ff {
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
-	DriverTexture::Ptr DriverTextures::get(const Texture::Ptr& texture) noexcept {
+	auto DriverTextures::get(const Texture::Ptr& texture) noexcept -> DriverTexture::Ptr 
+	{
 		auto iter = mTextures.find(texture->getID());
-		if (iter == mTextures.end()) {
+		if (iter == mTextures.end())
+		{
 			iter = mTextures.insert(std::make_pair(texture->getID(), DriverTexture::create())).first;
 		}
 
 		return iter->second;
 	}
 
-	void DriverTextures::bindTexture(const Texture::Ptr& texture, GLenum textureUnit) {
+	auto DriverTextures::bindTexture(const Texture::Ptr& texture, GLenum textureUnit) -> void 
+	{
 		//GL_TEXTURE0  GL_TEXTURE1 GL_TEXTURE2....
 		//GL_TEXTURE1 = GL_TEXTURE0+1
 		//GL_TEXTURE2 = GL_TEXTURE0+2
@@ -199,7 +210,8 @@ namespace ff {
 		}
 	}
 
-	void DriverTextures::onTextureDestroy(const EventBase::Ptr& e) noexcept {
+	auto DriverTextures::onTextureDestroy(const EventBase::Ptr& e) noexcept -> void 
+	{
 		auto texture = static_cast<Texture*>(e->mTarget);
 		auto id = texture->getID();
 

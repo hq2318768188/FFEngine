@@ -20,9 +20,9 @@ namespace ff {
 
 		~DriverTexture() noexcept;
 
-		void dispose() noexcept;
+		auto dispose() noexcept -> void;
 
-		//通过glGenTextures获得的texture的编号
+		/// 通过glGenTextures获得的texture的编号
 		GLuint	mHandle{ 0 };
 
 	};
@@ -30,7 +30,7 @@ namespace ff {
 	/*
 	* 对于每一个texture，要确定在正式使用的时候，才能进行解析
 	* 如何判定一个texture正式使用了呢？
-	* 本texture被作为uniform进行upload的时候，才是其正式使用的契机
+	* 本texture被作为usniform进行upload的时候，才是其正式使用的契机
 	*/
 	class DriverTextures {
 	public:
@@ -43,23 +43,22 @@ namespace ff {
 
 		~DriverTextures() noexcept;
 
-		//传入texture，获得其对应的DriverTexture
-		DriverTexture::Ptr get(const Texture::Ptr& texture) noexcept;
+		/// \brief 传入texture，获得其对应的DriverTexture
+		auto get(const Texture::Ptr& texture) noexcept -> DriverTexture::Ptr;
 
-		//作用:
-		// 将texture对应的Driver Texture当中的mHandle，绑定到textureUnit的slot上
-		//GL_TEXTURE0 GL_TEXTURE1....
-		void bindTexture(const Texture::Ptr& texture, GLenum textureUnit);
+		/// \brief 将texture对应的Driver Texture当中的mHandle，绑定到textureUnit的slot上
+		///        GL_TEXTURE0 GL_TEXTURE1....
+		auto bindTexture(const Texture::Ptr& texture, GLenum textureUnit) -> void;
 
 		void setupRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept;
 
-		void onTextureDestroy(const EventBase::Ptr& e) noexcept;
+		auto onTextureDestroy(const EventBase::Ptr& e) noexcept -> void;
 
 	private:
-		//要么新建一个texture ， 要么跟新原有texture的属性数据或者内容数据
-		void update(const Texture::Ptr& texture) noexcept;
+		/// \brief 要么新建一个texture ， 要么跟新原有texture的属性数据或者内容数据
+		auto update(const Texture::Ptr& texture) noexcept -> void;
 
-		DriverTexture::Ptr setupDriverTexture(const Texture::Ptr& texture) noexcept;
+		auto setupDriverTexture(const Texture::Ptr& texture) noexcept -> DriverTexture::Ptr;
 
 		void setupFBOColorAttachment(const GLuint& fbo, const GLenum& target, const Texture::Ptr& texture) noexcept;
 

@@ -27,7 +27,8 @@ namespace ff {
 		KeyboardMapType::value_type(GLFW_KEY_D, DKey),
 	};
 
-	enum class MouseAction :uint8_t {
+	enum class MouseAction :uint8_t 
+	{
 		LeftDown,
 		RightDown,
 		MiddleDown,
@@ -41,13 +42,15 @@ namespace ff {
 	/// value:对应的up or down, tuple来表达,tuple拥有顺序,std::get<0>拿到的就是第一个mouseAction
 	using MouseActionMapType = std::unordered_map<uint32_t, std::tuple<MouseAction, MouseAction>>;
 
-	static const MouseActionMapType MouseActionMap = {
+	static const MouseActionMapType MouseActionMap = 
+	{
 		MouseActionMapType::value_type(GLFW_MOUSE_BUTTON_LEFT, {MouseAction::LeftDown, MouseAction::LeftUp}),
 		MouseActionMapType::value_type(GLFW_MOUSE_BUTTON_RIGHT, {MouseAction::RightDown, MouseAction::RightUp}),
 		MouseActionMapType::value_type(GLFW_MOUSE_BUTTON_MIDDLE, {MouseAction::MiddleDown, MouseAction::MiddleUp}),
 	};
 
-	enum class DataType {
+	enum class DataType 
+	{
 		UnsignedByteType,
 		ByteType,
 		Int32Type,
@@ -56,32 +59,40 @@ namespace ff {
 	};
 
 	template<typename T>
-	static DataType toDataType() {
-		if (typeid(T) == typeid(float)) {
+	static DataType toDataType() 
+	{
+		if (typeid(T) == typeid(float)) 
+		{
 			return DataType::FloatType;
 		}
 
-		if (typeid(T) == typeid(int)) {
+		if (typeid(T) == typeid(int)) 
+		{
 			return DataType::Int32Type;
 		}
 
-		if (typeid(T) == typeid(char)) {
+		if (typeid(T) == typeid(char)) 
+		{
 			return DataType::ByteType;
 		}
 
-		if (typeid(T) == typeid(unsigned char)) {
+		if (typeid(T) == typeid(unsigned char)) 
+		{
 			return DataType::UnsignedByteType;
 		}
 
-		if (typeid(T) == typeid(uint32_t)) {
+		if (typeid(T) == typeid(uint32_t)) 
+		{
 			return DataType::UInt32Type;
 		}
 
 		return DataType::FloatType;
 	}
 
-	static unsigned int toGL(const DataType& value) {
-		switch (value) {
+	static auto toGL(const DataType& value) -> unsigned int 
+	{
+		switch (value) 
+		{
 		case DataType::UnsignedByteType:
 			return GL_UNSIGNED_BYTE;
 		case DataType::FloatType:
@@ -98,8 +109,10 @@ namespace ff {
 		}
 	}
 
-	static size_t toSize(const DataType& value) {
-		switch (value) {
+	static auto toSize(const DataType& value) -> size_t
+	{
+		switch (value) 
+		{
 		case DataType::UnsignedByteType:
 			return sizeof(unsigned char);
 		case DataType::FloatType:
@@ -119,7 +132,8 @@ namespace ff {
 	static const std::string DISPOSE = "dispose";
 
 	/// material---------------
-	namespace MaterialName {
+	namespace MaterialName 
+	{
 		static const std::string Material = "Material";
 		static const std::string MeshBasicMaterial = "MeshBasicMaterial";
 		static const std::string MeshPhongMaterial = "MeshPhongMaterial";
@@ -130,12 +144,14 @@ namespace ff {
 
 
 	/// geometry---------------
-	enum class BufferAllocType {
+	enum class BufferAllocType 
+	{
 		StaticDrawBuffer,
 		DynamicDrawBuffer
 	};
 
-	static uint32_t toGL(const BufferAllocType& value) {
+	static auto toGL(const BufferAllocType& value) -> uint32_t
+	{
 		switch (value) {
 		case BufferAllocType::StaticDrawBuffer:
 			return GL_STATIC_DRAW;
@@ -146,13 +162,16 @@ namespace ff {
 		}
 	}
 
-	enum class BufferType {
+	enum class BufferType 
+	{
 		ArrayBuffer,
 		IndexBuffer
 	};
 
-	static uint32_t toGL(const BufferType& value) {
-		switch (value) {
+	static auto toGL(const BufferType& value) -> uint32_t
+	{
+		switch (value) 
+		{
 		case BufferType::ArrayBuffer:
 			return GL_ARRAY_BUFFER;
 		case BufferType::IndexBuffer:
@@ -167,13 +186,16 @@ namespace ff {
 	static constexpr uint32_t MAX_TEXUTRE_COUNT = 8;
 	static constexpr GLuint MAX_TEXTURE = GL_TEXTURE0 + 7;
 
-	enum class TextureType {
+	enum class TextureType 
+	{
 		Texture2D,
 		TextureCubeMap
 	};
 
-	static GLuint toGL(const TextureType& value) noexcept {
-		switch (value) {
+	static auto toGL(const TextureType& value) noexcept -> GLuint
+	{
+		switch (value) 
+		{
 		case TextureType::Texture2D:
 			return GL_TEXTURE_2D;
 		case TextureType::TextureCubeMap:
@@ -183,15 +205,18 @@ namespace ff {
 		}
 	}
 
-	enum class TextureFormat {
+	enum class TextureFormat 
+	{
 		RGB,
 		RGBA,
 		DepthFormat,
 		DepthStencilFormat
 	};
 
-	static GLuint toGL(const TextureFormat& format) noexcept {
-		switch (format) {
+	static auto toGL(const TextureFormat& format) noexcept -> GLuint 
+	{
+		switch (format) 
+		{
 		case TextureFormat::RGB:
 			return GL_RGB;
 		case TextureFormat::RGBA:
@@ -205,8 +230,10 @@ namespace ff {
 		}
 	}
 
-	static uint32_t toStbImageFormat(const TextureFormat& format) {
-		switch (format) {
+	static auto toStbImageFormat(const TextureFormat& format) -> uint32_t
+	{
+		switch (format) 
+		{
 		case TextureFormat::RGB:
 			return STBI_rgb;
 		case TextureFormat::RGBA:
@@ -216,8 +243,10 @@ namespace ff {
 		}
 	}
 
-	static uint32_t toPixelSize(const TextureFormat& format) {
-		switch (format) {
+	static auto toPixelSize(const TextureFormat& format) -> uint32_t 
+	{
+		switch (format) 
+		{
 		case TextureFormat::RGB:
 			return 24;
 		case TextureFormat::RGBA:
@@ -227,8 +256,10 @@ namespace ff {
 		}
 	}
 
-	static uint32_t toByteSize(const TextureFormat& format) {
-		switch (format) {
+	static auto toByteSize(const TextureFormat& format) -> uint32_t 
+	{
+		switch (format) 
+		{
 		case TextureFormat::RGB:
 			return 3;
 		case TextureFormat::RGBA:
@@ -238,14 +269,16 @@ namespace ff {
 		}
 	}
 
-	enum class TextureWrapping {
+	enum class TextureWrapping 
+	{
 		RepeatWrapping,
 		ClampToEdgeWrapping,
 		ClampToBorder,
 		MirroredRepeatWrapping,
 	};
 
-	static uint32_t toGL(const TextureWrapping& value) {
+	static auto toGL(const TextureWrapping& value) -> uint32_t 
+	{
 		switch (value) {
 		case TextureWrapping::RepeatWrapping:
 			return GL_REPEAT;
@@ -260,13 +293,16 @@ namespace ff {
 		}
 	}
 
-	enum class TextureFilter {
+	enum class TextureFilter 
+	{
 		LinearFilter,
 		NearestFilter,
 	};
 
-	static uint32_t toGL(const TextureFilter& value) {
-		switch (value) {
+	static auto toGL(const TextureFilter& value) -> uint32_t 
+	{
+		switch (value) 
+		{
 		case TextureFilter::LinearFilter:
 			return GL_LINEAR;
 		case TextureFilter::NearestFilter:
@@ -276,20 +312,24 @@ namespace ff {
 		}
 	}
 
-	enum class TextureUsage {
+	enum class TextureUsage 
+	{
 		SamplerTexture,
 		RenderTargetTexture
 	};
 
-	enum class Side {
+	enum class Side 
+	{
 		FrontSide,
 		BackSide,
 		DoubleSide,
 		None
 	};
 
-	static uint32_t toGL(const Side& side) {
-		switch (side) {
+	static auto toGL(const Side& side) -> uint32_t 
+	{
+		switch (side) 
+		{
 		case Side::FrontSide:
 			return GL_BACK;
 		case Side::BackSide:
@@ -299,14 +339,17 @@ namespace ff {
 		}
 	}
 
-	enum class FrontFace {
+	enum class FrontFace 
+	{
 		FrontClockWise,
 		FrontCounterClockWise,
 		None
 	};
 
-	static uint32_t toGL(const FrontFace& value) {
-		switch (value) {
+	static auto toGL(const FrontFace& value) -> uint32_t 
+	{
+		switch (value) 
+		{
 		case FrontFace::FrontCounterClockWise:
 			return GL_CCW;
 		case FrontFace::FrontClockWise:
@@ -316,13 +359,16 @@ namespace ff {
 		}
 	}
 
-	enum class BlendingType {
+	enum class BlendingType 
+	{
 		DefaultBlending,
 		CustomBlending,
 		NoBlending,
 		None
 	};
-	enum class BlendingFactor {
+
+	enum class BlendingFactor 
+	{
 		Zero,
 		One,
 		SrcAlpha,
@@ -330,8 +376,10 @@ namespace ff {
 		None
 	};
 
-	static uint32_t toGL(const BlendingFactor& value) {
-		switch (value) {
+	static auto toGL(const BlendingFactor& value) -> uint32_t 
+	{
+		switch (value) 
+		{
 		case BlendingFactor::SrcAlpha:
 			return GL_SRC_ALPHA;
 		case BlendingFactor::OneMinusSrcAlpha:
@@ -345,15 +393,18 @@ namespace ff {
 		}
 	}
 
-	enum class BlendingEquation {
+	enum class BlendingEquation 
+	{
 		AddEquation,
 		MinEquation,
 		MaxEquation,
 		None
 	};
 
-	static uint32_t toGL(const BlendingEquation& value) {
-		switch (value) {
+	static auto toGL(const BlendingEquation& value) -> uint32_t 
+	{
+		switch (value) 
+		{
 		case BlendingEquation::AddEquation:
 			return GL_FUNC_ADD;
 		case BlendingEquation::MaxEquation:
@@ -365,7 +416,8 @@ namespace ff {
 		}
 	}
 
-	enum class CompareFunction {
+	enum class CompareFunction 
+	{
 		Less,
 		LessOrEqual,
 		Bigger,
@@ -373,8 +425,10 @@ namespace ff {
 		None
 	};
 
-	static uint32_t toGL(const CompareFunction& value) {
-		switch (value) {
+	static auto toGL(const CompareFunction& value) -> uint32_t 
+	{
+		switch (value) 
+		{
 		case CompareFunction::Less:
 			return GL_LESS;
 		case CompareFunction::Bigger:
@@ -388,14 +442,17 @@ namespace ff {
 		}
 	}
 
-	enum class DrawMode {
+	enum class DrawMode 
+	{
 		Lines,
 		LinesStrip,
 		Triangles
 	};
 
-	static uint32_t toGL(const DrawMode& value) {
-		switch (value) {
+	static auto toGL(const DrawMode& value) -> uint32_t 
+	{
+		switch (value) 
+		{
 		case DrawMode::Lines:
 			return GL_LINES;
 		case DrawMode::LinesStrip:
@@ -408,7 +465,8 @@ namespace ff {
 	}
 
 	/// attributes
-	static const std::unordered_map<std::string, uint32_t>  LOCATION_MAP = {
+	static const std::unordered_map<std::string, uint32_t>  LOCATION_MAP = 
+{
 		{"position", 0},
 		{"normal", 1},
 		{"color", 2},
