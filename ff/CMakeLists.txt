@@ -3,6 +3,8 @@ project(ff_lib)
 
 file(GLOB_RECURSE FF_FILES ./ *)
 
+find_package(glad CONFIG REQUIRED)
+
 foreach(file IN LISTS FF_FILES)
     if(IS_DIRECTORY "${file}")
         continue()
@@ -15,3 +17,5 @@ foreach(file IN LISTS FF_FILES)
 endforeach()
 
 add_library(${PROJECT_NAME} ${FF_FILES})
+
+target_link_libraries(${PROJECT_NAME} PRIVATE glad::glad )
