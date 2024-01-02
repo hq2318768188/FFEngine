@@ -67,7 +67,7 @@ namespace ff {
 
 		static std::vector<AnimationClip::Ptr> processAnimation(const aiScene* scene);
 
-		static Bone::Ptr AssimpLoader::getBoneByName(const std::string& name, const std::vector<Bone::Ptr>& bones) noexcept;
+		static Bone::Ptr getBoneByName(const std::string& name, const std::vector<Bone::Ptr>& bones) noexcept;
 
 		static void setVertexSkinData(
 			const uint32_t& id, 
