@@ -121,7 +121,6 @@ namespace ff {
 	class PureArrayUniform : public UniformBase {
 	public:
 		using Ptr = std::shared_ptr<PureArrayUniform>;
-		using Ptr = std::shared_ptr<PureArrayUniform>;
 		static Ptr create(const std::string& id, const GLint& location, const GLenum& type, GLint size) {
 			return std::make_shared<PureArrayUniform>(id, location, type, size);
 		}

@@ -34,7 +34,7 @@ namespace ff {
 		Texture::Ptr			mNormalMap{ nullptr };
 		Texture::Ptr			mSpecularMap{ nullptr };
 
-		bool					mNeedsLight{ nullptr };
+		bool					mNeedsLight{ false };
 		uint32_t				mLightsStateVersion{ 0 };
 
 		bool					mSkinning{ false };
