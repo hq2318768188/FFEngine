@@ -118,7 +118,7 @@ namespace ff {
 
 		/// float vector: a b c d value f g h i j
 		/// 假设index = 1 itemsize=3
-		mData[index * mItemSize + 1] = x;
+		mData[index * mItemSize + 1] = value;
 		mNeedsUpdate = true;
 	}
 
@@ -128,7 +128,7 @@ namespace ff {
 
 		/// float vector: a b c d e value g h i j
 		/// 假设index = 1 itemsize=3
-		mData[index * mItemSize + 2] = x;
+		mData[index * mItemSize + 2] = value;
 		mNeedsUpdate = true;
 	}
 
