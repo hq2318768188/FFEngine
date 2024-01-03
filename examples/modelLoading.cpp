@@ -83,8 +83,8 @@ Scene::Ptr makeScene() {
 	scene->addChild(directionalLight);
 	scene->addChild(ambientLight);
 
-	//auto model = AssimpLoader::load("assets/models/tian/tian.fbx");
-	auto model = AssimpLoader::load(R"(C:\Users\dell\Desktop\testTexured\test.obj)");
+	auto model = AssimpLoader::load("assets/models/tian/tian.fbx");
+//	auto model = AssimpLoader::load(R"(C:\Users\dell\Desktop\testTexured\test.obj)");
 	model->mObject->setPosition(0.0, 0.0, 0.0);
 	model->mObject->rotateX(-90.0);
 	model->mObject->setScale(0.0000001, 0.0000001, 0.0000001);
