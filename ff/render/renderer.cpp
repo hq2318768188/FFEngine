@@ -14,6 +14,11 @@ namespace ff
 		}
 	}
 
+	Renderer::Ptr Renderer::create(const Descriptor& descriptor)
+	{
+		return std::make_shared <Renderer>(descriptor);
+	}
+
 	Renderer::Renderer(const Descriptor& descriptor) noexcept
 	{
 		mWidth = descriptor.mWidth;
@@ -36,15 +41,14 @@ namespace ff
 		mBackground = DriverBackground::create(this, mObjects);
 		mRenderState = DriverRenderState::create();
 		mRenderTargets = DriverRenderTargets::create();
+		/// 纹理
 		mTextures = DriverTextures::create(mInfos, mRenderTargets);
 		mShadowMap = DriverShadowMap::create(this, mObjects, mState);
 
 		mFrustum = Frustum::create();
 	}
 
-	Renderer::~Renderer() noexcept
-	{
-	}
+	Renderer::~Renderer() noexcept = default;
 
 	auto Renderer::render(Scene::Ptr scene, Camera::Ptr camera) -> bool
 	{
@@ -60,15 +64,15 @@ namespace ff
 		scene->updateWorldMatrix(true, true);
 		camera->updateWorldMatrix(true, true);
 
-		auto projectionMatrix = camera->getProjectionMatrix();
-		auto cameraInverseMatrix = camera->getWorldMatrixInverse();
+		const auto projectionMatrix = camera->getProjectionMatrix();
+		const auto cameraInverseMatrix = camera->getWorldMatrixInverse();
 
 		mCurrentViewMatrix = projectionMatrix * cameraInverseMatrix;
 		mFrustum->setFromProjectionMatrix(mCurrentViewMatrix);
 
 		/// 2 提取渲染数据，构成渲染列表与状态
 		mRenderState->init(); /// 光与影
-		mRenderList->init();  /// 渲染数据
+		mRenderList->init(); /// 渲染数据
 
 		/// scene当中的数据都是层级架构的树状数据，从这个结构，解析为一个线性列表
 		projectObject(scene, 0, mSortObject);
@@ -104,7 +108,7 @@ namespace ff
 		return true;
 	}
 
-	auto Renderer::swap() noexcept -> void
+	auto Renderer::swap() const noexcept -> void
 	{
 		mWindow->swap();
 	}
@@ -119,12 +123,12 @@ namespace ff
 		/// 对object进行了类型判断，并且分别做不同的处理 
 		if (object->mIsGroup)
 		{
-			auto group = std::static_pointer_cast<Group>(object);
+			const auto group = std::static_pointer_cast<Group>(object);
 			groupOrder = group->mGroupOrder;
 		}
 		else if (object->mIsLight)
 		{
-			auto light = std::static_pointer_cast<Light>(object);
+			const auto light = std::static_pointer_cast<Light>(object);
 			mRenderState->pushLight(light);
 			if (light->mCastShadow)
 			{
@@ -137,7 +141,7 @@ namespace ff
 			/// 骨骼
 			if (object->mIsSkinnedMesh)
 			{
-				auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
+				const auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
 				skinnedMesh->mSkeleton->update();
 			}
 
@@ -148,7 +152,7 @@ namespace ff
 				toolVec = mCurrentViewMatrix * toolVec;
 			}
 
-			auto renderableObject = std::static_pointer_cast<RenderableObject>(object);
+			const auto renderableObject = std::static_pointer_cast<RenderableObject>(object);
 
 			/// 首先对object进行一次视景体剪裁测试
 			if (mFrustum->intersectObject(renderableObject))
@@ -179,7 +183,7 @@ namespace ff
 		const DriverRenderList::Ptr& currentRenderList,
 		const Scene::Ptr& scene,
 		const Camera::Ptr& camera
-		) noexcept -> void
+	) noexcept -> void
 	{
 		const auto opaqueObjects = currentRenderList->getOpaques();
 		const auto transparentObjects = currentRenderList->getTransparents();
@@ -198,7 +202,7 @@ namespace ff
 		const std::vector<RenderItem::Ptr>& renderItems,
 		const Scene::Ptr& scene,
 		const Camera::Ptr& camera
-		) noexcept -> void
+	) noexcept -> void
 	{
 		/// 对当前某一个渲染队列的渲染任务，进行一些必要的状态设置
 		const auto overrideMaterial = scene->mIsScene ? scene->mOverrideMaterial : nullptr;
@@ -219,7 +223,7 @@ namespace ff
 		const Camera::Ptr& camera,
 		const Geometry::Ptr& geometry,
 		const Material::Ptr& material
-		) noexcept -> void
+	) noexcept -> void
 	{
 		object->onBeforeRender(this, scene.get(), camera.get());
 
@@ -237,7 +241,7 @@ namespace ff
 		const Camera::Ptr& camera,
 		const Geometry::Ptr& geometry,
 		const Material::Ptr& material
-		) noexcept -> void
+	) noexcept -> void
 	{
 		auto _scene = scene;
 		if (_scene == nullptr) _scene = mDummyScene;
@@ -281,15 +285,15 @@ namespace ff
 		const Geometry::Ptr& geometry,
 		const Material::Ptr& material,
 		const RenderableObject::Ptr& object
-		) noexcept -> DriverProgram::Ptr
+	) noexcept -> DriverProgram::Ptr
 	{
-		auto lights = mRenderState->mLights;
+		const auto lights = mRenderState->mLights;
 
 		/// 标志着是否需要更换一个绑定的Program
 		bool needsProgramChange = false;
 
 		/// 从backeng里面，获取到当前Material的DriverMaterial
-		auto dMaterial = mMaterials->get(material);
+		const auto dMaterial = mMaterials->get(material);
 
 		/// 如果本物体第一次送入管线进行绘制，比如第一帧的第一个三角形，就必须为其生成一个DriverProgram
 		/// material的Version初始化为1， DriverMaterial的Version初始化为0
@@ -353,7 +357,7 @@ namespace ff
 
 			if (object->mIsSkinnedMesh)
 			{
-				auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
+				const auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
 				if (skinnedMesh->mSkeleton->mBones.size() != dMaterial->mMaxBones)
 				{
 					needsProgramChange = true;
@@ -392,7 +396,7 @@ namespace ff
 		///  DriverMaterial根据我们绘制需要的material，对uniforms进行了更新处理
 		DriverMaterials::refreshMaterialUniforms(uniforms, material);
 
-		bool needsLights = materialNeedsLights(material);
+		const bool needsLights = materialNeedsLights(material);
 
 		auto& lightUniforms = mRenderState->mLights->mState.mLightUniformHandles;
 
@@ -407,8 +411,8 @@ namespace ff
 		/// bones
 		if (object->mIsSkinnedMesh)
 		{
-			auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
-			auto skeleton = skinnedMesh->mSkeleton;
+			const auto skinnedMesh = std::dynamic_pointer_cast<SkinnedMesh>(object);
+			const auto skeleton = skinnedMesh->mSkeleton;
 			uniforms.insert(skeleton->mUniforms.begin(), skeleton->mUniforms.end());
 		}
 
@@ -440,7 +444,7 @@ namespace ff
 		const Material::Ptr& material,
 		const Scene::Ptr& scene,
 		const RenderableObject::Ptr& object
-		) noexcept -> DriverProgram::Ptr
+	) noexcept -> DriverProgram::Ptr
 	{
 		DriverProgram::Ptr program = nullptr;
 
@@ -575,7 +579,7 @@ namespace ff
 		return mState->getClearColor();
 	}
 
-	void Renderer::clear(bool color, bool depth, bool stencil) noexcept
+	auto Renderer::clear(bool color, bool depth, bool stencil) const noexcept -> void
 	{
 		GLbitfield bits = 0;
 

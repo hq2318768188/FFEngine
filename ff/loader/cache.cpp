@@ -16,7 +16,7 @@ namespace ff
 		               {
 			               mInstance = new Cache();
 		               }
-			);
+		);
 
 
 		return mInstance;
@@ -27,21 +27,18 @@ namespace ff
 		EventDispatcher::getInstance()->addEventListener("sourceRelease", this, &Cache::onSourceRelease);
 	}
 
-	Cache::~Cache() noexcept
-	{
-	}
+	Cache::~Cache() noexcept = default;
 
 	auto Cache::getSource(const std::string& path) noexcept -> Source::Ptr
 	{
-		std::hash<std::string> hasher;
-		auto hashCode = hasher(path);
+		constexpr std::hash<std::string> hasher;
+		const auto hashCode = hasher(path);
 
 		std::lock_guard<std::mutex> lock(mMutex); /// 使用互斥锁保护共享数据
 
 		Source::Ptr source = nullptr;
 
-		auto iter = mSources.find(hashCode);
-		if (iter != mSources.end())
+		if (const auto iter = mSources.find(hashCode); iter != mSources.end())
 		{
 			source = iter->second;
 
@@ -55,14 +52,13 @@ namespace ff
 	/// path可能是硬盘文件路径，也可能是网络数据流的url，也可能是嵌入式纹理在模型当中的path/name
 	auto Cache::cacheSource(const std::string& path, Source::Ptr source) noexcept -> void
 	{
-		std::hash<std::string> hasher;
+		constexpr std::hash<std::string> hasher;
 		auto hashCode = hasher(path);
 
 		std::lock_guard<std::mutex> lock(mMutex); /// 使用互斥锁保护共享数据
 
 		/// 寻找是否重复
-		auto iter = mSources.find(hashCode);
-		if (iter != mSources.end())
+		if (const auto iter = mSources.find(hashCode); iter != mSources.end())
 		{
 			return;
 		}
@@ -80,12 +76,12 @@ namespace ff
 	/// cache会监听sourceRelease
 	auto Cache::onSourceRelease(const EventBase::Ptr& e) -> void
 	{
-		auto source = static_cast<Source*>(e->mTarget);
-		auto hashCode = source->mHashCode;
+		const auto source = static_cast<Source*>(e->mTarget);
+		const auto hashCode = source->mHashCode;
 
 		std::lock_guard<std::mutex> lock(mMutex); /// 使用互斥锁保护共享数据
 
-		auto iter = mSources.find(hashCode);
+		const auto iter = mSources.find(hashCode);
 		if (iter == mSources.end())
 		{
 			return;

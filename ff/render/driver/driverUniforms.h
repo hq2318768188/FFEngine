@@ -37,7 +37,8 @@ namespace ff {
 	class SingleUniform : public UniformBase {
 	public:
 		using Ptr = std::shared_ptr<SingleUniform>;
-		static Ptr create(const std::string& id, const GLint& location, const GLenum& type) {
+		static Ptr create(const std::string& id, const GLint& location, const GLenum& type)
+		{
 			return std::make_shared<SingleUniform>(id, location, type);
 		}
 
@@ -56,10 +57,14 @@ namespace ff {
 			const DriverTextures::Ptr& textures,
 			const std::shared_ptr<DriverUniforms>& driverUniforms) -> void override;
 
+		/// \brief 绑定shader texture
+		/// \param driverUniforms 
+		/// \param textures 
+		/// \param value 
 		auto uploadTexture(
 			const std::shared_ptr<DriverUniforms>& driverUniforms,
 			const DriverTextures::Ptr& textures,
-			const std::any& value) -> void;
+			const std::any& value) const -> void;
 
 		
 		/// \brief 将T类型的变量value，传输到location所代表的uniform里面
@@ -139,10 +144,14 @@ namespace ff {
 			const DriverTextures::Ptr& textures,
 			const std::shared_ptr<DriverUniforms>& driverUniforms) -> void override;
 
-		void uploadTexture2DArray(
+		/// \brief 上传后端 shader texture
+		/// \param driverUniforms 
+		/// \param textures 
+		/// \param value 
+		auto uploadTexture2DArray(
 			const std::shared_ptr<DriverUniforms>& driverUniforms,
 			const DriverTextures::Ptr& textures,
-			const std::any& value);
+			const std::any& value) const -> void;
 
 		template<typename T>
 		auto upload(const T* value) -> void;
@@ -221,19 +230,21 @@ namespace ff {
 		DriverUniforms(const GLint& program) noexcept;
 
 		~DriverUniforms() noexcept;
-
+	public:
 		auto upload(UniformHandleMap& uniformHandleMap, const DriverTextures::Ptr& textures) -> void;
 
 		auto addUniform(UniformContainer* container, const UniformBase::Ptr& uniformObject) -> void;
 
 		
-		/// \brief texture slots
+		/// \brief set texture slots
 		/// \param location 
 		/// \param slot 
 		auto setTextureSlot(const GLint& location, GLuint slot) noexcept -> void;
 
+		/// \brief get texture slot 
+		/// \param location 
+		/// \return  
 		auto getTextureSlot(const GLint& location) noexcept -> GLint;
-
 
 		/// \brief 跟Texture Array相关 uniform sampler2D texs[10]
 		/// \param location 

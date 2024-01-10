@@ -5,17 +5,17 @@
 #include "driverAttributes.h"
 #include "driverInfo.h"
 
-namespace ff {
-	class DriverObjects {
+namespace ff
+{
+	class DriverObjects
+	{
 	public:
 		using Ptr = std::shared_ptr<DriverObjects>;
 		static Ptr create(
 			const DriverGeometries::Ptr& geometries,
 			const DriverAttributes::Ptr& attributes,
 			const DriverInfo::Ptr& info
-		) {
-			return std::make_shared <DriverObjects>(geometries, attributes, info);
-		}
+		);
 
 		DriverObjects(
 			const DriverGeometries::Ptr& geometries,
@@ -25,15 +25,17 @@ namespace ff {
 
 		~DriverObjects() noexcept;
 
-		auto update(const RenderableObject::Ptr& object) noexcept -> Geometry::Ptr;
+		Geometry::Ptr update(const RenderableObject::Ptr& object) noexcept;
 
 	private:
 		/// TODO  还差一个instance绘制的功能
 
+		/// key：geometry的ID
+		/// value：frameNumber
 		std::unordered_map<ID, uint32_t> mUpdateMap{};
 
-		DriverInfo::Ptr mInfo{ nullptr };
-		DriverAttributes::Ptr mAttributes{ nullptr };
-		DriverGeometries::Ptr mGeometries{ nullptr };
+		DriverInfo::Ptr mInfo{nullptr};
+		DriverAttributes::Ptr mAttributes{nullptr};
+		DriverGeometries::Ptr mGeometries{nullptr};
 	};
 }

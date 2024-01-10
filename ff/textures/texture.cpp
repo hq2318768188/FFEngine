@@ -2,8 +2,8 @@
 #include "../tools/identity.h"
 #include "../global/eventDispatcher.h"
 
-namespace ff {
-
+namespace ff
+{
 	Texture::Texture(
 		const uint32_t& width,
 		const uint32_t& height,
@@ -14,7 +14,8 @@ namespace ff {
 		const TextureFilter& magFilter,
 		const TextureFilter& minFilter,
 		const TextureFormat& format
-	) noexcept {
+	) noexcept
+	{
 		mID = Identity::generateID();
 		mWidth = width;
 		mHeight = height;
@@ -28,13 +29,15 @@ namespace ff {
 		mTextureType = TextureType::Texture2D;
 	}
 
-	Texture::~Texture() noexcept {
+	Texture::~Texture() noexcept
+	{
 		/// 消亡的时候，通过dispatcher向外发出本texture消亡的消息
 		EventBase::Ptr e = EventBase::create("textureDispose");
 		e->mTarget = this;
 		EventDispatcher::getInstance()->dispatchEvent(e);
 
-		if (mSource) {
+		if (mSource)
+		{
 			EventBase::Ptr e = EventBase::create("sourceRelease");
 			e->mTarget = mSource.get();
 			EventDispatcher::getInstance()->dispatchEvent(e);
@@ -43,7 +46,8 @@ namespace ff {
 
 	auto Texture::clone() noexcept -> Texture::Ptr
 	{
-		auto texture = Texture::create(mWidth, mHeight, mDataType, mWrapS, mWrapT, mWrapR, mMagFilter, mMinFilter, mFormat);
+		auto texture = Texture::create(mWidth, mHeight, mDataType, mWrapS, mWrapT, mWrapR, mMagFilter, mMinFilter,
+		                               mFormat);
 		texture->mSource = mSource;
 		texture->mUsage = mUsage;
 		texture->mTextureType = mTextureType;
@@ -51,5 +55,4 @@ namespace ff {
 
 		return texture;
 	}
-
 }

@@ -2,13 +2,25 @@
 #include "../tools/identity.h"
 #include "../global/eventDispatcher.h"
 
-namespace ff {
+namespace ff
+{
+	Object3D::Ptr Object3D::create()
+	{
+		return std::make_shared <Object3D>();
+	}
 
-	Object3D::Object3D() noexcept {
+	auto Object3D::fakeFunction() noexcept -> void
+	{
+		
+	}
+
+	Object3D::Object3D() noexcept
+	{
 		mID = Identity::generateID();
 	}
 
-	Object3D::~Object3D() noexcept {
+	Object3D::~Object3D() noexcept
+	{
 		EventBase::Ptr e = EventBase::create("objectDispose");
 		e->mTarget = this;
 		EventDispatcher::getInstance()->dispatchEvent(e);
@@ -16,7 +28,7 @@ namespace ff {
 
 	auto Object3D::setPosition(float x, float y, float z) noexcept -> void
 	{
-		setPosition(glm::vec3(x, y, z));	
+		setPosition(glm::vec3(x, y, z));
 	}
 
 	auto Object3D::setPosition(const glm::vec3& position) noexcept -> void
@@ -37,7 +49,7 @@ namespace ff {
 		float scaleX = glm::length(glm::vec3(mLocalMatrix[0]));
 		float scaleY = glm::length(glm::vec3(mLocalMatrix[1]));
 		float scaleZ = glm::length(glm::vec3(mLocalMatrix[2]));
- 
+
 		/// 将glm的四元数转换为一个旋转矩阵
 		glm::mat4 rotateMatrix = glm::mat4_cast(quaternion);
 
@@ -47,12 +59,11 @@ namespace ff {
 		mLocalMatrix[2] = rotateMatrix[2] * scaleX;
 
 		/// 基于现在的参数，推导其他的参数
-		decompose(); 
+		decompose();
 	}
 
 	auto Object3D::setScale(float x, float y, float z) noexcept -> void
 	{
-
 		/// 拿到某一列，normalize去掉之前的scale影响,再乘以当前的相关scale
 		auto col0 = glm::normalize(glm::vec3(mLocalMatrix[0])) * x;
 		auto col1 = glm::normalize(glm::vec3(mLocalMatrix[1])) * y;
@@ -162,7 +173,8 @@ namespace ff {
 
 	auto Object3D::updateMatrix() noexcept -> void
 	{
-		if (mNeedsUpdateMatrix) {
+		if (mNeedsUpdateMatrix)
+		{
 			mNeedsUpdateMatrix = false;
 			auto translateMatrix = glm::translate(glm::mat4(1.0f), mPosition);
 			auto rotateMatrix = glm::mat4_cast(mQuaternion);
@@ -175,10 +187,10 @@ namespace ff {
 	/// 通过层级matrix相乘，得到最后的转换到世界坐标系的矩阵
 	auto Object3D::updateWorldMatrix(bool updateParent, bool updateChildren) noexcept -> glm::mat4
 	{
-
 		/// 检查有没有父节点
-		if (!mParent.expired() && updateParent) {
-			auto parent = mParent.lock(); /// 拿到父节点的sharedPtr
+		if (!mParent.expired() && updateParent)
+		{
+			const auto parent = mParent.lock(); /// 拿到父节点的sharedPtr
 			parent->updateWorldMatrix(true, false); ///调用父节点的worldMatrix升级更新
 		}
 
@@ -189,14 +201,17 @@ namespace ff {
 		mWorldMatrix = mLocalMatrix;
 
 		/// 如果有父节点，那么需要做成父节点的worldMatrix，从而把上方所有节点的影响带入
-		if (!mParent.expired()) {
+		if (!mParent.expired())
+		{
 			auto parent = mParent.lock();
 			mWorldMatrix = parent->mWorldMatrix * mWorldMatrix;
 		}
 
 		/// 依次更新子节点的worldMatrix
-		if (updateChildren) {
-			for (auto& child : mChildren) {
+		if (updateChildren)
+		{
+			for (auto& child : mChildren)
+			{
 				child->updateWorldMatrix(false, true);
 			}
 		}
@@ -260,7 +275,8 @@ namespace ff {
 		return mWorldMatrix;
 	}
 
-	glm::mat4 Object3D::getModelViewMatrix() const noexcept {
+	glm::mat4 Object3D::getModelViewMatrix() const noexcept
+	{
 		return mModelViewMatrix;
 	}
 
@@ -272,7 +288,8 @@ namespace ff {
 
 	auto Object3D::addChild(const Object3D::Ptr& child) noexcept -> bool
 	{
-		if (child == shared_from_this()) {
+		if (child == shared_from_this())
+		{
 			return false;
 		}
 
@@ -286,7 +303,7 @@ namespace ff {
 
 		mChildren.push_back(child);
 
-		return true; 
+		return true;
 	}
 
 	auto Object3D::getChildren() const noexcept -> const std::vector<Object3D::Ptr>&
@@ -305,6 +322,6 @@ namespace ff {
 		glm::vec4 perspective;
 
 		/// 是将变换矩阵当中的参数们，抽离出来 
-		glm::decompose(mLocalMatrix, mScale, mQuaternion, mPosition,skew, perspective);
+		glm::decompose(mLocalMatrix, mScale, mQuaternion, mPosition, skew, perspective);
 	}
 }

@@ -1,14 +1,71 @@
 ﻿#include "driverRenderList.h"
 
-namespace ff {
+namespace ff
+{
+	RenderItem::Ptr RenderItem::create()
+	{
+		return std::make_shared<RenderItem>();
+	}
 
-	RenderItem::RenderItem() noexcept {}
+	auto smallerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) -> bool
+	{
+		/// 首先保证groupOrder大的物体先绘制
+		if (item0->mGroupOrder != item1->mGroupOrder)
+		{
+			return item0->mGroupOrder > item1->mGroupOrder;
+		}
+		/// 小的z，排在前面
+		else if (item0->mZ != item1->mZ)
+		{
+			return item0->mZ < item1->mZ;
+		}
+		else
+		{
+			/// 如果groupOrder与z分别相等,但是sort函数，必须要给到其一个true or false
+			/// id越大，说明创建的越晚，则创建越晚的物体，越先绘制
+			return item0->mID > item1->mID;
+		}
+	}
 
-	RenderItem::~RenderItem() noexcept {}
+	auto biggerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) -> bool
+	{
+		if (item0->mGroupOrder != item1->mGroupOrder)
+		{
+			return item0->mGroupOrder > item1->mGroupOrder;
+		}
+		else if (item0->mZ != item1->mZ)
+		{
+			/// z越大，排序越靠前
+			return item0->mZ > item1->mZ;
+		}
+		else
+		{
+			return item0->mID > item1->mID;
+		}
+	}
 
-	DriverRenderList::DriverRenderList() {}
+	DriverRenderList::Ptr DriverRenderList::create()
+	{
+		return std::make_shared<DriverRenderList>();
+	}
 
-	DriverRenderList::~DriverRenderList() {}
+	auto DriverRenderList::getOpaques() const noexcept -> const auto&
+	{
+		return mOpaques;
+	}
+
+	auto DriverRenderList::getTransparents() const noexcept -> const auto&
+	{
+		return mTransparents;
+	}
+
+	RenderItem::RenderItem() noexcept = default;
+
+	RenderItem::~RenderItem() noexcept = default;
+
+	DriverRenderList::DriverRenderList() = default;
+
+	DriverRenderList::~DriverRenderList() = default;
 
 	/// 每一帧开始的时候，渲染列表都会被清空
 	auto DriverRenderList::init() noexcept -> void
@@ -27,7 +84,7 @@ namespace ff {
 		const Material::Ptr& material,
 		const uint32_t& groupOrder,
 		float z
-		) noexcept -> void
+	) noexcept -> void
 	{
 		/// 每一帧都会重新构建renderList，所以比如有5个物体，如果不做renderItem的缓存，那么
 		/// 每一帧都要重新new 5个renderItem
@@ -36,10 +93,12 @@ namespace ff {
 		const auto renderItem = getNextRenderItem(object, geometry, material, groupOrder, z);
 
 		/// 检测是否开启透明
-		if (material->mTransparent) {
+		if (material->mTransparent)
+		{
 			mTransparents.push_back(renderItem);
 		}
-		else {
+		else
+		{
 			mOpaques.push_back(renderItem);
 		}
 	}
@@ -50,17 +109,19 @@ namespace ff {
 		const Material::Ptr& material,
 		const uint32_t& groupOrder,
 		float z
-		) noexcept -> RenderItem::Ptr
+	) noexcept -> RenderItem::Ptr
 	{
 		RenderItem::Ptr renderItem = nullptr;
 
 		/// 如果当前renderItem的总数已经大于了缓存数量，那么就重新生成
 		/// 否则直接从缓存当中抽取第mRenderItemIndex个item
-		if (mRenderItemIndex >= mRenderItemCache.size()) {
+		if (mRenderItemIndex >= mRenderItemCache.size())
+		{
 			renderItem = RenderItem::create();
 			mRenderItemCache.push_back(renderItem);
 		}
-		else {
+		else
+		{
 			renderItem = mRenderItemCache[mRenderItemIndex];
 		}
 
@@ -80,7 +141,6 @@ namespace ff {
 		const RenderListSortFunction& opaqueSort,
 		const RenderListSortFunction& transparentSort) noexcept -> void
 	{
-
 		if (!mOpaques.empty()) std::sort(mOpaques.begin(), mOpaques.end(), opaqueSort);
 
 		if (!mTransparents.empty()) std::sort(mTransparents.begin(), mTransparents.end(), transparentSort);
@@ -91,15 +151,17 @@ namespace ff {
 	/// 所以finish需要检测剩下的没有使用到的item，然后依次将其智能指针的引用置空
 	auto DriverRenderList::finish() noexcept -> void
 	{
-		auto listSize = mRenderItemCache.size();
+		const auto listSize = mRenderItemCache.size();
 
 		/// 0 1 2 ..... 9 cache里面的
 		/// 0 1 2 3 4 使用到的
 		/// mRenderItemIndex = 5，则这个循环会检测：
 		/// 5 6 7 8 9
-		for (uint32_t i = mRenderItemIndex; i < listSize; ++i) {
+		for (uint32_t i = mRenderItemIndex; i < listSize; ++i)
+		{
 			auto renderItem = mRenderItemCache[i];
-			if (renderItem == nullptr) {
+			if (renderItem == nullptr)
+			{
 				break;
 			}
 

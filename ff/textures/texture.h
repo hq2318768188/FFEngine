@@ -46,46 +46,52 @@ namespace ff {
 			const TextureFormat& format = TextureFormat::RGBA
 		) noexcept;
 
-		~Texture() noexcept;
-
+		virtual ~Texture() noexcept;
+	public:
+		/// \brief 纹理ID
+		/// \return  
 		auto getID() const noexcept -> ID { return mID; }
 
+		/// \brief 纹理使用方法
+		/// \return  
 		auto getUsage() const noexcept -> TextureUsage { return mUsage; }
 
 		virtual auto clone() noexcept -> Texture::Ptr;
 
 	public:
+		/// \brief
 		/// Filter，Nearest四舍五入， 直接取得某个像素的颜色值
 		/// Filter，Linear取得周边像素的颜色值，按照远近程度标定权重，加权平均
 		TextureFilter		mMinFilter{ TextureFilter::LinearFilter };
 		TextureFilter		mMagFilter{ TextureFilter::LinearFilter };
 
-		/// 包装方式，纹理坐标超出了0-1，怎么办？
+		/// \brief  包装方式，纹理坐标超出了0-1，怎么办？
 		TextureWrapping		mWrapS{ TextureWrapping::RepeatWrapping };
 		TextureWrapping		mWrapT{ TextureWrapping::RepeatWrapping };
 		TextureWrapping		mWrapR{ TextureWrapping::RepeatWrapping };
 
-		/// 像素格式信息
+		/// \brief 像素格式信息
 		/// Format 即输入的图片像素格式，internalFormat即在shader采样的时候，内存中存放的格式
 		TextureFormat		mFormat{ TextureFormat::RGBA };
 		TextureFormat		mInternalFormat{ TextureFormat::RGBA };
 
-		/// 每个颜色通道的数值格式
+		/// \brief 每个颜色通道的数值格式
 		DataType			mDataType{ DataType::UnsignedByteType };
 
-		/// 必要的长宽
+		/// \brief 必要的长宽
 		uint32_t			mWidth{ 0 };
 		uint32_t			mHeight{ 0 };
 
+		/// \brief 原图片数据
 		Source::Ptr			mSource{ nullptr };
 
-		/// 要么长宽变了，要么参数变了，要么数据变了
+		/// \brief 要么长宽变了，要么参数变了，要么数据变了
 		bool				mNeedsUpdate{ true };
 
-		/// 纹理类型，平面纹理，立方体贴图，纹理数组。。。
+		/// \brief 纹理类型，平面纹理，立方体贴图，纹理数组。。。
 		TextureType			mTextureType{ TextureType::Texture2D };
 
-		/// 本纹理用于何方，贴图，画布（colorRendertarget/colorAttachment）
+		/// \brief 本纹理用于何方，贴图，画布（colorRendertarget/colorAttachment）
 		TextureUsage		mUsage{ TextureUsage::SamplerTexture };
 
 	protected:

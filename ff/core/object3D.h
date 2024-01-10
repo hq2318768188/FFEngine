@@ -1,36 +1,36 @@
 ﻿#pragma once
 #include "../global/base.h"
 
-namespace ff {
-
-	class ObjectTypeChecker {
+namespace ff
+{
+	class ObjectTypeChecker
+	{
 	public:
-		bool mIsRenderableObject{ false };
-		bool mIsMesh{ false };
-		bool mIsSkinnedMesh{ false };
-		bool mIsBone{ false };
-		bool mIsScene{ false };
-		bool mIsCamera{ false };
-		bool mIsPerpectiveCamera{ false };
-		bool mIsOrthographicCamera{ false };
-		bool mIsGroup{ false };
-		bool mIsLight{ false };
-		bool mIsAmbientLight{ false };
-		bool mIsDirectionalLight{ false };
+		bool mIsRenderableObject{false};
+		bool mIsMesh{false};
+		bool mIsSkinnedMesh{false};
+		bool mIsBone{false};
+		bool mIsScene{false};
+		bool mIsCamera{false};
+		bool mIsPerpectiveCamera{false};
+		bool mIsOrthographicCamera{false};
+		bool mIsGroup{false};
+		bool mIsLight{false};
+		bool mIsAmbientLight{false};
+		bool mIsDirectionalLight{false};
 	};
 
 	/// Object3D是所有空间变换、节点结构等的最基础的类型
-	class Object3D : public std::enable_shared_from_this<Object3D>, public ObjectTypeChecker {
+	class Object3D : public std::enable_shared_from_this<Object3D>, public ObjectTypeChecker
+	{
 	public:
 		/// 使用智能指针进行管理
 		using Ptr = std::shared_ptr<Object3D>;
-		static Ptr create() {
-			return std::make_shared <Object3D>();
-		}
+		static Ptr create();
 
 		Object3D() noexcept;
 
-		~Object3D() noexcept;
+		virtual ~Object3D() noexcept;
 
 		/// TODO 满足动态类型转换 
 		/// Parent* p = new ChildA();
@@ -42,7 +42,7 @@ namespace ff {
 		/* std::reinterpret_pointer_cast
 		std::dynamic_pointer_cast;
 		std::static_pointer_cast; */
-		virtual auto fakeFunction() noexcept -> void {}
+		virtual auto fakeFunction() noexcept -> void;
 
 		/// \brief 设置OBJ3D坐标位置 
 		/// \param x 
@@ -179,48 +179,48 @@ namespace ff {
 
 	public:
 		/// visible来表示是否对其进行渲染
-		bool	mVisible{ true };
+		bool mVisible{true};
 
 		/// 是否产生阴影
-		bool	mCastShadow{ true };
+		bool mCastShadow{true};
 
 		/// obj的名字
 		std::string mName;
 
 		/// 表示是否强制对矩阵进行更新
-		bool	mNeedsUpdateMatrix{ true };
+		bool mNeedsUpdateMatrix{true};
 
 	protected:
-		ID	mID{ 0 };/// 全局唯一id
+		ID mID{0}; /// 全局唯一id
 
 		/// for setting easy
-		glm::vec3 mPosition{ glm::vec3(0.0f) };
+		glm::vec3 mPosition{glm::vec3(0.0f)};
 
 		/// 对于object的旋转变换，我们一律采用四元数
-		glm::quat mQuaternion{ glm::quat(1.0f, 0.0f, 0.0f, 0.0f) };
+		glm::quat mQuaternion{glm::quat(1.0f, 0.0f, 0.0f, 0.0f)};
 
-		glm::vec3 mScale{ glm::vec3(1.0f) };
+		glm::vec3 mScale{glm::vec3(1.0f)};
 
 		/// localMatrix对其模型坐标系进行了变换
-		glm::mat4	mLocalMatrix = glm::mat4(1.0f);
+		glm::mat4 mLocalMatrix = glm::mat4(1.0f);
 
 		/// worldMatrix将模型顶点从模型坐标系，转换到世界坐标系
-		glm::mat4	mWorldMatrix = glm::mat4(1.0f);
+		glm::mat4 mWorldMatrix = glm::mat4(1.0f);
 
 		/// 保留参数
-		bool		mNeedsUpdate{ false };
+		bool mNeedsUpdate{false};
 
 		/// 节点系统
 		/// 父节点采用weakPtr ，防止循环引用
-		std::weak_ptr<Object3D>		mParent;
+		std::weak_ptr<Object3D> mParent;
 		/// 父节点存储了子节点的sharedPtr，建立一次引用,保证子节点的引用计数至少大于1
-		std::vector<Object3D::Ptr>	mChildren{};
+		std::vector<Object3D::Ptr> mChildren{};
 
 		/// for shading
 		/// modelViewMatrix将模型顶点，从模型坐标系，转换到当前摄像机坐标系,viewMatrix * worldMatrix
-		glm::mat4	mModelViewMatrix = glm::mat4(1.0f);
+		glm::mat4 mModelViewMatrix = glm::mat4(1.0f);
 
 		/// 将模型的normal从模型坐标系，转换到摄像机坐标系
-		glm::mat3	mNormalMatrix = glm::mat3(1.0f);
+		glm::mat3 mNormalMatrix = glm::mat3(1.0f);
 	};
 }

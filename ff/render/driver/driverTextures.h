@@ -19,10 +19,12 @@ namespace ff {
 		DriverTexture() noexcept;
 
 		~DriverTexture() noexcept;
-
+	public:
+		 
+		/// \brief 解除纹理id 
 		auto dispose() noexcept -> void;
-
-		/// 通过glGenTextures获得的texture的编号
+	public:
+		/// \brief 通过glGenTextures获得的texture的编号
 		GLuint	mHandle{ 0 };
 
 	};
@@ -42,12 +44,16 @@ namespace ff {
 		DriverTextures(const DriverInfo::Ptr& info, const DriverRenderTargets::Ptr& renderTargets) noexcept;
 
 		~DriverTextures() noexcept;
-
-		/// \brief 传入texture，获得其对应的DriverTexture
+	public:
+		/// \brief  传入texture，获得其对应的DriverTexture
+		/// \param texture 
+		/// \return  
 		auto get(const Texture::Ptr& texture) noexcept -> DriverTexture::Ptr;
 
 		/// \brief 将texture对应的Driver Texture当中的mHandle，绑定到textureUnit的slot上
 		///        GL_TEXTURE0 GL_TEXTURE1....
+		/// \param texture 
+		/// \param textureUnit 
 		auto bindTexture(const Texture::Ptr& texture, GLenum textureUnit) -> void;
 
 		void setupRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept;
@@ -55,9 +61,13 @@ namespace ff {
 		auto onTextureDestroy(const EventBase::Ptr& e) noexcept -> void;
 
 	private:
-		/// \brief 要么新建一个texture ， 要么跟新原有texture的属性数据或者内容数据
+		/// \brief 要么新建一个texture ， 要么更新原有texture的属性数据或者内容数据
+		/// \param texture 
 		auto update(const Texture::Ptr& texture) noexcept -> void;
 
+		/// \brief 安装一个DriverTexture (opengl底层创建纹理)
+		/// \param texture 
+		/// \return  
 		auto setupDriverTexture(const Texture::Ptr& texture) noexcept -> DriverTexture::Ptr;
 
 		void setupFBOColorAttachment(const GLuint& fbo, const GLenum& target, const Texture::Ptr& texture) noexcept;

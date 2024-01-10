@@ -314,8 +314,8 @@ namespace ff {
 
 	enum class TextureUsage 
 	{
-		SamplerTexture,
-		RenderTargetTexture
+		SamplerTexture,			/// << 贴图使用（ 采样的纹理 ）
+		RenderTargetTexture		/// << 渲染目标 
 	};
 
 	enum class Side 

@@ -1,13 +1,14 @@
-#pragma once 
+#pragma once
 #include "../global/base.h"
 #include "../global/constant.h"
 #include "texture.h"
 
-namespace ff {
-
-	class CubeTexture :public Texture {
+namespace ff
+{
+	class CubeTexture : public Texture
+	{
 	public:
-		static const uint32_t CUBE_TEXTURE_COUNT = 6;
+		static constexpr uint32_t CUBE_TEXTURE_COUNT = 6;
 		using Ptr = std::shared_ptr<CubeTexture>;
 		static Ptr create(
 			const uint32_t& width,
@@ -19,18 +20,7 @@ namespace ff {
 			const TextureFilter& magFilter = TextureFilter::NearestFilter,
 			const TextureFilter& minFilter = TextureFilter::NearestFilter,
 			const TextureFormat& format = TextureFormat::RGBA
-		) {
-			return std::make_shared<CubeTexture>(
-				width,
-				height,
-				dataType,
-				wrapS,
-				wrapT,
-				wrapR,
-				magFilter,
-				minFilter,
-				format);
-		}
+		);
 
 		CubeTexture(
 			const uint32_t& width,
@@ -44,8 +34,8 @@ namespace ff {
 			const TextureFormat& format = TextureFormat::RGBA
 		) noexcept;
 
-		~CubeTexture() noexcept;
+		~CubeTexture() noexcept override;
 
-		Source::Ptr mSources[CUBE_TEXTURE_COUNT] = { nullptr };
+		Source::Ptr mSources[CUBE_TEXTURE_COUNT] = {nullptr};
 	};
 }

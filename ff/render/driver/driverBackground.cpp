@@ -4,56 +4,64 @@
 #include "../../camera/camera.h"
 #include "../renderer.h"
 
-namespace ff {
+namespace ff
+{
+	DriverBackground::Ptr DriverBackground::create(Renderer* renderer, const DriverObjects::Ptr& objects)
+	{
+		return std::make_shared<DriverBackground>(renderer, objects);
+	}
 
-	DriverBackground::DriverBackground(Renderer* renderer, const DriverObjects::Ptr& objects) noexcept {
+	DriverBackground::DriverBackground(Renderer* renderer, const DriverObjects::Ptr& objects) noexcept
+	{
 		mRenderer = renderer;
 		mObjects = objects;
 	}
 
-	DriverBackground::~DriverBackground() noexcept {
-	}
+	DriverBackground::~DriverBackground() noexcept = default;
 
-	void DriverBackground::render(const DriverRenderList::Ptr& renderList, const Scene::Ptr& scene) {
-		//clear renderer
-		if (mRenderer->mAutoClear) {
+	auto DriverBackground::render(const DriverRenderList::Ptr& renderList, const Scene::Ptr& scene) -> void
+	{
+		/// clear renderer
+		if (mRenderer->mAutoClear)
+		{
 			mRenderer->clear();
 		}
 
-		//prepare background
-		//将CubeTexture取出 ,赋值给background
-		auto background = scene->mBackground;
-		if (background == nullptr) {
+		/// prepare background
+		/// 将CubeTexture取出 ,赋值给background
+		const auto background = scene->mBackground;
+		if (background == nullptr)
+		{
 			return;
 		}
 
-		//构造用于绘制天空盒（CubeMap）的立方体Mesh
-		if (mBoxMesh == nullptr) {
-			//构建一个1*1*1 的boxGeometry
-			auto geometry = BoxGeometry::create(1.0f, 1.0f, 1.0f);
+		/// 构造用于绘制天空盒（CubeMap）的立方体Mesh
+		if (mBoxMesh == nullptr)
+		{
+			/// 构建一个1*1*1 的boxGeometry
+			const auto geometry = BoxGeometry::create(1.0f, 1.0f, 1.0f);
 			geometry->deleteAttribute("normal");
 			geometry->deleteAttribute("uv");
 
-			//摄像机永远放在box的内部中心，所以只绘制内部即可
-			auto material = CubeMaterial::create();
+			/// 摄像机永远放在box的内部中心，所以只绘制内部即可
+			const auto material = CubeMaterial::create();
 			material->mSide = Side::BackSide;
 			material->mEnvMap = background;
 
 			mBoxMesh = Mesh::create(geometry, material);
 
-			//当前的mBoxMesh，仍然处于世界坐标系的（000）位置，这个box需要跟着Camera移动。
-			//在这个mBoxMesh进行绘制之前，做这个变换操作
-			//lamda表达式大家要自行学习
-			mBoxMesh->mOnBeforeRenderCallback = [&](Renderer* render, Scene* scene, Camera* camera) {
+			/// 当前的mBoxMesh，仍然处于世界坐标系的（000）位置，这个box需要跟着Camera移动。
+			/// 在这个mBoxMesh进行绘制之前，做这个变换操作
+			mBoxMesh->mOnBeforeRenderCallback = [&](Renderer* render, Scene* scene, Camera* camera)
+			{
 				mBoxMesh->setPosition(camera->getWorldPosition());
 				mBoxMesh->updateWorldMatrix();
 			};
 
-			//在这里要单独对这个mesh进行一次解析，创建其VBO等
+			/// 在这里要单独对这个mesh进行一次解析，创建其VBO等
 			mObjects->update(mBoxMesh);
 		}
 
 		renderList->push(mBoxMesh, mBoxMesh->getGeometry(), mBoxMesh->getMaterial(), 0, 0);
 	}
-
 }

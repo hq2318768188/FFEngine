@@ -6,12 +6,13 @@
 #include "../textures/source.h"
 #include "../global/eventDispatcher.h"
 
-namespace ff {
-
+namespace ff
+{
 	/// 从中读取到已经保存过的source
 	/// 将新的source 缓存到这个类里面
 	/// source在被其他对象放弃使用权的时候，能够知晓，并且没有人用的时候，析构
-	class Cache {
+	class Cache
+	{
 	public:
 		static Cache* getInstance();
 
