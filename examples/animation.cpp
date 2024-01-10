@@ -29,10 +29,10 @@
 using namespace ff;
 
 /// 场景
-Scene::Ptr	scene = nullptr;
+Scene::Ptr scene = nullptr;
 
 /// 地板平面
-Mesh::Ptr	plane = nullptr;
+Mesh::Ptr plane = nullptr;
 
 /// 平行光
 DirectionalLight::Ptr directionalLight = nullptr;
@@ -43,20 +43,24 @@ GameCameraControl::Ptr cameraControl = nullptr;
 
 /// 动画相关
 AnimationAction::Ptr action = nullptr;
-Timer::Ptr	timer = Timer::create();
+Timer::Ptr timer = Timer::create();
 
 
-static void onMouseMove(double xpos, double ypos) {
+static void onMouseMove(double xpos, double ypos)
+{
 	cameraControl->onMouseMove(xpos, ypos);
 }
 
-static void onMouseAction(MouseAction mouseAction) {
-	if (mouseAction == MouseAction::LeftDown) {
+static void onMouseAction(MouseAction mouseAction)
+{
+	if (mouseAction == MouseAction::LeftDown)
+	{
 		float speed = action->mSpeed - 0.1;
 		action->mSpeed = speed > 0.0 ? speed : 0.001;
 	}
 
-	if (mouseAction == MouseAction::RightDown) {
+	if (mouseAction == MouseAction::RightDown)
+	{
 		float speed = action->mSpeed + 0.1;
 		action->mSpeed = speed > 0.0 ? speed : 0.001;
 	}
@@ -64,22 +68,25 @@ static void onMouseAction(MouseAction mouseAction) {
 	cameraControl->onMouseAction(mouseAction);
 }
 
-static void onKeyboardAction(KeyBoardState action) {
+static void onKeyboardAction(KeyBoardState action)
+{
 	cameraControl->onKeyboard(action);
 }
 
-void onResize(int width, int height) {
+void onResize(int width, int height)
+{
 }
 
-Scene::Ptr makeScene() {
+Scene::Ptr makeScene()
+{
 	Scene::Ptr scene = Scene::create();
 
 	/// 创建地板平面的Geometry
-	auto planeGeometry = PlaneGeometry::create(8.0, 8.0, 1, 1);
+	const auto planeGeometry = PlaneGeometry::create(8.0, 8.0, 1, 1);
 
 	/// 需要接受光照，并且需要接受模型的阴影
-	MeshPhongMaterial::Ptr phongMaterial = MeshPhongMaterial::create();
-	phongMaterial->mSide = Side::FrontSide;/// 只渲染正面
+	const MeshPhongMaterial::Ptr phongMaterial = MeshPhongMaterial::create();
+	phongMaterial->mSide = Side::FrontSide; /// 只渲染正面
 
 	/// 生成地板平面
 	plane = Mesh::create(planeGeometry, phongMaterial);
@@ -89,7 +96,7 @@ Scene::Ptr makeScene() {
 	scene->addChild(plane);
 
 	/// sky box
-	std::vector<std::string> cubePaths = {
+	const std::vector<std::string> cubePaths = {
 		"assets/textures/skybox/right.jpg",
 		"assets/textures/skybox/left.jpg",
 		"assets/textures/skybox/top.jpg",
@@ -98,7 +105,7 @@ Scene::Ptr makeScene() {
 		"assets/textures/skybox/back.jpg",
 	};
 
-	CubeTexture::Ptr cubeTexture = CubeTextureLoader::load(cubePaths);
+	const CubeTexture::Ptr cubeTexture = CubeTextureLoader::load(cubePaths);
 	scene->mBackground = cubeTexture;
 
 	/// lights
@@ -114,13 +121,13 @@ Scene::Ptr makeScene() {
 	directionalLight->mShadow->mCamera = OrthographicCamera::create(-10, 10, -10, 10, -10, 10);
 
 
-	auto ambientLight = AmbientLight::create();
+	const auto ambientLight = AmbientLight::create();
 	ambientLight->mIntensity = 0.2f;
 
 	scene->addChild(directionalLight);
 	scene->addChild(ambientLight);
 
-	auto model = AssimpLoader::load("assets/models/Fist Fight B.fbx");
+	const auto model = AssimpLoader::load("assets/models/Fist Fight B.fbx");
 	///model->mObject->setPosition(0.5, 0.5, 0.5);
 	model->mObject->setScale(0.01, 0.01, 0.01);
 	scene->addChild(model->mObject);
@@ -134,15 +141,18 @@ Scene::Ptr makeScene() {
 	return scene;
 }
 
-int main() {
-	try {
+int main()
+{
+	try
+	{
 		scene = makeScene();
 
 		Renderer::Descriptor rDc;
 		rDc.mWidth = 1200;
 		rDc.mHeight = 800;
 
-		camera = PerspectiveCamera::create(0.1, 10000, static_cast<float>(rDc.mWidth) / static_cast<float>(rDc.mHeight), 45.0f);
+		camera = PerspectiveCamera::create(0.1, 10000, static_cast<float>(rDc.mWidth) / static_cast<float>(rDc.mHeight),
+		                                   45.0f);
 		// camera = OrthographicCamera::create(-10, 10, -10, 10, -10, 10);
 		camera->setPosition(3, 4, 15);
 
@@ -159,7 +169,8 @@ int main() {
 		/// 除以1000.0， 一个是将int64_t转为float，一个是将毫秒转为秒计时
 		float lastTime = timer->elapsed_mill() / 1000.0f;
 
-		while (true) {
+		while (true)
+		{
 			/// 1 获取当前程序运行时间
 			float currentTime = timer->elapsed_mill() / 1000.0f;
 
@@ -175,15 +186,16 @@ int main() {
 
 			cameraControl->update();
 
-			if (!renderer->render(scene, camera)) {
+			if (!renderer->render(scene, camera))
+			{
 				break;
 			}
 
 			renderer->swap();
-
 		}
 	}
-	catch (std::exception e) {
+	catch (std::exception e)
+	{
 		std::cout << e.what() << std::endl;
 	}
 
