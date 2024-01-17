@@ -427,7 +427,6 @@ namespace ff
 
 			/// 取出来UniformHandle
 			auto& uniformHandle = uniformHandleMap[name];
-
 			if (uniformHandle.mNeedsUpdate)
 			{
 				uniformHandle.mNeedsUpdate = false;

@@ -25,30 +25,37 @@ ff::Mesh::Ptr meshDepthCube = nullptr;
 ff::Mesh::Ptr meshTransparentCube = nullptr;
 
 
-static void onMouseMove(double xpos, double ypos) {
+static void onMouseMove(double xpos, double ypos)
+{
 }
 
-static void onMouseAction(ff::MouseAction action) {
+static void onMouseAction(ff::MouseAction action)
+{
 }
 
-static void onKeyboardAction(KeyBoardState action) {
+static void onKeyboardAction(KeyBoardState action)
+{
 }
 
-static void onResize(int width, int height) {
+static void onResize(int width, int height)
+{
 }
 
 float angle = 0.6f;
-void rotateCube() {
+
+void rotateCube()
+{
 	meshBasicCube->rotateAroundAxis(glm::vec3(1.0, 1.0, 1.0), angle);
 	meshPhongCube->rotateAroundAxis(glm::vec3(1.0, 1.0, 1.0), angle);
 	meshDepthCube->rotateAroundAxis(glm::vec3(1.0, 1.0, 1.0), angle);
 	meshTransparentCube->rotateAroundAxis(glm::vec3(1.0, 1.0, 1.0), angle);
 }
 
-int main() {
-	auto boxGeometry = ff::BoxGeometry::create(1.0, 1.0, 1.0);
+int main()
+{
+	const auto boxGeometry = ff::BoxGeometry::create(1.0, 1.0, 1.0);
 
-	auto meshBasicMaterial = ff::MeshBasicMaterial::create();
+	const auto meshBasicMaterial = ff::MeshBasicMaterial::create();
 	meshBasicMaterial->mDiffuseMap = ff::TextureLoader::load("assets/textures/cat.png");
 	meshBasicCube = ff::Mesh::create(boxGeometry, meshBasicMaterial);
 	meshBasicCube->setPosition(-2.0, 0.0, 0.0);
@@ -66,7 +73,7 @@ int main() {
 
 	/// 用的还是基础材质，只不过启用了透明度
 	auto meshTransparentMaterial = ff::MeshBasicMaterial::create();
-	meshTransparentMaterial->mDiffuseMap = ff::TextureLoader::load("assets/textures/cat.png"); 
+	meshTransparentMaterial->mDiffuseMap = ff::TextureLoader::load("assets/textures/cat.png");
 	meshTransparentMaterial->mTransparent = true;
 	meshTransparentMaterial->mOpacity = 0.4;
 	meshTransparentCube = ff::Mesh::create(boxGeometry, meshTransparentMaterial);
@@ -79,7 +86,7 @@ int main() {
 	directionalLight->mIntensity = 1.0;
 	directionalLight->lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 
-	auto scene = ff::Scene::create();
+	const auto scene = ff::Scene::create();
 	scene->addChild(meshBasicCube);
 	scene->addChild(meshPhongCube);
 	scene->addChild(meshDepthCube);
@@ -105,8 +112,10 @@ int main() {
 	renderer->setFrameSizeCallBack(onResize);
 	renderer->setMouseMoveCallBack(onMouseMove);
 
-	while (true) {
-		if (!renderer->render(scene, camera)) {
+	while (true)
+	{
+		if (!renderer->render(scene, camera))
+		{
 			break;
 		}
 
@@ -114,5 +123,4 @@ int main() {
 
 		rotateCube();
 	}
-
 }

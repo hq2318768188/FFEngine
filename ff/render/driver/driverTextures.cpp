@@ -188,11 +188,11 @@ namespace ff
 
 	auto DriverTextures::bindTexture(const Texture::Ptr& texture, GLenum textureUnit) -> void
 	{
-		//GL_TEXTURE0  GL_TEXTURE1 GL_TEXTURE2....
-		//GL_TEXTURE1 = GL_TEXTURE0+1
-		//GL_TEXTURE2 = GL_TEXTURE0+2
+		/// GL_TEXTURE0  GL_TEXTURE1 GL_TEXTURE2....
+		/// GL_TEXTURE1 = GL_TEXTURE0+1
+		/// GL_TEXTURE2 = GL_TEXTURE0+2
 		glActiveTexture(textureUnit);
-		//更新或者创建textureID
+		/// 更新或者创建textureID
 		update(texture);
 		const auto dTexture = get(texture);
 		glBindTexture(toGL(texture->mTextureType), dTexture->mHandle);

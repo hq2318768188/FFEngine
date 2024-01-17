@@ -20,28 +20,34 @@ uint32_t HEIGHT = 600;
 //mesh类型的智能指针
 ff::Mesh::Ptr cube = nullptr;
 
-static void onMouseMove(double xpos, double ypos) {
+static void onMouseMove(double xpos, double ypos)
+{
 }
 
-static void onMouseAction(ff::MouseAction action) {
+static void onMouseAction(ff::MouseAction action)
+{
 }
 
-static void onKeyboardAction(KeyBoardState action) {
+static void onKeyboardAction(KeyBoardState action)
+{
 }
 
-static void onResize(int width, int height) {
+static void onResize(int width, int height)
+{
 }
 
 float angle = 0.6f;
-void rotateCube() {
+
+void rotateCube()
+{
 	cube->rotateAroundAxis(glm::vec3(1.0, 1.0, 1.0), angle);
 }
 
-int main() {
-
+int main()
+{
 	//创建Cube的Geometry
 	auto boxGeometry = ff::BoxGeometry::create(1.0, 1.0, 1.0);
-	
+
 	//创建基础材质
 	auto material = ff::MeshBasicMaterial::create();
 	auto diffuseMap = ff::TextureLoader::load("assets/textures/cat.png");
@@ -82,11 +88,13 @@ int main() {
 	ff::RenderTarget::Options options;
 	ff::RenderTarget::Ptr renderTarget = ff::RenderTarget::create(WIDTH, HEIGHT, options);
 
-	while (true) {
-		//第一个pass,渲染立方体
+	while (true)
+	{
+		/// 第一个pass,渲染立方体
 		material->mDiffuseMap = diffuseMap;
 		renderer->setRenderTarget(renderTarget);
-		if (!renderer->render(scene, camera)) {
+		if (!renderer->render(scene, camera))
+		{
 			break;
 		}
 
@@ -95,7 +103,8 @@ int main() {
 
 		//改为向默认的renderatarget进行渲染
 		renderer->setRenderTarget(nullptr);
-		if (!renderer->render(scene, camera)) {
+		if (!renderer->render(scene, camera))
+		{
 			break;
 		}
 
@@ -103,5 +112,4 @@ int main() {
 
 		rotateCube();
 	}
-
 }

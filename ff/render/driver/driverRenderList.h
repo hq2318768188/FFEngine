@@ -31,9 +31,42 @@ namespace ff
 	/// 排序的原因:
 	/// 1 opaque物体需要排序，
 	/// >表示大的在前面
-	static auto smallerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) -> bool;
+	static auto smallerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) -> bool
+	{
+		/// 首先保证groupOrder大的物体先绘制
+		if (item0->mGroupOrder != item1->mGroupOrder)
+		{
+			return item0->mGroupOrder > item1->mGroupOrder;
+		}
+		/// 小的z，排在前面
+		else if (item0->mZ != item1->mZ)
+		{
+			return item0->mZ < item1->mZ;
+		}
+		else
+		{
+			/// 如果groupOrder与z分别相等,但是sort函数，必须要给到其一个true or false
+			/// id越大，说明创建的越晚，则创建越晚的物体，越先绘制
+			return item0->mID > item1->mID;
+		}
+	}
 
-	static auto biggerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) -> bool;
+	static auto biggerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) -> bool
+	{
+		if (item0->mGroupOrder != item1->mGroupOrder)
+		{
+			return item0->mGroupOrder > item1->mGroupOrder;
+		}
+		else if (item0->mZ != item1->mZ)
+		{
+			/// z越大，排序越靠前
+			return item0->mZ > item1->mZ;
+		}
+		else
+		{
+			return item0->mID > item1->mID;
+		}
+	}
 
 	/// driverRenderList用来存储，基础的渲染单元
 	class DriverRenderList
@@ -76,11 +109,11 @@ namespace ff
 
 		/// \brief 获得非透明的OBJ队列
 		/// \return 
-		auto getOpaques() const noexcept -> const auto&;
+		auto getOpaques() const noexcept -> const std::vector<RenderItem::Ptr>&;
 
 		/// \brief 获得透明的OBJ队列
 		/// \return 
-		auto getTransparents() const noexcept -> const auto&;
+		auto getTransparents() const noexcept -> const std::vector<RenderItem::Ptr>&;
 
 	private:
 		/// \brief

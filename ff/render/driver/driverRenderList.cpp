@@ -7,54 +7,18 @@ namespace ff
 		return std::make_shared<RenderItem>();
 	}
 
-	auto smallerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) -> bool
-	{
-		/// 首先保证groupOrder大的物体先绘制
-		if (item0->mGroupOrder != item1->mGroupOrder)
-		{
-			return item0->mGroupOrder > item1->mGroupOrder;
-		}
-		/// 小的z，排在前面
-		else if (item0->mZ != item1->mZ)
-		{
-			return item0->mZ < item1->mZ;
-		}
-		else
-		{
-			/// 如果groupOrder与z分别相等,但是sort函数，必须要给到其一个true or false
-			/// id越大，说明创建的越晚，则创建越晚的物体，越先绘制
-			return item0->mID > item1->mID;
-		}
-	}
-
-	auto biggerZFirstSort(const RenderItem::Ptr& item0, const RenderItem::Ptr& item1) -> bool
-	{
-		if (item0->mGroupOrder != item1->mGroupOrder)
-		{
-			return item0->mGroupOrder > item1->mGroupOrder;
-		}
-		else if (item0->mZ != item1->mZ)
-		{
-			/// z越大，排序越靠前
-			return item0->mZ > item1->mZ;
-		}
-		else
-		{
-			return item0->mID > item1->mID;
-		}
-	}
 
 	DriverRenderList::Ptr DriverRenderList::create()
 	{
 		return std::make_shared<DriverRenderList>();
 	}
 
-	auto DriverRenderList::getOpaques() const noexcept -> const auto&
+	auto DriverRenderList::getOpaques() const noexcept -> const std::vector<RenderItem::Ptr>&
 	{
 		return mOpaques;
 	}
 
-	auto DriverRenderList::getTransparents() const noexcept -> const auto&
+	auto DriverRenderList::getTransparents() const noexcept -> const std::vector<RenderItem::Ptr>&
 	{
 		return mTransparents;
 	}

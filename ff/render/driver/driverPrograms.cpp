@@ -5,11 +5,12 @@
 #include "../../log/debugLog.h"
 #include "../../objects/skinnedMesh.h"
 
-namespace ff {
-
+namespace ff
+{
 	/// 1 需要对很多功能进行#define的操作，从而决定打开哪些代码段
 	/// 2 占位字符串的替换,比如POSITION_LOCATION占位字符串替换为0
-	DriverProgram::DriverProgram(const Parameters::Ptr& parameters) noexcept {
+	DriverProgram::DriverProgram(const Parameters::Ptr& parameters) noexcept
+	{
 		mID = Identity::generateID();
 
 		/// 1 shader版本字符串
@@ -28,7 +29,9 @@ namespace ff {
 
 		prefixVertex.append(parameters->mShadowMapEnabled ? "#define USE_SHADOWMAP\n" : "");
 		prefixVertex.append(parameters->mSkinning ? "#define USE_SKINNING\n" : "");
-		prefixVertex.append(parameters->mSkinning ? std::string("#define MAX_BONES ") + std::to_string(parameters->mMaxBones) + "\n" : "");
+		prefixVertex.append(parameters->mSkinning
+			                    ? std::string("#define MAX_BONES ") + std::to_string(parameters->mMaxBones) + "\n"
+			                    : "");
 		prefixVertex.append(parameters->mUseNormalMap ? "#define USE_NORMALMAP\n" : "");
 		prefixVertex.append(parameters->mUseTangent ? "#define USE_TANGENT\n" : "");
 
@@ -40,7 +43,9 @@ namespace ff {
 		prefixFragment.append(parameters->mHasSpecularMap ? "#define USE_SPECULARMAP\n" : "");
 
 		prefixFragment.append(parameters->mShadowMapEnabled ? "#define USE_SHADOWMAP\n" : "");
-		prefixFragment.append(parameters->mDepthPacking == DepthMaterial::RGBADepthPacking ? "#define DEPTH_PACKING_RGBA\n" : "");
+		prefixFragment.append(parameters->mDepthPacking == DepthMaterial::RGBADepthPacking
+			                      ? "#define DEPTH_PACKING_RGBA\n"
+			                      : "");
 		prefixFragment.append(parameters->mUseNormalMap ? "#define USE_NORMALMAP\n" : "");
 		prefixFragment.append(parameters->mUseTangent ? "#define USE_TANGENT\n" : "");
 
@@ -76,7 +81,7 @@ namespace ff {
 		/// shader的编译与链接
 		uint32_t vertexID = 0, fragID = 0;
 		char infoLog[512];
-		int  successFlag = 0;
+		int successFlag = 0;
 
 		vertexID = glCreateShader(GL_VERTEX_SHADER);
 		glShaderSource(vertexID, 1, &vertex, NULL);
@@ -121,7 +126,8 @@ namespace ff {
 		DebugLog::getInstance()->end();
 	}
 
-	DriverProgram::~DriverProgram() noexcept {
+	DriverProgram::~DriverProgram() noexcept
+	{
 		glDeleteProgram(mProgram);
 	}
 
@@ -129,7 +135,7 @@ namespace ff {
 	{
 		/// 1 通过正则表达式，匹配相应的占位符，比如可以匹配  POSITION_LOCATION
 		/// 2 匹配成功之后，replace功能来将POSITION_LOCATION字符串替换为“0”
-		
+
 		/// pattern-replace
 		std::unordered_map<std::string, std::string> replaceMap = {
 			{"POSITION_LOCATION", std::to_string(LOCATION_MAP.at("position"))},
@@ -142,7 +148,8 @@ namespace ff {
 			{"BITANGENT_B_LOCATION", std::to_string(LOCATION_MAP.at("bitangent"))},
 		};
 
-		for (const auto& iter : replaceMap) {
+		for (const auto& iter : replaceMap)
+		{
 			/// iter.first = 占位符字符串
 			/// iter.second = location数字的字符串
 
@@ -163,7 +170,8 @@ namespace ff {
 			{"NUM_DIR_LIGHT_SHADOWS", std::to_string(parameters->mNumDirectionalLightShadows)},
 		};
 
-		for (const auto& iter : replaceMap) {
+		for (const auto& iter : replaceMap)
+		{
 			std::regex pattern(iter.first);
 			shader = std::regex_replace(shader, pattern, iter.second);
 		}
@@ -177,15 +185,19 @@ namespace ff {
 		return extensionString;
 	}
 
-	auto DriverProgram::uploadUniforms(UniformHandleMap& uniformMap, const DriverTextures::Ptr& textures) -> void
+	auto DriverProgram::uploadUniforms(UniformHandleMap& uniformMap, const DriverTextures::Ptr& textures) const -> void
 	{
 		mUniforms->upload(uniformMap, textures);
 	}
 
-/// -----------------------------------driver programs---------------------------- ///
-	DriverPrograms::DriverPrograms() noexcept {}
+	/// -----------------------------------driver programs---------------------------- ///
+	DriverPrograms::DriverPrograms() noexcept
+	{
+	}
 
-	DriverPrograms::~DriverPrograms() noexcept {}
+	DriverPrograms::~DriverPrograms() noexcept
+	{
+	}
 
 	auto DriverPrograms::acquireProgram(const DriverProgram::Parameters::Ptr& parameters,
 	                                    HashType cacheKey) noexcept -> DriverProgram::Ptr
@@ -194,7 +206,8 @@ namespace ff {
 		/// 但是从全局角度，其他Material可能曾经使用过符合本Parameters的DriverProgram
 		auto iter = mPrograms.find(cacheKey);
 
-		if (iter != mPrograms.end()) {
+		if (iter != mPrograms.end())
+		{
 			return iter->second;
 		}
 
@@ -212,7 +225,8 @@ namespace ff {
 	/// 本函数被调用，意味着外界某个renderItem释放了对本Driverprogram的使用
 	auto DriverPrograms::release(const DriverProgram::Ptr& program) noexcept -> void
 	{
-		if (--program->mRefCount == 0) {
+		if (--program->mRefCount == 0)
+		{
 			mPrograms.erase(program->mCacheKey);
 		}
 	}
@@ -222,18 +236,18 @@ namespace ff {
 		const Object3D::Ptr& object,
 		const DriverLights::Ptr& lights,
 		const DriverShadowMap::Ptr& shadowMap
-		) const noexcept -> DriverProgram::Parameters::Ptr
+	) const noexcept -> DriverProgram::Parameters::Ptr
 	{
-		auto renderObject = std::static_pointer_cast<RenderableObject>(object);
-		auto geometry = renderObject->getGeometry();
+		const auto renderObject = std::static_pointer_cast<RenderableObject>(object);
+		const auto geometry = renderObject->getGeometry();
 
 		/// 新建一个parameters
 		auto parameters = DriverProgram::Parameters::create();
 
-		auto shaderID = material->getType();
-		auto shaderIter = ShaderLib.find(shaderID);
-
-		if (shaderIter == ShaderLib.end()) {
+		const auto shaderID = material->getType();
+		const auto shaderIter = ShaderLib.find(shaderID);
+		if (shaderIter == ShaderLib.end())
+		{
 			return nullptr;
 		}
 
@@ -246,47 +260,57 @@ namespace ff {
 		parameters->mDirectionalLightCount = lights->mState.mDirectionalCount;
 		parameters->mNumDirectionalLightShadows = lights->mState.mNumDirectionalShadows;
 
-		if (geometry->hasAttribute("normal")) {
+		if (geometry->hasAttribute("normal"))
+		{
 			parameters->mHasNormal = true;
 		}
 
-		if (geometry->hasAttribute("uv")) {
+		if (geometry->hasAttribute("uv"))
+		{
 			parameters->mHasUV = true;
 		}
 
-		if (geometry->hasAttribute("color")) {
+		if (geometry->hasAttribute("color"))
+		{
 			parameters->mHasColor = true;
 		}
 
-		if (material->mDiffuseMap != nullptr) {
+		if (material->mDiffuseMap != nullptr)
+		{
 			parameters->mHasDiffuseMap = true;
 		}
 
-		if (material->mEnvMap != nullptr) {
+		if (material->mEnvMap != nullptr)
+		{
 			parameters->mHasEnvCubeMap = true;
 		}
 
-		if (material->mSpecularMap != nullptr) {
+		if (material->mSpecularMap != nullptr)
+		{
 			parameters->mHasSpecularMap = true;
 		}
 
-		if (material->mNormalMap != nullptr) {
+		if (material->mNormalMap != nullptr)
+		{
 			parameters->mUseNormalMap = true;
 		}
-		
-		if (object->mIsRenderableObject) {
+
+		if (object->mIsRenderableObject)
+		{
 			auto renderableObject = std::static_pointer_cast<RenderableObject>(object);
 			auto geometry = renderableObject->getGeometry();
 			parameters->mUseTangent = geometry->hasAttribute("tangent");
 		}
 
-		if (material->mIsDepthMaterial) {
+		if (material->mIsDepthMaterial)
+		{
 			auto depthMaterial = std::static_pointer_cast<DepthMaterial>(material);
 			parameters->mDepthPacking = depthMaterial->mPacking;
 		}
 
-		if (object->mIsSkinnedMesh) {
-			auto skinnedMesh = std::static_pointer_cast<SkinnedMesh>(object);
+		if (object->mIsSkinnedMesh)
+		{
+			const auto skinnedMesh = std::static_pointer_cast<SkinnedMesh>(object);
 			parameters->mSkinning = true;
 			parameters->mMaxBones = skinnedMesh->mSkeleton->mBones.size();
 		}
@@ -294,23 +318,24 @@ namespace ff {
 		return parameters;
 	}
 
-	
+
 	auto DriverPrograms::getUniforms(const Material::Ptr& material) noexcept -> UniformHandleMap
 	{
 		UniformHandleMap uniforms{};
 
-		auto shaderID = material->getType();
-		auto shaderIter = ShaderLib.find(shaderID);
-
-		if (shaderIter != ShaderLib.end()) {
+		const auto shaderID = material->getType();
+		const auto shaderIter = ShaderLib.find(shaderID);
+		if (shaderIter != ShaderLib.end())
+		{
 			uniforms = shaderIter->second.mUniformMap;
 		}
 
 		return uniforms;
 	}
 
-	
-	HashType DriverPrograms::getProgramCacheKey(const DriverProgram::Parameters::Ptr& parameters) noexcept {
+
+	HashType DriverPrograms::getProgramCacheKey(const DriverProgram::Parameters::Ptr& parameters) noexcept
+	{
 		std::hash<std::string> hasher;
 
 		std::string keyString;

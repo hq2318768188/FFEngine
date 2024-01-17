@@ -319,7 +319,7 @@ namespace ff {
 	};
 
 	enum class Side 
-	{
+	{ 
 		FrontSide,
 		BackSide,
 		DoubleSide,
@@ -331,7 +331,7 @@ namespace ff {
 		switch (side) 
 		{
 		case Side::FrontSide:
-			return GL_BACK;
+			return  GL_BACK;
 		case Side::BackSide:
 			return GL_FRONT;
 		default:

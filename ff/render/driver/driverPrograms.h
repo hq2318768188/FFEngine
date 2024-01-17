@@ -58,7 +58,7 @@ namespace ff {
 
 		GLuint		mProgram{ 0 };
 
-		auto uploadUniforms(UniformHandleMap& uniformGroup, const DriverTextures::Ptr& textures) -> void;
+		auto uploadUniforms(UniformHandleMap& uniformGroup, const DriverTextures::Ptr& textures) const -> void;
 
 	private:
 		auto replaceAttributeLocations(std::string& shader) const noexcept -> void;

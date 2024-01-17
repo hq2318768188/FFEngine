@@ -185,8 +185,8 @@ namespace ff
 		const Camera::Ptr& camera
 	) noexcept -> void
 	{
-		const auto opaqueObjects = currentRenderList->getOpaques();
-		const auto transparentObjects = currentRenderList->getTransparents();
+		auto opaqueObjects = currentRenderList->getOpaques();
+		auto transparentObjects = currentRenderList->getTransparents();
 
 		/// TODO 设置场景相关的状态，可以在这里继续扩展很多场景相关设置
 		mRenderState->setupLightsView(camera);
@@ -448,14 +448,14 @@ namespace ff
 	{
 		DriverProgram::Ptr program = nullptr;
 
-		auto dMaterial = mMaterials->get(material);
-		auto lights = mRenderState->mLights;
+		const auto dMaterial = mMaterials->get(material);
+		const auto lights = mRenderState->mLights;
 
 		/// 将以前用过的DriverPrograms取出来，是一个map的引用
 		auto& programs = dMaterial->mPrograms;
 
 		/// mPrograms是DriverPrograms，通过下方的接口，生成本个RenderItem的Parameters
-		auto parameters = mPrograms->getParameters(material, object, lights, mShadowMap);
+		const auto parameters = mPrograms->getParameters(material, object, lights, mShadowMap);
 
 		/// 通过Parameters计算一个哈希值
 		auto cacheKey = mPrograms->getProgramCacheKey(parameters);
