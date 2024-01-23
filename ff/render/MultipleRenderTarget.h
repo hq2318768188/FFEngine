@@ -1,23 +1,25 @@
 ﻿#pragma once
 #include "renderTarget.h"
 
-namespace ff {
-
+namespace ff
+{
 	class DriverTextures;
+
 	/// 拥有多个颜色输出通道
-	class MultipleRenderTarget :public RenderTarget {
+	class MultipleRenderTarget : public RenderTarget
+	{
 	public:
 		friend DriverTextures;
 
 		using Ptr = std::shared_ptr<MultipleRenderTarget>;
-		static Ptr create(const uint32_t& width, const uint32_t& height, const uint32_t& count, const RenderTarget::Options& options) {
-			return std::make_shared <MultipleRenderTarget>(width, height, count, options);
-		}
+		static Ptr create(const uint32_t& width, const uint32_t& height, const uint32_t& count,
+		                  const RenderTarget::Options& options);
 
 		/// count是有多少个ColorAttachment
-		MultipleRenderTarget(const uint32_t& width, const uint32_t& height, const uint32_t& count, const RenderTarget::Options& options) noexcept;
-		
-		~MultipleRenderTarget() noexcept;
+		MultipleRenderTarget(const uint32_t& width, const uint32_t& height, const uint32_t& count,
+		                     const RenderTarget::Options& options) noexcept;
+
+		~MultipleRenderTarget() noexcept override;
 
 		void pushColor(const Texture::Ptr& texture) noexcept;
 

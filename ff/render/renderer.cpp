@@ -553,7 +553,7 @@ namespace ff
 		}
 
 		/// 拿出来DriverRenderTarget
-		auto dRenderTarget = mRenderTargets->get(renderTarget);
+		const auto dRenderTarget = mRenderTargets->get(renderTarget);
 
 		/// 如果当前的RenderTarget还没有被创建，则将创建任务丢给DriverTextures
 		if (!dRenderTarget->mFrameBuffer)

@@ -49,14 +49,14 @@ namespace ff
 
 	auto DriverTextures::setupDriverTexture(const Texture::Ptr& texture) noexcept -> DriverTexture::Ptr
 	{
-		DriverTexture::Ptr dtexture = get(texture);
+		DriverTexture::Ptr textural = get(texture);
 		texture->mNeedsUpdate = false;
 
-		if (!dtexture->mHandle)
+		if (!textural->mHandle)
 		{
-			glGenTextures(1, &dtexture->mHandle);
+			glGenTextures(1, &textural->mHandle);
 		}
-		glBindTexture(toGL(texture->mTextureType), dtexture->mHandle);
+		glBindTexture(toGL(texture->mTextureType), textural->mHandle);
 
 		/// 设置纹理参数
 		glTexParameteri(toGL(texture->mTextureType), GL_TEXTURE_MIN_FILTER, toGL(texture->mMinFilter));
@@ -98,11 +98,11 @@ namespace ff
 		glBindTexture(toGL(texture->mTextureType), 0);
 		mInfo->mMemory.mTextures++;
 
-		return dtexture;
+		return textural;
 	}
 
-	void DriverTextures::setupFBOColorAttachment(const GLuint& fbo, const GLenum& attachment,
-	                                             const Texture::Ptr& texture) noexcept
+	auto DriverTextures::setupFBOColorAttachment(const GLuint& fbo, const GLenum& attachment,
+	                                             const Texture::Ptr& texture) noexcept -> void
 	{
 		const auto dTexture = get(texture);
 
@@ -113,20 +113,20 @@ namespace ff
 
 	void DriverTextures::setupFBODepthStencilAttachment(const RenderTarget::Ptr& renderTarget) noexcept
 	{
-		auto dRenderTarget = mRenderTargets->get(renderTarget);
+		const auto dRenderTarget = mRenderTargets->get(renderTarget);
 		if (!dRenderTarget->mFrameBuffer)
 		{
 			std::cout << "Error: frameBuffer has not been generated,when setupFBODepthStencilAttachment!" << std::endl;
 			return;
 		}
 
-		//TODO: support stencil buffer
-		//如果需要DepthTest，并且用户指定了一张用户创建的Texture
+		/// TODO: support stencil buffer
+		/// 如果需要DepthTest，并且用户指定了一张用户创建的Texture
 		if (renderTarget->mNeedsDepth && renderTarget->mDepthTexture)
 		{
 			setupDepthTexture(dRenderTarget->mFrameBuffer, renderTarget);
 		}
-		//如果用户没有指定，自己默认创建一个用于深度检测的RenderBuffer
+		/// 如果用户没有指定，自己默认创建一个用于深度检测的RenderBuffer
 		else if (renderTarget->mNeedsDepth)
 		{
 			setupDepthRenderBuffer(dRenderTarget->mFrameBuffer, renderTarget);
@@ -140,8 +140,8 @@ namespace ff
 			std::cout << "Error: renderTarget has no depth info when setupDepthTexture";
 			return;
 		}
-		auto depthTexture = renderTarget->mDepthTexture;
-		auto dDepthTexture = get(depthTexture);
+		const auto depthTexture = renderTarget->mDepthTexture;
+		const auto dDepthTexture = get(depthTexture);
 		setupDriverTexture(depthTexture);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
@@ -152,18 +152,17 @@ namespace ff
 
 	void DriverTextures::setupDepthRenderBuffer(const GLuint& frameBuffer, const RenderTarget::Ptr& renderTarget)
 	{
-		auto dRenderTarget = mRenderTargets->get(renderTarget);
+		const auto dRenderTarget = mRenderTargets->get(renderTarget);
 
-		//创建RenderBuffer
+		/// 创建RenderBuffer
 		glGenRenderbuffers(1, &dRenderTarget->mDepthRenderBuffer);
 		glBindRenderbuffer(GL_RENDERBUFFER, dRenderTarget->mDepthRenderBuffer);
 
-		//为renderBuffer对象开辟空间
+		/// 为renderBuffer对象开辟空间
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, renderTarget->mWidth, renderTarget->mHeight);
 		glBindRenderbuffer(GL_RENDERBUFFER, 0);
 
-
-		//向frameBuffer进行绑定
+		/// 向frameBuffer进行绑定
 		glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
 		glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER,
 		                          dRenderTarget->mDepthRenderBuffer);
@@ -198,37 +197,37 @@ namespace ff
 		glBindTexture(toGL(texture->mTextureType), dTexture->mHandle);
 	}
 
-	void DriverTextures::setupRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept
+	auto DriverTextures::setupRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept -> void
 	{
-		auto dRenderTarget = mRenderTargets->get(renderTarget);
+		const auto dRenderTarget = mRenderTargets->get(renderTarget);
 
-		//generate framebuffer
+		/// generate framebuffer
 		if (!dRenderTarget->mFrameBuffer)
 		{
 			dRenderTarget->generateFrameBuffer();
 		}
 
-		//setup color attachments
+		/// setup color attachments
 		if (renderTarget->mIsMultiRenderTarget)
 		{
-			auto multiRT = std::static_pointer_cast<MultipleRenderTarget>(renderTarget);
-			auto textures = multiRT->mTextures;
+			const auto multiRT = std::static_pointer_cast<MultipleRenderTarget>(renderTarget);
+			const auto textures = multiRT->mTextures;
 
 			for (uint32_t i = 0; i < textures.size(); ++i)
 			{
-				auto texture = textures[i];
+				const auto& texture = textures[i];
 				setupDriverTexture(texture);
 				setupFBOColorAttachment(dRenderTarget->mFrameBuffer, GL_COLOR_ATTACHMENT0 + i, texture);
 			}
 		}
 		else
 		{
-			auto texture = renderTarget->mTexture;
+			const auto texture = renderTarget->mTexture;
 			setupDriverTexture(texture);
 			setupFBOColorAttachment(dRenderTarget->mFrameBuffer, GL_COLOR_ATTACHMENT0, texture);
 		}
 
-		//setup depth and stencil
+		/// setup depth and stencil
 		if (renderTarget->mNeedsDepth)
 		{
 			setupFBODepthStencilAttachment(renderTarget);

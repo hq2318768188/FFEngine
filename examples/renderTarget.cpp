@@ -45,20 +45,20 @@ void rotateCube()
 
 int main()
 {
-	//创建Cube的Geometry
-	auto boxGeometry = ff::BoxGeometry::create(1.0, 1.0, 1.0);
+	/// 创建Cube的Geometry
+	const auto boxGeometry = ff::BoxGeometry::create(1.0, 1.0, 1.0);
 
-	//创建基础材质
-	auto material = ff::MeshBasicMaterial::create();
-	auto diffuseMap = ff::TextureLoader::load("assets/textures/cat.png");
+	/// 创建基础材质
+	const auto material = ff::MeshBasicMaterial::create();
+	const auto diffuseMap = ff::TextureLoader::load("assets/textures/cat.png");
 	material->mDiffuseMap = diffuseMap;
 
 	cube = ff::Mesh::create(boxGeometry, material);
 
-	auto scene = ff::Scene::create();
+	const auto scene = ff::Scene::create();
 	scene->addChild(cube);
 
-	//sky box
+	/// sky box
 	std::vector<std::string> cubePaths = {
 		"assets/textures/skybox/right.jpg",
 		"assets/textures/skybox/left.jpg",
@@ -68,16 +68,16 @@ int main()
 		"assets/textures/skybox/back.jpg",
 	};
 
-	ff::CubeTexture::Ptr cubeTexture = ff::CubeTextureLoader::load(cubePaths);
+	const ff::CubeTexture::Ptr cubeTexture = ff::CubeTextureLoader::load(cubePaths);
 	scene->mBackground = cubeTexture;
 
-	auto camera = ff::PerspectiveCamera::create(0.1f, 100.0f, (float)WIDTH / (float)(HEIGHT), 60.0f);
+	const auto camera = ff::PerspectiveCamera::create(0.1f, 100.0f, (float)WIDTH / (float)(HEIGHT), 60.0f);
 	camera->setPosition(0.0f, 0.0f, 2.0f);
 
 	ff::Renderer::Descriptor rDc;
 	rDc.mWidth = WIDTH;
 	rDc.mHeight = HEIGHT;
-	ff::Renderer::Ptr renderer = ff::Renderer::create(rDc);
+	const ff::Renderer::Ptr renderer = ff::Renderer::create(rDc);
 	renderer->setClearColor(0.94, 1.0, 0.94, 1.0);
 
 	renderer->setMouseActionCallback(onMouseAction);
@@ -85,8 +85,8 @@ int main()
 	renderer->setFrameSizeCallBack(onResize);
 	renderer->setMouseMoveCallBack(onMouseMove);
 
-	ff::RenderTarget::Options options;
-	ff::RenderTarget::Ptr renderTarget = ff::RenderTarget::create(WIDTH, HEIGHT, options);
+	const ff::RenderTarget::Options options;
+	const ff::RenderTarget::Ptr renderTarget = ff::RenderTarget::create(WIDTH, HEIGHT, options);
 
 	while (true)
 	{
@@ -98,10 +98,10 @@ int main()
 			break;
 		}
 
-		//第二个pass，将第一个pass渲染的结果，作为diffuseMap输送给了当前cube使用的material
+		/// 第二个pass，将第一个pass渲染的结果，作为diffuseMap输送给了当前cube使用的material
 		material->mDiffuseMap = renderTarget->getTexture();
 
-		//改为向默认的renderatarget进行渲染
+		/// 改为向默认的renderatarget进行渲染
 		renderer->setRenderTarget(nullptr);
 		if (!renderer->render(scene, camera))
 		{

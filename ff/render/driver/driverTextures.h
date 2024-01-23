@@ -56,7 +56,7 @@ namespace ff {
 		/// \param textureUnit 
 		auto bindTexture(const Texture::Ptr& texture, GLenum textureUnit) -> void;
 
-		void setupRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept;
+		auto setupRenderTarget(const RenderTarget::Ptr& renderTarget) noexcept -> void;
 
 		auto onTextureDestroy(const EventBase::Ptr& e) noexcept -> void;
 
@@ -70,7 +70,8 @@ namespace ff {
 		/// \return  
 		auto setupDriverTexture(const Texture::Ptr& texture) noexcept -> DriverTexture::Ptr;
 
-		void setupFBOColorAttachment(const GLuint& fbo, const GLenum& target, const Texture::Ptr& texture) noexcept;
+		auto setupFBOColorAttachment(const GLuint& fbo, const GLenum& target,
+		                             const Texture::Ptr& texture) noexcept -> void;
 
 		void setupFBODepthStencilAttachment(const RenderTarget::Ptr& renderTarget) noexcept;
 

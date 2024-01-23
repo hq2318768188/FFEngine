@@ -257,7 +257,7 @@ namespace ff
 
 	auto DriverState::setClearColor(float r, float g, float b, float a) noexcept -> void
 	{
-		glm::vec4 color(r, g, b, a);
+		const glm::vec4 color(r, g, b, a);
 		if (mCurrentColor.mClearColor != color)
 		{
 			mCurrentColor.mClearColor = color;
