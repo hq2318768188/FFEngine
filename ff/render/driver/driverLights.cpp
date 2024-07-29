@@ -36,13 +36,13 @@ namespace ff {
 
 		float r = 0, g = 0, b = 0;
 
-		//to make shadowLight in front of others for shader
+		/// to make shadowLight in front of others for shader
 		std::sort(lights.begin(), lights.end(), shadowCastingLightsFirst);
 
-		//prepare shadow uniforms
+		/// prepare shadow uniforms
 		auto& lightArray = mState.mLightUniformHandles["directionalLights"];
 
-		//UniformHandle
+		/// UniformHandle
 		auto& shadowStructuredArray = mState.mLightUniformHandles["directionalLightShadows"];
 		auto& shadowMapPureArray = mState.mLightUniformHandles["directionalShadowMap"];
 		auto& shadowMatrixPureArray = mState.mLightUniformHandles["directionalShadowMatrix"];
@@ -61,8 +61,8 @@ namespace ff {
 
 			Texture::Ptr shadowMap = (light->mShadow && light->mShadow->mRenderTarget) ? light->mShadow->mRenderTarget->getTexture() : nullptr;
 
-			//maybe multi-ambient
-			//在这里将所有ambientLight的影响都累加
+			/// maybe multi-ambient
+			/// 在这里将所有ambientLight的影响都累加
 			if (light->mIsAmbientLight) {
 				r += color.r * intensity;
 				g += color.g * intensity;
@@ -70,7 +70,7 @@ namespace ff {
 			}
 			else if (light->mIsDirectionalLight) {
 
-				//add one directionalLight
+				/// add one directionalLight  
 				UniformUnitMap* directionalLightUniform = setArrayStructuredUniform(directionalLightCount, std::any_cast<UniformUnitMap>(&lightArray.mValue));
 
 				(*directionalLightUniform)["color"] = light->mColor * light->mIntensity;
@@ -78,13 +78,13 @@ namespace ff {
 				if (light->mCastShadow) {
 					LightShadow::Ptr shadow = light->mShadow; 
 
-					//shadow uniform
+					/// shadow uniform
 					UniformUnitMap* directionalShadowUniform = setArrayStructuredUniform(directionalLightCount, std::any_cast<UniformUnitMap>(&shadowStructuredArray.mValue));
 					(*directionalShadowUniform)["shadowBias"] = shadow->mBias;
 					(*directionalShadowUniform)["shadowRadius"] = shadow->mRadius;
 					(*directionalShadowUniform)["shadowMapSize"] = shadow->mMapSize;
 
-					//matrix and shadowmap will update when rendering shadow map
+					/// matrix and shadowmap will update when rendering shadow map
 
 					numDirectionalShadows++;
 				}

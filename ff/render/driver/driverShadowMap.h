@@ -32,7 +32,7 @@ namespace ff {
 			const Frustum::Ptr& frustum) noexcept;
 
 	public:
-		//决定整个系统是否开启ShadowMap
+		/// 决定整个系统是否开启ShadowMap
 		bool mEnabled{ true };
 
 	private:

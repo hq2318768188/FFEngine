@@ -16,7 +16,7 @@ namespace ff
 
 	Renderer::Ptr Renderer::create(const Descriptor& descriptor)
 	{
-		return std::make_shared <Renderer>(descriptor);
+		return std::make_shared<Renderer>(descriptor);
 	}
 
 	Renderer::Renderer(const Descriptor& descriptor) noexcept

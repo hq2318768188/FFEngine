@@ -4,25 +4,31 @@
 #include "driverState.h"
 #include "../renderer.h"
 
-namespace ff {
-
-	DriverShadowMap::DriverShadowMap(Renderer* renderer, const std::shared_ptr<DriverObjects>& objects, const std::shared_ptr<DriverState>& state) noexcept {
+namespace ff
+{
+	DriverShadowMap::DriverShadowMap(Renderer* renderer, const std::shared_ptr<DriverObjects>& objects,
+	                                 const std::shared_ptr<DriverState>& state) noexcept
+	{
 		mRenderer = renderer;
 		mObjects = objects;
 		mState = state;
 	}
 
-	DriverShadowMap::~DriverShadowMap() noexcept {}
+	DriverShadowMap::~DriverShadowMap() noexcept
+	{
+	}
 
-	//任务
-	// 1 填充Uniforms（shadowMapUniform， shadowMatrixUniform）
-	// 2 生成每个光源的RenderTarget
-	// 3 为每个光源渲染自己的ShadowMap
-	//
-	void DriverShadowMap::render(const std::shared_ptr<DriverRenderState>& renderState, const Scene::Ptr& scene, const Camera::Ptr& camera) noexcept {
+	/// 任务
+	/// 1 填充Uniforms（shadowMapUniform， shadowMatrixUniform）
+	/// 2 生成每个光源的RenderTarget
+	/// 3 为每个光源渲染自己的ShadowMap
+	///
+	void DriverShadowMap::render(const std::shared_ptr<DriverRenderState>& renderState, const Scene::Ptr& scene,
+	                             const Camera::Ptr& camera) noexcept
+	{
 		if (!mEnabled) return;
 
-		//store old state
+		/// store old state
 		auto currentRenderTarget = mRenderer->getRenderTarget();
 		auto currentClearColor = mRenderer->getClearColor();
 
@@ -31,41 +37,44 @@ namespace ff {
 
 		mRenderer->setClearColor(1.0, 1.0, 1.0, 1.0);
 
-		//render depth map 
+		/// render depth map 
 
 		glm::vec2 shadowMapSize = glm::vec2(0.0);
 		glm::vec4 viewport = glm::vec4(0.0);
 		glm::vec2 viewportSize = glm::vec2(0.0);
-		glm::vec2 shadowFrameExtents = glm::vec2(1.0);//为了兼容点光源，但是在这里没有用
+		glm::vec2 shadowFrameExtents = glm::vec2(1.0); /// 为了兼容点光源，但是在这里没有用
 		Frustum::Ptr frustum = nullptr;
 
-		//将会产生阴影的光源数组取出
+		/// 将会产生阴影的光源数组取出
 		auto lights = renderState->mShadowsArray;
 
-		//取出来光照系统的outMap
+		/// 取出来光照系统的outMap
 		auto& uniforms = renderState->mLights->mState.mLightUniformHandles;
 
-		//clear shadow matrix array
+		/// clear shadow matrix array
 		auto& shadowMapArray = uniforms["directionalShadowMap"];
 		clearPureArrayUniform(std::any_cast<std::vector<Texture::Ptr>>(&shadowMapArray.mValue));
 
 		auto& shadowMatrixArray = uniforms["directionalShadowMatrix"];
 		clearPureArrayUniform(std::any_cast<std::vector<glm::mat4>>(&shadowMatrixArray.mValue));
 
-		for (uint32_t i = 0; i < lights.size(); ++i) {
+		for (uint32_t i = 0; i < lights.size(); ++i)
+		{
 			auto light = lights[i];
 			auto shadow = light->mShadow;
 
-			if (shadow == nullptr) {
+			if (shadow == nullptr)
+			{
 				std::cout << "Error: light has no shadow when rendering shadow map!" << std::endl;
 				return;
 			}
 
 			shadowMapSize = shadow->mMapSize;
-			shadowFrameExtents = shadow->mFrameExtent;//todo
+			shadowFrameExtents = shadow->mFrameExtent; //todo
 			viewportSize = shadow->mMapSize;
 
-			if (shadow->mRenderTarget == nullptr) {
+			if (shadow->mRenderTarget == nullptr)
+			{
 				RenderTarget::Options options;
 				options.mMinFilter = TextureFilter::NearestFilter;
 				options.mMagFilter = TextureFilter::NearestFilter;
@@ -73,21 +82,22 @@ namespace ff {
 
 				shadow->mRenderTarget = RenderTarget::create(shadowMapSize.x, shadowMapSize.y, options);
 			}
-			//give map to uniform handle
-			pushPureArrayUniform(shadow->mRenderTarget->getTexture(), std::any_cast<std::vector<Texture::Ptr>>(&shadowMapArray.mValue));
+			/// give map to uniform handle
+			pushPureArrayUniform(shadow->mRenderTarget->getTexture(),
+			                     std::any_cast<std::vector<Texture::Ptr>>(&shadowMapArray.mValue));
 
-			//开始向当前的shadowMap上面绘制，输出深度信息
+			/// 开始向当前的shadowMap上面绘制，输出深度信息
 			mRenderer->setRenderTarget(shadow->mRenderTarget);
 			mRenderer->clear();
 
-			//设置opengl渲染视口用的
-			viewport = { 0.0, 0.0, viewportSize.x, viewportSize.y };
+			/// 设置opengl渲染视口用的
+			viewport = {0.0, 0.0, viewportSize.x, viewportSize.y};
 
 			mState->viewport(viewport);
 
 			shadow->updateMatrices(light);
 
-			//update uniform shadowmap matrix
+			/// update uniform shadowmap matrix
 			pushPureArrayUniform(shadow->mMatrix, std::any_cast<std::vector<glm::mat4>>(&shadowMatrixArray.mValue));
 
 			frustum = shadow->getFrustum();
@@ -108,27 +118,30 @@ namespace ff {
 	{
 		if (!object->mVisible) return;
 
-		if (object->mIsRenderableObject) {
+		if (object->mIsRenderableObject)
+		{
 			auto renderableObject = std::static_pointer_cast<RenderableObject>(object);
 
-			if (renderableObject->mCastShadow && frustum->intersectObject(renderableObject)) {
+			if (renderableObject->mCastShadow && frustum->intersectObject(renderableObject))
+			{
 				renderableObject->updateModelViewMatrix(shadowCamera->getWorldMatrixInverse());
 
 				auto geometry = mObjects->update(renderableObject);
 
-				//所有物体统一使用默认的深度材质
+				/// 所有物体统一使用默认的深度材质
 				auto material = mDefaultDepthMaterial;
 
 				mRenderer->renderBufferDirect(renderableObject, nullptr, shadowCamera, geometry, material);
 			}
-			else {
+			else
+			{
 				std::cout << std::endl;
 			}
-
 		}
 
 		auto children = object->getChildren();
-		for (const auto& child : children) {
+		for (const auto& child : children)
+		{
 			renderObject(child, camera, shadowCamera, light, frustum);
 		}
 	}

@@ -17,7 +17,7 @@ namespace ff {
 		"\n"\
 		"		uniform DirectionalLightShadow directionalLightShadows[NUM_DIR_LIGHT_SHADOWS];\n"\
 		"	#endif\n"\
-		//return 1 if texture value is bigger than compare
+		/// return 1 if texture value is bigger than compare
 		"	float texture2DCompare(sampler2D depths, vec2 uv, float compare) {\n"\
 		"		return step(compare, unpackRGBAToDepth(texture(depths, uv)));\n"\
 		"	}\n"\
