@@ -14,12 +14,12 @@ namespace ff {
 		mLights->init();
 	}
 
-	//更新了一些与坐标系选择无关的uniform-color
+	/// 更新了一些与坐标系选择无关的uniform-color
 	void DriverRenderState::setupLights() noexcept {
 		mLights->setupLights(mLightsArray);
 	}
 
-	//更新与坐标系选择有关的uniforms-direction
+	/// 更新与坐标系选择有关的uniforms-direction
 	void DriverRenderState::setupLightsView(const Camera::Ptr& camera) noexcept {
 		mLights->setupLightsView(mLightsArray, camera);
 	}

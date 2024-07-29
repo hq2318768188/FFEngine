@@ -5,10 +5,13 @@ set(CMAKE_TOOLCHAIN_FILE $ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake CACHE
 project(FFEngine_Project)
 
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(CMAKE_BUILD_TYPE Debug) 
 
 # 查找 vcpkg 安装的库
-find_package(glad CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
+find_package(glad CONFIG REQUIRED) 
+find_package(glfw3 CONFIG REQUIRED) 
 find_package(assimp CONFIG REQUIRED)
 message("Found glad: ${glad_VERSION}")
 message("Found glfw: ${glfw3_VERSION}")

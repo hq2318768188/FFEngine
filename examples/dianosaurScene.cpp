@@ -208,7 +208,7 @@ Scene::Ptr makeScene() {
 
 int main() {
 	try {
-		//DebugLog::getInstance()->mEnableDebug = true;
+		// DebugLog::getInstance()->mEnableDebug = true;
 		scene = makeScene();
 
 		Renderer::Descriptor rDc;

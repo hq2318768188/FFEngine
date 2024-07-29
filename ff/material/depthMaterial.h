@@ -16,7 +16,7 @@ namespace ff {
 		~DepthMaterial() noexcept;
 
 	public:
-		//是否启用深度打包
+		/// 是否启用深度打包
 		uint32_t mPacking{ NoPacking };
 	};
 }
