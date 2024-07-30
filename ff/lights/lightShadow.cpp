@@ -15,7 +15,7 @@ namespace ff {
 
 		/// 计算了projectionMatrix * viewMatrix
 		auto pvMatrix = mCamera->getProjectionMatrix() * mCamera->getWorldMatrixInverse();
-		mFrustum->setFromProjectionMatrix(pvMatrix);-
+		mFrustum->setFromProjectionMatrix(pvMatrix);
 
 		/// to transpose one fragment's xyz to 0-1,but need colum-first!remember!
 		/// 将x = （x + 1)/2，从-1到1，转化为0-1
