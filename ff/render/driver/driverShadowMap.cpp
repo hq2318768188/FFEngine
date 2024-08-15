@@ -18,10 +18,10 @@ namespace ff
 	{
 	}
 
-	/// ÈÎÎñ
-	/// 1 Ìî³äUniforms£¨shadowMapUniform£¬ shadowMatrixUniform£©
-	/// 2 Éú³ÉÃ¿¸ö¹âÔ´µÄRenderTarget
-	/// 3 ÎªÃ¿¸ö¹âÔ´äÖÈ¾×Ô¼ºµÄShadowMap
+	/// ä»»åŠ¡
+	/// 1 å¡«å……Uniformsï¼ˆshadowMapUniformï¼Œ shadowMatrixUniformï¼‰
+	/// 2 ç”Ÿæˆæ¯ä¸ªå…‰æºçš„RenderTarget
+	/// 3 ä¸ºæ¯ä¸ªå…‰æºæ¸²æŸ“è‡ªå·±çš„ShadowMap
 	///
 	void DriverShadowMap::render(const std::shared_ptr<DriverRenderState>& renderState, const Scene::Ptr& scene,
 	                             const Camera::Ptr& camera) noexcept
@@ -42,13 +42,13 @@ namespace ff
 		glm::vec2 shadowMapSize = glm::vec2(0.0);
 		glm::vec4 viewport = glm::vec4(0.0);
 		glm::vec2 viewportSize = glm::vec2(0.0);
-		glm::vec2 shadowFrameExtents = glm::vec2(1.0); /// ÎªÁË¼æÈİµã¹âÔ´£¬µ«ÊÇÔÚÕâÀïÃ»ÓĞÓÃ
+		glm::vec2 shadowFrameExtents = glm::vec2(1.0); /// ä¸ºäº†å…¼å®¹ç‚¹å…‰æºï¼Œä½†æ˜¯åœ¨è¿™é‡Œæ²¡æœ‰ç”¨
 		Frustum::Ptr frustum = nullptr;
 
-		/// ½«»á²úÉúÒõÓ°µÄ¹âÔ´Êı×éÈ¡³ö
+		/// å°†ä¼šäº§ç”Ÿé˜´å½±çš„å…‰æºæ•°ç»„å–å‡º
 		auto lights = renderState->mShadowsArray;
 
-		/// È¡³öÀ´¹âÕÕÏµÍ³µÄoutMap
+		/// å–å‡ºæ¥å…‰ç…§ç³»ç»Ÿçš„outMap
 		auto& uniforms = renderState->mLights->mState.mLightUniformHandles;
 
 		/// clear shadow matrix array
@@ -86,11 +86,11 @@ namespace ff
 			pushPureArrayUniform(shadow->mRenderTarget->getTexture(),
 			                     std::any_cast<std::vector<Texture::Ptr>>(&shadowMapArray.mValue));
 
-			/// ¿ªÊ¼Ïòµ±Ç°µÄshadowMapÉÏÃæ»æÖÆ£¬Êä³öÉî¶ÈĞÅÏ¢
+			/// å¼€å§‹å‘å½“å‰çš„shadowMapä¸Šé¢ç»˜åˆ¶ï¼Œè¾“å‡ºæ·±åº¦ä¿¡æ¯
 			mRenderer->setRenderTarget(shadow->mRenderTarget);
 			mRenderer->clear();
 
-			/// ÉèÖÃopengläÖÈ¾ÊÓ¿ÚÓÃµÄ
+			/// è®¾ç½®openglæ¸²æŸ“è§†å£ç”¨çš„
 			viewport = {0.0, 0.0, viewportSize.x, viewportSize.y};
 
 			mState->viewport(viewport);
@@ -128,7 +128,7 @@ namespace ff
 
 				auto geometry = mObjects->update(renderableObject);
 
-				/// ËùÓĞÎïÌåÍ³Ò»Ê¹ÓÃÄ¬ÈÏµÄÉî¶È²ÄÖÊ
+				/// æ‰€æœ‰ç‰©ä½“ç»Ÿä¸€ä½¿ç”¨é»˜è®¤çš„æ·±åº¦æè´¨
 				auto material = mDefaultDepthMaterial;
 
 				mRenderer->renderBufferDirect(renderableObject, nullptr, shadowCamera, geometry, material);

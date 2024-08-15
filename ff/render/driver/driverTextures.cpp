@@ -1,4 +1,4 @@
-﻿#include "driverTextures.h"
+#include "driverTextures.h"
 #include "../MultipleRenderTarget.h"
 
 namespace ff

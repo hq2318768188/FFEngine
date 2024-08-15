@@ -8,7 +8,7 @@ namespace ff {
 
 	class Light;
 
-	/// ÃèÊöÁËÒ»Õµ¹âÔ´£¬¹ØÓÚÆäÒõÓ°Ïà¹ØµÄ¸÷Àà²ÎÊı
+	/// æè¿°äº†ä¸€ç›å…‰æºï¼Œå…³äºå…¶é˜´å½±ç›¸å…³çš„å„ç±»å‚æ•°
 	class LightShadow {
 	public:
 		using Ptr = std::shared_ptr<LightShadow>;
@@ -29,25 +29,25 @@ namespace ff {
 		Frustum::Ptr getFrustum() const noexcept;
  
 	public:
-		Camera::Ptr				mCamera{ nullptr }; /// ·ÅÔÚ¹âÔ´Î»ÖÃ£¬ÓÃÓÚäÖÈ¾Éî¶ÈÌùÍ¼µÄÉãÏñ»ú
-		float					mBias{ -0.003f };	///.ÎªÁË·ÀÖ¹ShadowAnceµÄÉî¶ÈÆ«ÒÆÁ¿
-		float					mRadius{ 1.0f };	/// ·ÀÖ¹±ßÔµ¹ıÓ²µÄÊ±ºò£¬²ÉÓÃµÄÃ××ÖĞÍ²ÉÑù·¶Î§µÄ´óĞ¡
+		Camera::Ptr				mCamera{ nullptr }; /// æ”¾åœ¨å…‰æºä½ç½®ï¼Œç”¨äºæ¸²æŸ“æ·±åº¦è´´å›¾çš„æ‘„åƒæœº
+		float					mBias{ -0.003f };	///.ä¸ºäº†é˜²æ­¢ShadowAnceçš„æ·±åº¦åç§»é‡
+		float					mRadius{ 1.0f };	/// é˜²æ­¢è¾¹ç¼˜è¿‡ç¡¬çš„æ—¶å€™ï¼Œé‡‡ç”¨çš„ç±³å­—å‹é‡‡æ ·èŒƒå›´çš„å¤§å°
 
-		glm::vec2				mMapSize = glm::vec2(512.0, 512.0); ///ShadowMap·Ö±æÂÊµÄ´óĞ¡ 
+		glm::vec2				mMapSize = glm::vec2(512.0, 512.0); ///ShadowMapåˆ†è¾¨ç‡çš„å¤§å° 
 
-		/// ¶ÔÓÚ¹âÔ´»òÕßÒõÓ°£¬ÔÛÃÇÏµÍ³ÊµÏÖÁËÆ½ĞĞ¹âÏµÍ³£¬µ«ÊÇ»¹Ã»ÓĞÊµÏÖµã¹âÔ´
+		/// å¯¹äºå…‰æºæˆ–è€…é˜´å½±ï¼Œå’±ä»¬ç³»ç»Ÿå®ç°äº†å¹³è¡Œå…‰ç³»ç»Ÿï¼Œä½†æ˜¯è¿˜æ²¡æœ‰å®ç°ç‚¹å…‰æº
 		glm::vec2				mFrameExtent = glm::vec2(1.0, 1.0);
 		std::vector<glm::vec4>	mViewports = { glm::vec4(0.0f, 0.0f, 1.0f, 1.0f) };
 
-		RenderTarget::Ptr		mRenderTarget{ nullptr }; /// µ±Ç°µÄShadowMapËù¶ÔÓ¦µÄäÖÈ¾Ä¿±ê,ShadowMap¾Í·ÅÔÚÁËËûµÄColorAttachment
+		RenderTarget::Ptr		mRenderTarget{ nullptr }; /// å½“å‰çš„ShadowMapæ‰€å¯¹åº”çš„æ¸²æŸ“ç›®æ ‡,ShadowMapå°±æ”¾åœ¨äº†ä»–çš„ColorAttachment
 
-		/// 1 ½«ÎïÌåµÄ¶¥µã£¬´ÓÊÀ½ç×ø±êÏµ£¬×ª»¯µ½¹âÔ´ÉãÏñ»úµÄÍ¶Ó°×ø±êÏµÄÚ£¨NDC×ø±ê×é-»¹Ã»ÓĞ³ıÒÔw£©
-		/// 2 projectionMatrix * viewMatrix£¨¹âÔ´Ïà»ú£©
-		/// 3 ÁíÍâ»¹µÃ°ÑNDC×ø±ê´Ó-1µ½1£¬×ª»¯Îª0-1
+		/// 1 å°†ç‰©ä½“çš„é¡¶ç‚¹ï¼Œä»ä¸–ç•Œåæ ‡ç³»ï¼Œè½¬åŒ–åˆ°å…‰æºæ‘„åƒæœºçš„æŠ•å½±åæ ‡ç³»å†…ï¼ˆNDCåæ ‡ç»„-è¿˜æ²¡æœ‰é™¤ä»¥wï¼‰
+		/// 2 projectionMatrix * viewMatrixï¼ˆå…‰æºç›¸æœºï¼‰
+		/// 3 å¦å¤–è¿˜å¾—æŠŠNDCåæ ‡ä»-1åˆ°1ï¼Œè½¬åŒ–ä¸º0-1
 		glm::mat4				mMatrix = glm::mat4(1.0f);
 
 	protected:
-		/// ÓÃÀ´°ïÖú¹âÔ´ÉãÏñ»ú½øĞĞÊÓ¾°Ìå¼ô²Ã
+		/// ç”¨æ¥å¸®åŠ©å…‰æºæ‘„åƒæœºè¿›è¡Œè§†æ™¯ä½“å‰ªè£
 		Frustum::Ptr			mFrustum = Frustum::create();
 	};
 }

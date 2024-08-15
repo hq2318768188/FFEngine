@@ -177,25 +177,25 @@ namespace ff {
 		const aiScene* scene,
 		const aiMaterial* material,
 		const std::string& rootPath) {
-		//for texture
+		/// for texture
 		aiString aiPath;
 
-		//for now we only need one texture per type, without texture blending
-		//todo: multi-texture blending
-		//对于当前模型，我们工程里面存储的路径可能是：assets/models/superMan/man.fbx
-		//图片数据可能会存放在：assets/models/superMan/textures/文件夹下
-		//下方拿到的aiPath是要读取的图片的相对路径，相对于man.fbx
+		/// for now we only need one texture per type, without texture blending
+		/// todo: multi-texture blending
+		/// 对于当前模型，我们工程里面存储的路径可能是：assets/models/superMan/man.fbx
+		/// 图片数据可能会存放在：assets/models/superMan/textures/文件夹下
+		/// 下方拿到的aiPath是要读取的图片的相对路径，相对于man.fbx
 		material->Get(AI_MATKEY_TEXTURE(type, 0), aiPath);
 
 		if (!aiPath.length) {
 			return nullptr;
 		}
 
-		//有的模型，会把纹理一起打包在模型内部，并没有单独存放。
-		//查看对于当前的aiPath对应的图片来讲，是否存在这种打包在模型内部的情况
+		/// 有的模型，会把纹理一起打包在模型内部，并没有单独存放。
+		/// 查看对于当前的aiPath对应的图片来讲，是否存在这种打包在模型内部的情况
 		const aiTexture* assimpTexture = scene->GetEmbeddedTexture(aiPath.C_Str());
 		if (assimpTexture) {
-			//如果确实图片打包在了模型内部，则上述代码获取到的aiTexture里面就含有了图片数据
+			/// 如果确实图片打包在了模型内部，则上述代码获取到的aiTexture里面就含有了图片数据
 			unsigned char* dataIn = reinterpret_cast<unsigned char*>(assimpTexture->pcData);
 			uint32_t widthIn = assimpTexture->mWidth;
 			uint32_t heightIn = assimpTexture->mHeight;
@@ -203,18 +203,18 @@ namespace ff {
 
 			return TextureLoader::load(path, dataIn, widthIn, heightIn);
 		}
-		//因为aiPath是textures/diffuseTexture.jpg
-		//拼装后变成：assets/models/superMan/textures/diffuseTexture.jpg
+		/// 因为aiPath是textures/diffuseTexture.jpg
+		/// 拼装后变成：assets/models/superMan/textures/diffuseTexture.jpg
 		std::string fullPath = rootPath + aiPath.C_Str();
 		return TextureLoader::load(fullPath);
 	}
 
-	//1 如果当前解析的Mesh收到了骨骼的影响，那么就是一个SkinnedMesh
-	//2 如果收到了骨骼影响，那么其Attribute就需要加入skinIdex以及skinWeight
+	/// 1 如果当前解析的Mesh收到了骨骼的影响，那么就是一个SkinnedMesh
+	/// 2 如果收到了骨骼影响，那么其Attribute就需要加入skinIdex以及skinWeight
 	Object3D::Ptr AssimpLoader::processMesh(
 		const aiMesh* mesh,
 		const aiScene* scene,
-		//当前Mesh所属的Node如果有哪怕一个mesh，就无法设置LocalMatrix
+		/// 当前Mesh所属的Node如果有哪怕一个mesh，就无法设置LocalMatrix
 		const glm::mat4 localTransform,
 		const std::vector<Material::Ptr>& materials,
 		const std::vector<Bone::Ptr>& bones) {
@@ -223,23 +223,23 @@ namespace ff {
 		Material::Ptr material = nullptr;
 		Geometry::Ptr geometry = Geometry::create();
 
-		std::vector<Bone::Ptr> meshBones;//对当前Mesh产生影响的bone的数组
-		std::vector<glm::mat4> offsetMatrices;//对应上述数组的每一个bone的offsetMatrix
+		std::vector<Bone::Ptr> meshBones; 		/// 对当前Mesh产生影响的bone的数组
+		std::vector<glm::mat4> offsetMatrices;	/// 对应上述数组的每一个bone的offsetMatrix
 
-		//一个Mesh所需要的所有attributes
+		/// 一个Mesh所需要的所有attributes
 		std::vector<float> positions;
 		std::vector<float> normals;
 		std::vector<float> tangents;
 		std::vector<float> bitangents;
 
-		std::vector<std::vector<float>> uvs;//每一个元素都是第i个channel的纹理坐标数据
-		std::vector<uint32_t> numUVComponents;//每一个元素都是第i个channel的itemSize
+		std::vector<std::vector<float>> uvs;	/// 每一个元素都是第i个channel的纹理坐标数据
+		std::vector<uint32_t> numUVComponents;	/// 每一个元素都是第i个channel的itemSize
 
 		std::vector<uint32_t> indices;
 		std::vector<float> skinIndices;
 		std::vector<float> skinWeights;
 
-		//按照顶点来遍历的
+		/// 按照顶点来遍历的
 		for (uint32_t i = 0; i < mesh->mNumVertices; ++i) {
 			positions.push_back(mesh->mVertices[i].x);
 			positions.push_back(mesh->mVertices[i].y);
@@ -261,71 +261,71 @@ namespace ff {
 				bitangents.push_back(mesh->mBitangents[i].z);
 			}
 
-			//may have multi-textures, u is the number
-			//1 一个模型可能其中的mesh会有多个贴图，贴图可能会有相同功能，比如DiffuseMap可能有多张，那么颜色就会混合
-			//也有可能是不同功能，比如NormalMap SpecularMap DiffuseMap。
-			// 2 既然有多张贴图可能，同一个顶点采样不同的纹理，可能会有不同的uv坐标
-			// 3 纹理坐标会有不同类型，如果采样二位图片，就是简单的二位uv，如果采样环境贴图uvw（str）
-			// 
-			// 总结：对于同一个Mesh，读取其某个顶点的uv
-			// 1 会有多套uv，分布在不同的Channel
-			// 2 读取纹理坐标的时候，要判断是uv还是uvw
-			//
+			/// may have multi-textures, u is the number
+			/// 1 一个模型可能其中的mesh会有多个贴图，贴图可能会有相同功能，比如DiffuseMap可能有多张，那么颜色就会混合
+			/// 也有可能是不同功能，比如NormalMap SpecularMap DiffuseMap。
+			/// 2 既然有多张贴图可能，同一个顶点采样不同的纹理，可能会有不同的uv坐标
+			/// 3 纹理坐标会有不同类型，如果采样二位图片，就是简单的二位uv，如果采样环境贴图uvw（str）
+			/// 
+			/// 总结：对于同一个Mesh，读取其某个顶点的uv
+			/// 1 会有多套uv，分布在不同的Channel
+			/// 2 读取纹理坐标的时候，要判断是uv还是uvw
+			/// 
 
-			//GetNumUVChannels:获取当前Mesh有多少套纹理坐标
-			//将不同的Channel的纹理坐标存在了不同的vector<float>里面
+			/// GetNumUVChannels:获取当前Mesh有多少套纹理坐标
+			/// 将不同的Channel的纹理坐标存在了不同的vector<float>里面
 			for (uint32_t u = 0; u < mesh->GetNumUVChannels(); ++u) {
 				if (u >= uvs.size()) {
 					uvs.push_back(std::vector<float>());
 				}
 				std::vector<float>& uvComponents = uvs[u];
 
-				//查看对于当前这个Channel其纹理坐标是uv还是uvw
-				//mNumUVComponents 存储了当前第u个Channel所对应的这一套纹理坐标itemSize
+				/// 查看对于当前这个Channel其纹理坐标是uv还是uvw
+				/// mNumUVComponents 存储了当前第u个Channel所对应的这一套纹理坐标itemSize
 				uint32_t numComponents = mesh->mNumUVComponents[u];
 
-				//uv  or  uvw 存下来的原因，是如果将当前的纹理坐标作为attribute传入geometry，在构建
-				//attribute的时候，就需要知道itemSize
+				/// uv  or  uvw 存下来的原因，是如果将当前的纹理坐标作为attribute传入geometry，在构建
+				/// attribute的时候，就需要知道itemSize
 				if (u >= numUVComponents.size()) {
 					numUVComponents.push_back(numComponents);
 				}
 
-				//按照numComponents进行遍历读取，要么循环2次即uv，要么循环3次即uvw
+				/// 按照numComponents进行遍历读取，要么循环2次即uv，要么循环3次即uvw
 				for (uint32_t c = 0; c < numComponents; c++) {
-					//mTextureCoords存储着所有的纹理坐标数据
-					//u代表着第u个channel
-					//i代表了读取第i个顶点的数据
-					//c代表了第c个纹理坐标数据
+					/// mTextureCoords存储着所有的纹理坐标数据
+					/// u代表着第u个channel
+					/// i代表了读取第i个顶点的数据
+					/// c代表了第c个纹理坐标数据
 					uvComponents.push_back(mesh->mTextureCoords[u][i][c]);
 				}
 			}
 		}
 
-		//读取当前Mesh的Index数据
-		//在aimesh里面，每一个三角形都是一个Face，遍历所有的Face，将其index取出保存
+		/// 读取当前Mesh的Index数据
+		/// 在aimesh里面，每一个三角形都是一个Face，遍历所有的Face，将其index取出保存
 		for (uint32_t f = 0; f < mesh->mNumFaces; f++)
 		{
 			aiFace	face = mesh->mFaces[f];
 
 			for (uint32_t id = 0; id < face.mNumIndices; id++)
 			{
-				//推入每一个Face的每一个顶点的ID
+				/// 推入每一个Face的每一个顶点的ID
 				indices.push_back(face.mIndices[id]);
 			}
 		}
 
-		//parse bone weights and indices, first get enought space
+		/// parse bone weights and indices, first get enought space
 		skinIndices.assign(positions.size() * 4 / 3, -1.0);
 		skinWeights.assign(positions.size() * 4 / 3, 0.0);
 
-		//traverse every bone
+		/// traverse every bone
 		bool hasBone = false;
 
-		//mNumBones对当前mesh产生影响的骨骼数量
+		/// mNumBones对当前mesh产生影响的骨骼数量
 		for (uint32_t b = 0; b < mesh->mNumBones; ++b) {
 			auto aiBone = mesh->mBones[b];
 
-			//这个骨骼的名字，也是对应了aiNode当中的某一个节点的名字
+			/// 这个骨骼的名字，也是对应了aiNode当中的某一个节点的名字
 			std::string name = aiBone->mName.C_Str();
 
 			auto bone = getBoneByName(name, bones);
@@ -349,11 +349,11 @@ namespace ff {
 			hasBone = true;
 		}
 
-		//make object
+		/// make object
 		geometry->setAttribute("position", Attributef::create(positions, 3));
 		geometry->setAttribute("normal", Attributef::create(normals, 3));
 
-		//TBN
+		//T/ BN
 		if (tangents.size()) {
 			geometry->setAttribute("tangent", Attributef::create(tangents, 3));
 		}
@@ -362,35 +362,35 @@ namespace ff {
 			geometry->setAttribute("bitangent", Attributef::create(bitangents, 3));
 		}
 
-		//skinned
+		/// skinned
 		if (skinIndices.size()) {
 			geometry->setAttribute("skinIndex", Attributef::create(skinIndices, 4));
 			geometry->setAttribute("skinWeight", Attributef::create(skinWeights, 4));
 		}
 
-		//geometry里面是key-value，key就是attribute的名字，value就是attribute对象
-		//主diffuseMap的uv仍然叫做uv
-		//从第二套纹理坐标开始，都叫做uv1 uv2.....
+		/// geometry里面是key-value，key就是attribute的名字，value就是attribute对象
+		/// 主diffuseMap的uv仍然叫做uv
+		/// 从第二套纹理坐标开始，都叫做uv1 uv2.....
 		std::string uvName;
 
-		//循环每一套纹理坐标
+		/// 循环每一套纹理坐标
 		for (uint32_t uvId = 0; uvId < uvs.size(); ++uvId) {
 			uvName = "uv";
 			if (uvId) {
 				uvName += std::to_string(uvId);
 			}
 	
-			//uvName : uv  uv1  uv2 uv3....。目前的引擎系统仅支持uv，还没有扩展多套uv的情况
-			//取出uvs[uvId]：第uvId套uv数据vector<float>
-			//numUVComponents[uvId]：第uvId套uv的itemSize，可能是2 可能是3
+			/// uvName : uv  uv1  uv2 uv3....。目前的引擎系统仅支持uv(shader)，还没有扩展多套uv的情况
+			/// 取出uvs[uvId]：第uvId套uv数据vector<float>
+			/// numUVComponents[uvId]：第uvId套uv的itemSize，可能是2 可能是3
 			geometry->setAttribute(uvName, Attributef::create(uvs[uvId], numUVComponents[uvId]));
 		}
 
 		geometry->setIndex(Attributei::create(indices, 1));
 
-		//process material
-		//从aiMesh里面，可以拿到当前Mesh所使用的Material的index，对应着aiScene->mMaterials数组的编号
-		//已经解析好的materials数组跟aiScene->mMaterials是一一对应的
+		/// process material
+		/// 从aiMesh里面，可以拿到当前Mesh所使用的Material的index，对应着aiScene->mMaterials数组的编号
+		/// 已经解析好的materials数组跟aiScene->mMaterials是一一对应的
 		if (mesh->mMaterialIndex >= 0) {
 			material = materials[mesh->mMaterialIndex];
 		}
@@ -405,7 +405,7 @@ namespace ff {
 			//attention: localTransform is in bone
 		}
 		else {
-			//注意！！如果没有动画影像，则使用当前节点的Transform矩阵作为其localMatrix
+			/// 如果没有动画影像，则使用当前节点的Transform矩阵作为其localMatrix
 			object = Mesh::create(geometry, material);
 			object->setLocalMatrix(localTransform);
 		}
@@ -548,7 +548,7 @@ namespace ff {
 		return nullptr;
 	}
 
-	//系列工具函数，将向量、四元数、矩阵从assimp的格式里面转化为glm的格式
+	/// 系列工具函数，将向量、四元数、矩阵从assimp的格式里面转化为glm的格式
 	glm::vec3 AssimpLoader::getGLMVec3(aiVector3D value) noexcept
 	{
 		return glm::vec3(value.x, value.y, value.z);
@@ -562,7 +562,7 @@ namespace ff {
 	glm::mat4 AssimpLoader::getGLMMat4(aiMatrix4x4 value) noexcept
 	{
 		glm::mat4 to;
-		//the a,b,c,d in assimp is the row ; the 1,2,3,4 is the column
+		/// the a,b,c,d in assimp is the row ; the 1,2,3,4 is the column
 		to[0][0] = value.a1; to[1][0] = value.a2; to[2][0] = value.a3; to[3][0] = value.a4;
 		to[0][1] = value.b1; to[1][1] = value.b2; to[2][1] = value.b3; to[3][1] = value.b4;
 		to[0][2] = value.c1; to[1][2] = value.c2; to[2][2] = value.c3; to[3][2] = value.c4;

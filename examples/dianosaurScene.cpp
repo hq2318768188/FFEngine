@@ -194,7 +194,7 @@ Scene::Ptr makeScene() {
 	dragon->mObject->getChildren()[1]->setPosition(0.0, -1.5, 21.1);
 
 	dragon->mActions[1]->play();
-	dragon->mActions[1]->mSpeed = 15.0f;
+	dragon->mActions[1]->mSpeed = 2.0f;
 	scene->addChild(dragon->mObject);
 
 	auto room = AssimpLoader::load("assets/models/poCity/scene.gltf");

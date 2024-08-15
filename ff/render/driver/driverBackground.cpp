@@ -13,7 +13,8 @@ namespace ff
 
 	DriverBackground::DriverBackground(Renderer* renderer, const DriverObjects::Ptr& objects) noexcept
 	{
-		mRenderer = renderer;
+		mRenderer = renderer;ff\render\driver\driverShadowMap.cpp
+
 		mObjects = objects;
 	}
 
@@ -28,37 +29,37 @@ namespace ff
 		}
 
 		/// prepare background
-		/// ½«CubeTextureÈ¡³ö ,¸³Öµ¸øbackground
+		/// å°†CubeTextureå–å‡º ,èµ‹å€¼ç»™background
 		const auto background = scene->mBackground;
 		if (background == nullptr)
 		{
 			return;
 		}
 
-		/// ¹¹ÔìÓÃÓÚ»æÖÆÌì¿ÕºÐ£¨CubeMap£©µÄÁ¢·½ÌåMesh
+		/// æž„é€ ç”¨äºŽç»˜åˆ¶å¤©ç©ºç›’ï¼ˆCubeMapï¼‰çš„ç«‹æ–¹ä½“Mesh
 		if (mBoxMesh == nullptr)
 		{
-			/// ¹¹½¨Ò»¸ö1*1*1 µÄboxGeometry
+			/// æž„å»ºä¸€ä¸ª1*1*1 çš„boxGeometry
 			const auto geometry = BoxGeometry::create(1.0f, 1.0f, 1.0f);
 			geometry->deleteAttribute("normal");
 			geometry->deleteAttribute("uv");
 
-			/// ÉãÏñ»úÓÀÔ¶·ÅÔÚboxµÄÄÚ²¿ÖÐÐÄ£¬ËùÒÔÖ»»æÖÆÄÚ²¿¼´¿É
+			/// æ‘„åƒæœºæ°¸è¿œæ”¾åœ¨boxçš„å†…éƒ¨ä¸­å¿ƒï¼Œæ‰€ä»¥åªç»˜åˆ¶å†…éƒ¨å³å¯
 			const auto material = CubeMaterial::create();
 			material->mSide = Side::BackSide;
 			material->mEnvMap = background;
 
 			mBoxMesh = Mesh::create(geometry, material);
 
-			/// µ±Ç°µÄmBoxMesh£¬ÈÔÈ»´¦ÓÚÊÀ½ç×ø±êÏµµÄ£¨000£©Î»ÖÃ£¬Õâ¸öboxÐèÒª¸ú×ÅCameraÒÆ¶¯¡£
-			/// ÔÚÕâ¸ömBoxMesh½øÐÐ»æÖÆÖ®Ç°£¬×öÕâ¸ö±ä»»²Ù×÷
+			/// å½“å‰çš„mBoxMeshï¼Œä»ç„¶å¤„äºŽä¸–ç•Œåæ ‡ç³»çš„ï¼ˆ000ï¼‰ä½ç½®ï¼Œè¿™ä¸ªboxéœ€è¦è·Ÿç€Cameraç§»åŠ¨ã€‚
+			/// åœ¨è¿™ä¸ªmBoxMeshè¿›è¡Œç»˜åˆ¶ä¹‹å‰ï¼Œåšè¿™ä¸ªå˜æ¢æ“ä½œ
 			mBoxMesh->mOnBeforeRenderCallback = [&](Renderer* render, Scene* scene, Camera* camera)
 			{
 				mBoxMesh->setPosition(camera->getWorldPosition());
 				mBoxMesh->updateWorldMatrix();
 			};
 
-			/// ÔÚÕâÀïÒªµ¥¶À¶ÔÕâ¸ömesh½øÐÐÒ»´Î½âÎö£¬´´½¨ÆäVBOµÈ
+			/// åœ¨è¿™é‡Œè¦å•ç‹¬å¯¹è¿™ä¸ªmeshè¿›è¡Œä¸€æ¬¡è§£æžï¼Œåˆ›å»ºå…¶VBOç­‰
 			mObjects->update(mBoxMesh);
 		}
 

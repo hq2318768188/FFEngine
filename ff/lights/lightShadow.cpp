@@ -9,16 +9,16 @@ namespace ff {
 	LightShadow::~LightShadow() noexcept {}
 
 	void LightShadow::updateMatrices(const std::shared_ptr<Light>& light) noexcept {
-		/// ½«¹âÔ´ÉãÏñ»ú°Ú·Åµ½¹âÔ´µÄÎ»ÖÃ
+		/// å°†å…‰æºæ‘„åƒæœºæ‘†æ”¾åˆ°å…‰æºçš„ä½ç½®
 		mCamera->setLocalMatrix(light->getWorldMatrix());
 		mCamera->updateWorldMatrix();
 
-		/// ¼ÆËãÁËprojectionMatrix * viewMatrix
+		/// è®¡ç®—äº†projectionMatrix * viewMatrix
 		auto pvMatrix = mCamera->getProjectionMatrix() * mCamera->getWorldMatrixInverse();
 		mFrustum->setFromProjectionMatrix(pvMatrix);
 
 		/// to transpose one fragment's xyz to 0-1,but need colum-first!remember!
-		/// ½«x = £¨x + 1)/2£¬´Ó-1µ½1£¬×ª»¯Îª0-1
+		/// å°†x = ï¼ˆx + 1)/2ï¼Œä»Ž-1åˆ°1ï¼Œè½¬åŒ–ä¸º0-1
 		mMatrix = glm::mat4(
 			0.5, 0.0, 0.0, 0.5,
 			0.0, 0.5, 0.0, 0.5,
@@ -26,7 +26,7 @@ namespace ff {
 			0.0, 0.0, 0.0, 1.0
 		);
 
-		/// ´ÓÐÐÓÅÏÈ×ªÎªÁÐÓÅÏÈ´æ´¢
+		/// ä»Žè¡Œä¼˜å…ˆè½¬ä¸ºåˆ—ä¼˜å…ˆå­˜å‚¨
 		mMatrix = glm::transpose(mMatrix) * pvMatrix;
 	}
 
