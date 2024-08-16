@@ -1,5 +1,8 @@
 find_package(Perl REQUIRED)
 find_package(Doxygen REQUIRED)
+find_package(HtmlHelp REQUIRED)
+
+message("HTML_HELP_COMPILER = ${HTML_HELP_COMPILER}")
 
 function(add_doxygen_doc)
   set(options)
